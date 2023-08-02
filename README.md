@@ -1,23 +1,17 @@
-# kevinzunigacuellar.com
+# EshaanAgg
 
 [![Built with Astro](https://astro.badg.es/v1/built-with-astro.svg)](https://astro.build)
 
-A minimal, responsive, and accessible personal website built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/).
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/kevinzunigacuellar/kevinzunigacuellar.com?title=Personal%20website)
-
-![screenshot](https://user-images.githubusercontent.com/46791833/207947058-9d7c08bf-0ad1-4eb8-a9f8-8105ca0a4814.png)
+A minimal, responsive, and accessible personal website built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/). It contain's a brief summary about all the aspects of my journey as a Software Developer and even hosts my ramblings in the blog section!
 
 ## Tech stack
 
 - **Platform**: [Astro](https://github.com/withastro/astro)
-- **Frontend Library**: [Solid.js](https://github.com/solidjs/solid)
 - **Deployment**: [Netlify](https://www.netlify.com/)
-- **CI**: [GitHub Actions](https://github.com/features/actions)
 - **Package manager**: [pnpm](https://pnpm.io/)
 - **OG-images**: [Satori](https://github.com/vercel/satori)
 
-## Getting started
+## Setting up the Site Locally
 
 To get started, run the following commands:
 
@@ -30,3 +24,12 @@ pnpm install
 pnpm dev
 
 ```
+
+## Key Features
+
+- The site is fully repsonsive and is shipped with ZERO JavaScript.
+- We use Astro's `content` directory to manage all the blogs in Markdown.
+
+## Credits
+
+The site has been inspired by [Kevin Zuniga Cuellar's](https://github.com/kevinzunigacuellar/web) personal website and draws a lot of styling from the same. This is an attempt to modify the same according to my use, and add newer and more descriptive templates.

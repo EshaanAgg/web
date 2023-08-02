@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
 const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx,astro}"],
   darkMode: "media",
@@ -8,6 +10,8 @@ module.exports = {
       fontFamily: {
         sans: ["InterVariable", "Inter", ...defaultTheme.fontFamily.sans],
       },
+
+      // Setting up typography
       typography: (theme) => ({
         DEFAULT: {
           css: {

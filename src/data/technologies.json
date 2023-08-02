@@ -1,26 +1,50 @@
 [
   {
-    "logo":"simple-icons:astro",
-    "text":"Astro"
+    "logo": "vscode-icons:file-type-typescript-official",
+    "text": "TypeScript"
   },
   {
-    "logo":"vscode-icons:file-type-typescript-official",
-    "text":"TypeScript"
+    "logo": "logos:react",
+    "text": "React"
   },
   {
-    "logo":"vscode-icons:file-type-python",
-    "text":"Python"
+    "logo": "logos:vue",
+    "text": "Vue"
   },
   {
-    "logo":"logos:react",
-    "text":"React"
+    "logo": "simple-icons:astro",
+    "text": "Astro"
   },
   {
-    "logo":"logos:vue",
-    "text":"Vue"
+    "logo": "logos:nodejs-icon",
+    "text": "Node.js"
   },
   {
-    "logo":"logos:nodejs-icon",
-    "text":"Node.js"
+    "logo": "simple-icons:express",
+    "text": "Express"
+  },
+  {
+    "logo": "logos:apollostack",
+    "text": "Apollo"
+  },
+  {
+    "logo": "logos:graphql",
+    "text": "GraphQL"
+  },
+  {
+    "logo": "logos:mongodb",
+    "text": "MongoDB"
+  },
+  {
+    "logo": "logos:mysql-icon",
+    "text": "MySQL"
+  },
+  {
+    "logo": "logos:rust",
+    "text": "Rust"
+  },
+  {
+    "logo": "vscode-icons:file-type-python",
+    "text": "Python"
   }
 ]
