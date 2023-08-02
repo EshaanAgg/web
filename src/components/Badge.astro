@@ -3,7 +3,9 @@ interface Props {
   text: string;
   color: keyof typeof colors;
 }
+
 const { text, color } = Astro.props;
+
 const colors = {
   blue: "bg-blue-700 text-blue-200",
   red: "bg-red-700 text-red-200",
@@ -18,6 +20,7 @@ const colors = {
   "gradient-pink":
     "bg-gradient-to-r dark:from-fuchsia-600 from-fuchsia-500 to-pink-500 dark:to-pink-600 text-white",
 } as const;
+
 ---
 
 <span

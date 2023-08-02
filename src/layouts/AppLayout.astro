@@ -30,11 +30,14 @@ const canonicalURL = new URL(Astro.url).href;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
+    
     <title>{title}</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="canonical" href={canonicalURL} />
     <meta name="title" content={title} />
     <meta name="description" content={description} />
+    
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
@@ -53,6 +56,7 @@ const canonicalURL = new URL(Astro.url).href;
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="follow, index" />
     <meta name="author" content={author} />
+    
     {
       pubDate && (
         <meta
@@ -61,15 +65,7 @@ const canonicalURL = new URL(Astro.url).href;
         />
       )
     }
-    {
-      import.meta.env.PROD && (
-        <script
-          async
-          src="https://analytics.kevinzunigacuellar.com/script.js"
-          data-website-id="85f62bc2-3620-4a73-910d-b67ac58041e3"
-        />
-      )
-    }
+    
   </head>
   <body
     class="dark:bg-zinc-900 bg-zinc-100 antialiased selection:bg-teal-300 selection:text-zinc-900 dark:selection:bg-teal-600 dark:selection:text-white py-10 2xl:text-lg"
@@ -92,9 +88,11 @@ const canonicalURL = new URL(Astro.url).href;
         }
       </ul>
     </nav>
+    
     <main class="px-6 lg:px-0 mx-auto max-w-3xl" id="main-content">
       <slot />
     </main>
+  
   </body>
 </html>
 <style>

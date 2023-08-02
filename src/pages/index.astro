@@ -11,11 +11,11 @@ import { author } from "@data/socials";
   <header class="sm:flex sm:items-center sm:justify-between">
     <Image
       src={authorImage}
-      class="rounded-full aspect-square w-40 overflow-hidden inline-flex"
-      alt="Image of the author"
+      class="rounded-full aspect-square w-60 overflow-hidden inline-flex"
+      alt="Image of the author smiling and eating desserts"
       loading="eager"
-      width={320}
-      height={320}
+      width={400}
+      height={400}
     />
     <div class="mt-8 max-w-lg 2xl:max-w-xl sm:my-0 sm:order-first">
       <h1
@@ -23,20 +23,16 @@ import { author } from "@data/socials";
       >
         {author}
       </h1>
-      <p class="mb-4 dark:text-zinc-300 text-zinc-700">
-        Graduate Research Assistant and <a
-          href="https://twitter.com/astrodotbuild"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="dark:text-teal-400 text-blue-600 underline">@astrodotbuild</a
-        > Maintainer
-      </p>
+      <h2 class="mb-4 dark:text-zinc-300 text-zinc-700 text-lg">
+        Software Developer and Serial Procastinator
+      </h2>
       <p
         class="max-w-prose font-normal dark:text-zinc-400 text-zinc-600 sm:max-w-sm md:max-w-xl leading-relaxed"
       >
-        Welcome to my slice of the internet! I am a graduate student in
-        mechanical engineering at the University of Vermont. In my free time, I
-        build frontend tools and experiment with new web app technologies.
+        Welcome to my slice of the internet! I am a pre-final year student in
+        Computer Science Engineering at the Indian Institute of Technology, Varanasi. 
+        <br>
+        In my free time, I listen to music, rant about TypeScript, build stuff and experiment with new technologies.
       </p>
     </div>
   </header>
@@ -45,16 +41,14 @@ import { author } from "@data/socials";
       class="dark:text-zinc-300 text-zinc-700 mb-4 text-2xl font-bold tracking-tight"
       id="section-title"
     >
-      Favorite technologies
+      Tech I Work With!
     </h2>
     <p
       class="max-w-prose mb-8 font-normal dark:text-zinc-400 text-zinc-600 leading-relaxed"
     >
-      I love exploring new libraries, programing languages and frameworks. Here
-      is a list of technologies that I have worked with at school, side projects
-      and open source.
+      I love exploring new libraries, programing languages and frameworks. For the better part of the last year, I have divided head first, into soo-many new frameworks and technologies that it is hard to keep track of! Here is a small overview of them!
     </p>
-    <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <ul class="grid grid-cols-1 gap-3 sm:grid-cols-3 md:grid-cols-4">
       {technologies.map((tech) => <Skill text={tech.text} logo={tech.logo} />)}
     </ul>
   </section>

@@ -1,12 +1,12 @@
 export const twitter = "@kevinzunigacuel";
-export const author = "Kevin Zuniga Cuellar";
+export const author = "Eshaan Aggarwal";
 
 export const defaultMeta = {
-  title: "Kevin Zuniga Cuellar",
-  description:
-    "Welcome to my personal website! I am a software engineering student. I'm passionate about building software that helps developers to be more productive",
-  ogImage: {
-    src: "/static/banner.png",
-    alt: "Photo of the author smiling",
-  },
+	title: "Eshaan Aggarwal",
+	description:
+		"Welcome to my personal website! I am a Computer Science and Engineering student who is passionate about developing software that brings out the nerd in developers.",
+	ogImage: {
+		src: "/static/banner.png",
+		alt: "Banner image of the author smiling.",
+	},
 };
