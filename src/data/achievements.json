@@ -1,0 +1,18 @@
+[
+  {
+    "year": 2021,
+    "description": "My first year at IIT Varanasi",
+    "achievements": [
+      {
+        "name": "COPS Week",
+        "byline": "My first hackathon and CTF",
+        "description": "Participated in COPS Week (an annual intra-college competition only for the freshers of IIT Varanasi) and won the first position in two events: DebugIT (A week-long hackathon) and Wannahack (A 24-hour Capture The Flag)."
+      },
+      {
+        "name": "Uber HackTag 2.0",
+        "byline": "National Finalist",
+        "description": "Was a part of the Top 10 National Finalists in a pool of 34K students in Uber Hacktag 2.0. I worked on developing a solution that can help Uber get the next billion users in the next decade."
+      }
+    ]
+  }
+]
