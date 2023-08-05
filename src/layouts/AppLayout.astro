@@ -104,3 +104,23 @@ const canonicalURL = new URL(Astro.url).href;
     display: none; /* Safari and Chrome */
   }
 </style>
+
+<!-- Setting the dark mode theme -->
+<script is:inline>
+
+const theme = (() => {
+  // If the theme already exists, fetch the same
+  if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) return localStorage.getItem("theme");
+
+  // Check the prefered colour scheme of the user
+  if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+
+  // Return the default as light if no theme preference is found
+  return "light";
+})();
+
+if (theme === "light") document.documentElement.classList.remove("dark");
+else document.documentElement.classList.add("dark");
+
+window.localStorage.setItem("theme", theme);
+</script>

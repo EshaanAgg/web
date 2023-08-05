@@ -15,7 +15,7 @@ const { text, logo } = Astro.props;
       class="w-12 h-12 flex items-center justify-center border-t dark:border-zinc-700 border-transparent shadow dark:shadow-none bg-white dark:bg-zinc-800 rounded-full"
       ><Icon name={logo} class="w-6 group-hover:animate-spin" />
     </span>
-    <span class="dark:text-zinc-400 text-zinc-600">{text}</span>  
+    <span class="dark:text-zinc-300 text-zinc-600">{text}</span>  
   </li> 
 </div>
 
@@ -23,4 +23,8 @@ const { text, logo } = Astro.props;
   [astro-icon="simple-icons:astro"] {
     @apply dark:text-white;
   }
+  [astro-icon="simple-icons:express"] {
+    @apply dark:text-white;
+  }
+  
 </style>
