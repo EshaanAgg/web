@@ -23,7 +23,11 @@ const description =
     {description}
   </p>
   {
-    posts.length === 0 ? "Oops😔 I still haven't started writing. Please check up on me later?" : (
+    posts.length === 0 ? (
+      <div class="text-zinc-600 p-0 m-0">
+        Oops😔 I still haven't started writing. Please check up on me later? 
+      </div>
+    ) : (
       <ul class="flex flex-col gap-8 sm:border-l sm:dark:border-zinc-800">
         {
           posts.map((post) => (
