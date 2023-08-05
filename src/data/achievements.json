@@ -22,6 +22,11 @@
         "name": "Quadeye",
         "byline": "Upcoming SWE Intern",
         "description": "Took part in the on-campus Internship drive and got offered a SWE internship in the reputed HFT Quadeye in Week 1, Day 0, which I hearitily accepted. Looking forward to working with them next summer!"
+      },
+      {
+        "name": "Automicle",
+        "byline": "Student Collaborator",
+        "description": "Worked along with Avijit Thawani to present a demo of using OpenAI and related AI technologies to create a chat bot that can integrate with the exisiting Automicle APIs to cerate a more natural parking booking experience."
       }
     ]
   },
@@ -32,7 +37,7 @@
       {
         "name": "Inter IIT Tech Meet 11.0",
         "byline": "Gold Medalist",
-        "description": "First position among all IITs in the high prep Grow Simplee event (ML and development based problem statement). Worked on developing a genetic algorithm-based route planner and optimizer for last-mile operations in Rust.Also developed a Web UI for simulation of the deliveries by the riders in Next.js using Google Maps SDK."
+        "description": "First position among all IITs in the high prep Grow Simplee event (ML and development based problem statement). Worked on developing a genetic algorithm-based route planner and optimizer for last-mile operations in Rust. Also developed a Web UI for simulation of the deliveries by the riders in Next.js using Google Maps SDK."
       },
       {
         "name": "Technex '23",

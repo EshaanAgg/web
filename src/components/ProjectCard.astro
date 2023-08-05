@@ -23,6 +23,7 @@ const { name, role, url, description, stars, languages } = Astro.props;
 <li
   class="dark:bg-zinc-800 bg-white dark:text-zinc-400 text-zinc-500 gap-1 p-6 border dark:border-zinc-700/60 rounded-lg flex flex-col"
 >
+  <a href={url}>
   <div class="flex justify-between">
     <div class="flex flex-col sm:flex-row sm:items-baseline gap-2">
       <h2 class="text-lg font-medium dark:text-white text-zinc-700 [word-break:break-word]">{name}</h2>
@@ -45,7 +46,7 @@ const { name, role, url, description, stars, languages } = Astro.props;
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      class="w-5 text-zinc-400"
+      class="w-5 text-yellow-300"
     >
       <path
         fill-rule="evenodd"
@@ -65,4 +66,5 @@ const { name, role, url, description, stars, languages } = Astro.props;
       ))
     }
   </ul>
+  </a>
 </li>

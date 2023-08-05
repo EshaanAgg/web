@@ -1,106 +1,106 @@
 [
   {
-    "name": "remark-code-title",
-    "stars": 9,
-    "url": "https://github.com/kevinzunigacuellar/remark-code-title",
-    "description": "🔌 remark plugin to add titles to code blocks",
-    "languages": ["TypeScript"],
+    "name": "talawa-admin",
+    "stars": 56,
+    "url": "https://github.com/PalisadoesFoundation/talawa-admin",
+    "description": "Admin portal for the Talawa Mobile App.",
+    "languages": ["TypeScript", "React"],
+    "role": "contributor"
+  },
+  {
+    "name": "talawa-api",
+    "stars": 114,
+    "url": "https://github.com/PalisadoesFoundation/talawa-api",
+    "description": "API Backend for the Talawa Mobile App.",
+    "languages": ["TypeScript", "GraphQL", "Express", "Vitest"],
+    "role": "contributor"
+  },
+  {
+    "name": "wierd-counter",
+    "stars": 0,
+    "url": "https://github.com/EshaanAgg/Wierd-Counter",
+    "description": "Implementing a counter, but by using 4 UI libraries to demonstrate state sharing between frameworks with the help of client-agnostic libraries such as Nanostores.",
+    "languages": ["TypeScript", "Vue", "Solid", "Vue", "React", "Nanostores"],
     "role": "author"
   },
   {
-    "name": "astro-layouts",
-    "stars": 23,
-    "url": "https://github.com/kevinzunigacuellar/astro-layouts",
-    "description": "🔌 remark plugin to add folder-based layouts in Astro",
-    "languages": ["TypeScript"],
+    "name": "sndwch",
+    "stars": 0,
+    "url": "https://github.com/EshaanAgg/sndwch",
+    "description": "A small business site that uses several of the common workflows that many (maybe most) websites end up following. Built with Astro.",
+    "languages": ["TypeScript", "Astro", "CSS", "JavaScript"],
     "role": "author"
   },
   {
-    "name": "withastro/astro",
-    "stars": 32085,
-    "url": "https://github.com/withastro/astro",
-    "description": "The all-in-one web framework designed for speed. ⭐️ Star to support our work!",
-    "languages": ["TypeScript", "JavaScript", "Astro", "Vue"],
-    "role": "contributor"
+    "name": "leetcode-practice",
+    "stars": 3,
+    "url": "https://github.com/EshaanAgg/Leetcode_Practice_Frontend",
+    "description": "A site to give you access to all the leetcode problems, sorted by the companies they appeared in.",
+    "languages": ["Nuxt", "TypeScript"],
+    "role": "author"
   },
   {
-    "name": "vuejs/vitepress",
-    "stars": 8250,
-    "url": "https://github.com/vuejs/vitepress",
-    "description": "Vite & Vue powered static site generator.",
-    "languages": ["TypeScript", "Vue", "CSS", "JavaScript"],
-    "role": "contributor"
-  },
-  {
-    "name": "midudev/kings-league-project",
-    "stars": 1534,
-    "url": "https://github.com/midudev/kings-league-project",
-    "description": "API y website de la Kings League Infojobs por temas didácticos",
-    "languages": ["JavaScript", "Astro", "TypeScript"],
-    "role": "contributor"
-  },
-  {
-    "name": "withastro/starlight",
-    "stars": 1033,
-    "url": "https://github.com/withastro/starlight",
-    "description": "🌟 Build beautiful, high-performance documentation websites with Astro",
-    "languages": ["TypeScript", "Astro", "CSS", "HTML"],
-    "role": "contributor"
-  },
-  {
-    "name": "withastro/docs",
-    "stars": 799,
-    "url": "https://github.com/withastro/docs",
-    "description": "Astro documentation",
-    "languages": ["MDX", "TypeScript", "Astro", "JavaScript"],
+    "name": "deno-gpt",
+    "stars": 1,
+    "url": "https://github.com/EshaanAgg/Deno-GPT",
+    "description": "🌟 This is a Telegram bot that is made with the aim of helping UPSC aspirants in their preparation.",
+    "languages": ["TypeScript", "GrammY", "Serverless Functions"],
     "role": "maintainer"
   },
   {
-    "name": "withastro/astro.build",
-    "stars": 218,
-    "url": "https://github.com/withastro/astro.build",
-    "description": null,
-    "languages": ["MDX", "Astro", "TypeScript", "JavaScript"],
-    "role": "contributor"
+    "name": "type-challenges",
+    "stars": 0,
+    "url": "https://github.com/EshaanAgg/type-challenges",
+    "description": "My solutions and notes on solving the Type Challenges by @antfu",
+    "languages": ["TypeScript"],
+    "role": "author"
   },
   {
-    "name": "stackblitz/ilovecodeflow.com",
-    "stars": 38,
-    "url": "https://github.com/stackblitz/ilovecodeflow.com",
-    "description": null,
-    "languages": ["Astro", "SCSS", "JavaScript"],
-    "role": "contributor"
+    "name": "Research-Literature-Manager",
+    "stars": 8,
+    "url": "https://github.com/EshaanAgg/Research-Literature-Manager",
+    "description": "This is a free and open source research literature manager that makes it simple to manage the research papers you have read!",
+    "languages": ["Vue", "GitHub Actions", "TypeScript", "JavaScript"],
+    "role": "maintainer"
   },
   {
-    "name": "stackblitz/docs",
-    "stars": 27,
-    "url": "https://github.com/stackblitz/docs",
-    "description": "New StackBlitz docs site built with VitePress",
-    "languages": ["Vue", "SCSS", "TypeScript"],
-    "role": "contributor"
+    "name": "RustyChip8",
+    "stars": 3,
+    "url": "https://github.com/EshaanAgg/RustyChip8",
+    "description": "The Hello World of Emulation, made in your favourite memory-safe Rust",
+    "languages": ["Rust", "Wasm"],
+    "role": "author"
   },
   {
-    "name": "OpenContributionsProject/opencontributionssite",
-    "stars": 22,
-    "url": "https://github.com/OpenContributionsProject/opencontributionssite",
-    "description": "A resource to help advocate for and explain corporate contributions to open source.",
-    "languages": ["MDX", "TypeScript", "CSS", "JavaScript"],
-    "role": "contributor"
-  },
-  {
-    "name": "jnear/cs202-assignments",
-    "stars": 7,
-    "url": "https://github.com/jnear/cs202-assignments",
-    "description": null,
-    "languages": ["Jupyter Notebook", "Python", "Haskell", "C"],
-    "role": "contributor"
-  },
-  {
-    "name": "Duke-MatSci/materialsmine",
+    "name": "WorkoutBuddy",
     "stars": 5,
-    "url": "https://github.com/Duke-MatSci/materialsmine",
-    "description": "MaterialsMine App",
-    "languages": ["JavaScript", "Vue", "HTML", "Python"],
-    "role": "contributor"
+    "url": "https://github.com/EshaanAgg/workout-buddy",
+    "description": "A simple app to store your workout routines. Made with Nuxt 3 and Appwrite. Featured in @AwesomeAppwrite.",
+    "languages": ["Nuxt", "JavaScript", "TypeScript", "Appwrite"],
+    "role": "author"
+  },
+  {
+    "name": "PlaceFinder",
+    "stars": 3,
+    "url": "https://github.com/EshaanAgg/PlaceFinder",
+    "description": "A simple project which helps you to find activities todo near you!",
+    "languages": ["Nuxt 3", "TypeScript", "Semantic UI", "Google Maps SDK"],
+    "role": "author"
+  },
+  {
+    "name": "Grid-Mouse-Follower",
+    "stars": 0,
+    "url": "https://github.com/EshaanAgg/Grid-Mouse-Follower",
+    "description": "This is a basic effect which can be used as background in many sites. The design highlights the grid on the basis of the movement of the user's mouse.",
+    "languages": ["Vue", "JavaScript"],
+    "role": "author"
+  },
+  {
+    "name": "RustyAoc22",
+    "stars": 3,
+    "url": "https://github.com/EshaanAgg/Rusty-AoC22",
+    "description": "My solutions for Advent of Code '22 problems, written in the language that will save us from cpp.",
+    "languages": ["Rust"],
+    "role": "author"
   }
 ]
