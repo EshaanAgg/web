@@ -21,7 +21,7 @@ export default defineConfig({
   experimental: {
     assets: true,
   },
-  site: "https://www.kevinzunigacuellar.com/",
+  site: "https://eshaanagg.netlify.app/",
   image: {
     service: sharpImageService(),
   },
