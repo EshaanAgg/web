@@ -2,6 +2,7 @@
 title: Practical CSS Layouts
 description: In this guide, I give out some simple CSS snippets of base styling that I like to use while working on a new project.
 pubDate: 2023-08-14
+draft: true
 hero: "./images/astro_dark.png"
 heroAlt: "The logo of Astro and Tailwind CSS"
 ---

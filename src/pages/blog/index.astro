@@ -4,9 +4,11 @@ import BlogCard from "@components/BlogCard.astro";
 import Header from "@components/Header.astro";
 import { getCollection } from "astro:content";
 
-const posts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const posts = (await getCollection("blog"))
+  .filter((blog) => !blog.data.draft)
+  .sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
 
 const title = "Blog | Eshaan Aggarwal";
 const description =
@@ -20,16 +22,20 @@ const description =
   >
     {description}
   </p>
-  <ul class="flex flex-col gap-8 sm:border-l sm:dark:border-zinc-800">
-    {
-      posts.map((post) => (
-        <BlogCard
-          title={post.data.title}
-          pubDate={post.data.pubDate}
-          description={post.data.description}
-          url={`/blog/${post.slug}/`}
-        />
-      ))
-    }
-  </ul>
+  {
+    posts.length === 0 ? "Oops😔 I still haven't started writing. Please check up on me later?" : (
+      <ul class="flex flex-col gap-8 sm:border-l sm:dark:border-zinc-800">
+        {
+          posts.map((post) => (
+            <BlogCard
+              title={post.data.title}
+              pubDate={post.data.pubDate}
+              description={post.data.description}
+              url={`/blog/${post.slug}/`}
+            />
+          ))
+        }
+      </ul>
+    )
+  }
 </AppLayout>
