@@ -32,4 +32,4 @@ pnpm dev
 
 ## Credits
 
-The site has been inspired by [Kevin Zuniga Cuellar's](https://github.com/kevinzunigacuellar/web) personal website and draws a lot of styling from the same. This is an attempt to modify the same according to my use, and add newer and more descriptive templates.
+The site has been inspired by [Kevin Zuniga Cuellar](https://github.com/kevinzunigacuellar/web)'s personal website and draws a lot of styling from the same. This is an attempt to modify the same according to my use, and add newer and more descriptive templates.
