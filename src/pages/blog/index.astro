@@ -3,6 +3,7 @@ import AppLayout from "@layouts/AppLayout.astro";
 import BlogCard from "@components/BlogCard.astro";
 import Header from "@components/Header.astro";
 import { getCollection } from "astro:content";
+import getReadingTime from "reading-time";
 
 const posts = (await getCollection("blog"))
   .filter((blog) => !blog.data.draft)
@@ -36,6 +37,7 @@ const description =
               pubDate={post.data.pubDate}
               description={post.data.description}
               url={`/blog/${post.slug}/`}
+              readingTime={getReadingTime(post.body).text}
             />
           ))
         }

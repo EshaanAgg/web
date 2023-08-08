@@ -11,6 +11,9 @@ dependencies:
   preact:
     specifier: ^10.6.5
     version: 10.16.0
+  reading-time:
+    specifier: ^1.5.0
+    version: 1.5.0
   tailwindcss:
     specifier: ^3.3.3
     version: 3.3.3
@@ -4387,6 +4390,10 @@ packages:
     engines: {node: '>=8.10.0'}
     dependencies:
       picomatch: 2.3.1
+
+  /reading-time@1.5.0:
+    resolution: {integrity: sha512-onYyVhBNr4CmAxFsKS7bz+uTLRakypIe4R+5A824vBSkQy/hB3fZepoVEf8OVAxzLvK+H/jm9TzpI3ETSm64Kg==}
+    dev: false
 
   /rehype-parse@8.0.4:
     resolution: {integrity: sha512-MJJKONunHjoTh4kc3dsM1v3C9kGrrxvA3U8PxZlP2SjH8RNUSrb+lF7Y0KVaUDnGH2QZ5vAn7ulkiajM9ifuqg==}

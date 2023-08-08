@@ -4,7 +4,7 @@ description: A quick guide to Go syntax, features and conventions for the forget
 pubDate: 2023-08-15
 draft: false
 hero: "./images/go.png"
-heroAlt: "The logo of Go"
+heroAlt: "Go Gopher with the heading 'Languages I Used to Know, Featuring Go Lang'"
 ---
 
 I am not an honest person. I like to list a whole catalog of languages under my belt, and call myself procifient in every one of them. But the reality is, I am like a kid in a candy store, hopping from the lastest framework or language to the the next one. While this is very fun to do, the sad consequence of the same is, I often find myself forgetting and getting confused in frameworks I earlier worked with.
@@ -36,7 +36,7 @@ Tweet at me to let me know what you find about it! Let's get started.
 - Knows the existence of network requests and concurrency execution
 - Library-free experience for strings, network, compression, file management and testing
 - Cross-platform and backwards compatible
-- Can generate executable binaries for different platforms and OS. compile to WebAssembly and even transpile to frontend JavaScript (GopherJS)
+- Can generate executable binaries for different platforms and OS. compile to WebAssembly and even transpile to frontend JavaScript (`GopherJS`)
 - Powerful CLI
 - Opiniated and concise
 
@@ -146,13 +146,17 @@ package data
 const Text = "This test is exported from the module."
 ```
 
-#### Trivia
+---
+
+## Key Trivia
 
 - When working with web and JSON, every number is converted to `float64`.
 - Go offer functions like `print` and `println` which can be used to print and debug code. But the same are not guranteed to work on every platform. Thus using the `fmt` package is the industry standard.
 - Strings are multi-line by default in Go.
 - Go provides a default `init` function while is executed even before the `main` function, irrespective of the package or the file it is present it. Typically, it is used to initalise some values and variables.
 - The same `.go` file can have multiple copies of the `init` function, and they would be executed in the order they appear in the file (definiton order).
+- Each variable type can be used as a global function to cast other variables to that type.
+- Go does not support string templates. You can use the `fmt.Sprintf` which is a `printf` function, but instead of putting text on the console, it returns a string.
 
 ---
 
@@ -167,9 +171,9 @@ const Text = "This test is exported from the module."
 
 ---
 
-## Error's design pattern
+## Error Design Pattern
 
-Since we don't have exceptions in Go, this is the typical design pattern that we mostly follow for hndling errors.
+Since we don't have exceptions in Go, this is the typical design pattern that we mostly follow for handling errors.
 
 ```go
 func readUser(id int) (user, err) {
@@ -187,6 +191,28 @@ func main() {
 ```
 
 ---
+
+## Working with Types, Structures and Interfaces
+
+You can create `alias` in Go by using the `type` keyboard along with the `=` operator. You can also create new types, which are different citizens in the language. They have an associated base type, and can have other methods.
+
+```go
+package main
+
+type distance = float64 // This is just a type alias
+type distanceKm float64
+
+// Method
+func (miles distance) ToKm() distanceKm {
+    return distanceKm(1.6093 * miles)
+}
+
+func main() {
+    d := distance(4.5)
+    print(d.ToKm())
+}
+
+```
 
 ## Closing Remarks
 

@@ -4,9 +4,10 @@ interface Props {
   description: string;
   pubDate: Date;
   url: string;
+  readingTime: string
 }
 
-const { title, description, pubDate, url } = Astro.props;
+const { title, description, pubDate, url, readingTime } = Astro.props;
 
 const fullDate = pubDate.toLocaleDateString("en", {
   year: "numeric",
@@ -24,7 +25,7 @@ const fullDate = pubDate.toLocaleDateString("en", {
     datetime={pubDate.toISOString()}
     class="block text-sm tracking-wide dark:text-zinc-400 text-zinc-600"
   >
-    {fullDate}
+    {fullDate} | {readingTime}
   </time>
   <a
     class="text-lg before:absolute before:inset-0 font-semibold dark:text-zinc-100 text-zinc-700"

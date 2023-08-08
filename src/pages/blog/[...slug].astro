@@ -1,6 +1,7 @@
 ---
 import BlogLayout from "@layouts/BlogLayout.astro";
 import { CollectionEntry, getCollection } from "astro:content";
+import getReadingTime from "reading-time";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -25,6 +26,7 @@ const { Content } = await post.render();
   description={frontmatter.description}
   url={post.slug}
   updatedDate={frontmatter.updatedDate}
->
+  readingTime={getReadingTime(post.body).text}
+  >
   <Content />
 </BlogLayout>
