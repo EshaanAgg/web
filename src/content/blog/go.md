@@ -2,6 +2,7 @@
 title: "Languages I Used to Know: Go"
 description: A quick guide to Go syntax, features and conventions for the forgetful minds like me.
 pubDate: 2023-08-09
+updatedDate: 2023-08-10
 draft: false
 hero: "./images/go.png"
 heroAlt: "Go Gopher with the heading 'Languages I Used to Know, Featuring Go Lang'"
@@ -52,7 +53,7 @@ Tweet at me to let me know what you think about it! Let's get started.
 - Existence of semi-colons to separate sentences, but the best practise is `not` to use them unless required
 - No paranthesis needed for boolean conditions or values
 - No ternary operator
-- No break statement is needed while working with `switch`. However, you can `fallthrough` to the next case if needed.
+- No `break` statement is needed while working with `switch`. However, you can `fallthrough` to the next case if needed.
 - You can use the `switch` statement with conditions as cases as well.
 - We can emulate a `while` loop just by using a boolean expression with the `for` loop itself.
 
@@ -152,12 +153,12 @@ const Text = "This test is exported from the module."
 ## Key Trivia
 
 - When working with web and JSON, every number is converted to `float64`.
-- Go offer functions like `print` and `println` which can be used to print and debug code. But the same are not guranteed to work on every platform. Thus using the `fmt` package is the industry standard.
-- Strings are multi-line by default in Go.
-- Go provides a default `init` function while is executed even before the `main` function, irrespective of the package or the file it is present it. Typically, it is used to initalise some values and variables.
+- Offers functions like `print` and `println` which can be used to print and debug code. But the same are not guranteed to work on every platform. Thus using the `fmt` package is the industry standard.
+- Strings are multi-line by default.
+- Does not support string templates. You can use the `fmt.Sprintf` which is a `printf` function, but instead of putting text on the console, it returns a string.
+- Provides a default `init` function while is executed even before the `main` function, irrespective of the package or the file it is present it. Typically, it is used to initalise some values and variables.
 - The same `.go` file can have multiple copies of the `init` function, and they would be executed in the order they appear in the file (definiton order).
 - Each variable type can be used as a global function to cast other variables to that type.
-- Go does not support string templates. You can use the `fmt.Sprintf` which is a `printf` function, but instead of putting text on the console, it returns a string.
 
 ---
 
@@ -166,7 +167,7 @@ const Text = "This test is exported from the module."
 - `Arrays`: Fixed length (`[5] int`)
 - `Slices`: Similar to dynmic length arrays, but they are actually chunks of arrays (`[]int`)
 - `Maps`: Key-value dictonaries (`map[keyType]valueType`)
-- Go also provides support for Generics from version 1.8 onwards.
+- Provides support for Generics from version `1.8` onwards.
 - You can use the `{}` syntax like in C to initalise arrays.
 - Collections are not objects (nothing is an object actually), so we use global functions to work with them, such as `len` and `cap`.
 
@@ -195,7 +196,7 @@ func main() {
 
 ## Working with Types, Structures and Interfaces
 
-You can create `alias` in Go by using the `type` keyboard along with the `=` operator. You can also create new types, which are different citizens in the language. They have an associated base type, and can have other methods.
+You can create `alias` in Go by using the `type` keyboard along with the `=` operator. You can also create new types, which are first class citizens in the language. They have an associated base type, and can have other methods.
 
 ```go
 package main
@@ -220,7 +221,7 @@ func main() {
 - To model inheritance, we use "embedding" of one structure into the other.
 - The properties of the 'embedded' struct are not accessible in the constructor of the 'embedding' struct. We can use a factory to initalise them properly.
 - This is not exactly OOP, but some similarity is indeed present.
-- If we embed struct `A` into struct `B`, and then have a common property `X`, then by default we would be accessing `B`'s `X`. To access the other, we need to explicity say `B.A.X`. (This is one of the things I loved about Go. Everything is so clear, and there is no ambiguity. You have to be explicit about what you want, so that you don't get any runtime wierdness)
+- If we embed struct `A` into struct `B`, and then have a common property `X`, then by default we would be accessing `B`'s `X`. To access the other, we need to explicity say `B.A.X`. (This is one of the things I loved about Go. Everything is so clear and there is no ambiguity. You have to be explicit about what you want, so that you don't get any runtime wierdness!)
 
 **Interfaces** are a definition of methods. They emulate polymorphism from OOP. They have implicit implementation and can be embedded in other interfaces as well.
 
