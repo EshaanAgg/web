@@ -1,19 +1,19 @@
 ---
 title: "Languages I Used to Know: Go"
 description: A quick guide to Go syntax, features and conventions for the forgetful minds like me.
-pubDate: 2023-08-15
+pubDate: 2023-08-09
 draft: false
 hero: "./images/go.png"
 heroAlt: "Go Gopher with the heading 'Languages I Used to Know, Featuring Go Lang'"
 ---
 
-I am not an honest person. I like to list a whole catalog of languages under my belt, and call myself procifient in every one of them. But the reality is, I am like a kid in a candy store, hopping from the lastest framework or language to the the next one. While this is very fun to do, the sad consequence of the same is, I often find myself forgetting and getting confused in frameworks I earlier worked with.
+I am not an honest person. I like to list a whole catalog of languages under my belt, and call myself procifient in every one of them. But the reality is, I am like a kid in a candy store, hopping from the lastest framework and language to the the next one. While this is very fun to do, the sad consequence of the same is, I often find myself forgetting and getting confused in frameworks I earlier worked with.
 
-`Go` is no different. It was a language that I first picked up as a freshman, and after toying with it for a fornight, I just never looked back it. Now indeed, it is just [a language that I used to know](https://www.youtube.com/watch?v=8UVNT4wvIGY). This is a guide of dummies like me, who know a language, but need quick notes on syntax, to get back cracking at the same.
+`Go` is no different. It was a language that I first picked up as a freshman, and after toying with it for a fornight, I just never looked back it. Now indeed, it is just [a language that I used to know](https://www.youtube.com/watch?v=8UVNT4wvIGY). This is a guide of dummies like me, who know a language, but need quick notes on syntax, so that they back to using the same.
 
-Full disclosure: This is `NOT` intended for beginners, and won't be explanatory in nature for the most part. It's not even going to be an article, but just code snippets and bullets listing things I feel are important! But I will try to have the right balance of conscise and detailed, covering all the essentials, and hopefully more!
+**Full disclosure:** This is `NOT` intended for complete beginners who have no exposure to `Go`, and won't be explanatory in nature for the most part. It's not even going to be an article, but just code snippets and bullets listing things I feel are important! But I will try to have the right balance of conscise and detailed, covering all the essentials, and hopefully more! It's meant to serve as a guide and cheatsheet to all the paradigms that Go relies on, so that you can quicky dive head first into writing some Go with best practices by the community.
 
-Tweet at me to let me know what you find about it! Let's get started.
+Tweet at me to let me know what you think about it! Let's get started.
 
 ---
 
@@ -48,11 +48,11 @@ Tweet at me to let me know what you find about it! Let's get started.
 
 - No styling freedom
 - Case sensitive
-- No classes, no exceptions
-- Existence of semi-colons to separate sentences, but the best practise is `NOT` to use them
+- No classes and exceptions
+- Existence of semi-colons to separate sentences, but the best practise is `not` to use them unless required
 - No paranthesis needed for boolean conditions or values
-- There is no ternary operator in Go
-- No break statement is needed while working with `switch` in Go. However, you can `fallthrough` to the next case if needed.
+- No ternary operator
+- No break statement is needed while working with `switch`. However, you can `fallthrough` to the next case if needed.
 - You can use the `switch` statement with conditions as cases as well.
 - We can emulate a `while` loop just by using a boolean expression with the `for` loop itself.
 
@@ -71,6 +71,7 @@ Tweet at me to let me know what you find about it! Let's get started.
 - Every file must be within a package. Only one package (`main`) does not need to be a folder.
 - A folder is a `package`. Packages can have simple names (services) or URLs (libraries). Files in the same folder belong to the same package.
 - The `main` function acts like an entry point to a package.
+- The folder name and the package name mentioned in the files can be differenent (though it is highly recommended that you keep them the same!) But all the files in a folder must contain the same package name.
 
 - `Module` is a group of packages. It contains a `go.mod` file with configuration and metadata. CLI can be used to manipulate the module (`go mod init`, `go build`, `go run`, `go test` etc.)
 - Each module must have atleast one file with any name, but with `package main` and a function called `main`.
@@ -199,8 +200,8 @@ You can create `alias` in Go by using the `type` keyboard along with the `=` ope
 ```go
 package main
 
-type distance = float64 // This is just a type alias
-type distanceKm float64
+type distance float64
+type distanceKm = float64 // This is just a type alias
 
 // Method
 func (miles distance) ToKm() distanceKm {
@@ -211,11 +212,138 @@ func main() {
     d := distance(4.5)
     print(d.ToKm())
 }
-
 ```
+
+**Structures** kind of replace the class idea in Go. It is a data type with strongly typed properties which have a default constructor. You can add methods to the same.
+
+- We can't have our own "custom custructor" for structs, but we typically use a factory for the same.
+- To model inheritance, we use "embedding" of one structure into the other.
+- The properties of the 'embedded' struct are not accessible in the constructor of the 'embedding' struct. We can use a factory to initalise them properly.
+- This is not exactly OOP, but some similarity is indeed present.
+- If we embed struct `A` into struct `B`, and then have a common property `X`, then by default we would be accessing `B`'s `X`. To access the other, we need to explicity say `B.A.X`. (This is one of the things I loved about Go. Everything is so clear, and there is no ambiguity. You have to be explicit about what you want, so that you don't get any runtime wierdness)
+
+**Interfaces** are a definition of methods. They emulate polymorphism from OOP. They have implicit implementation and can be embedded in other interfaces as well.
+
+- You don't need to declare manually that a struct is "implementing" an interface. Define the required methods on the struct, define the interface, and you are good to go!
+
+```go
+package main
+
+import "fmt"
+
+// Fancy name for list of methods that can be used as a type
+type PrettyPrinted interface {
+    PrettyPrint() string
+}
+
+type User struct {
+    // Only properties with TitleCase name would be available in other packages
+    id int
+    name string
+}
+
+// Those this is not a method, but just a function. These are usually referred to as factory functions.
+func NewUser (id int, name string) User {
+    return User {id, name}
+}
+
+// A method on user
+func (u User) PrettyPrint() string {
+    return fmt.Sprint(u.id) + ": " + u.name
+}
+
+type Employee struct {
+    employeeId int
+    User // We have embedded the same into Employee. id and name would be accessible on it now
+}
+
+func NewEmployee (id int, name string, employeeId int) Employee {
+    user := NewUser(id, name)
+    return Employee {employeeId: employeeId, User: user}
+}
+
+func (e Employee) PrettyPrint() string {
+    return fmt.Sprint(e.id) + ", " + fmt.Sprint(e.employeeId) + ": " + e.name
+}
+
+func main() {
+    var u1 User
+    // Each struct has two pre-built constructors, with and without name
+    // While using the named constructor, you can either define all or some of the properties
+    u1 = User {id: 1, name: "John"}
+    u2 := User {2, "Doe"}
+    msg := u2.PrettyPrint()
+	fmt.Println(msg)
+
+    emp := NewEmployee(1, "Harry", 1)
+    fmt.Println(emp.id, emp.name, emp.employeeId)
+
+    // Create an array of Users as well as Employee's
+    humans := [3]PrettyPrinted {u1, u2, emp}
+    for _, human := range humans {
+        fmt.Println(human.PrettyPrint())
+    }
+}
+```
+
+- To change the way your struct is printed to the console with `fmt.Print` and related functions, you need to add a method called `String()` to the struct with a return type of `string`. The same would be used with the `%v` placeholder by the `fmt` library.
+- Conversion from `int` to `string` in Go yields a string of one rune, not a string of digits. Thus to convert integers into strings, use `fmt.Sprint()`.
+
+---
+
+## Goroutines and Channels
+
+A `goroutine` is the Go way of using threads. We can open a goroutine by just invoking any function with a `go` prefix. They can communicate through channels, which are a special type of variable. A `channel` contains a value of any kind. A routine can define a value for a channel and other routine can wait for that value. Channels can be buffered or not. To avoid deadlocks, you have to close the channels before ending the program with `close(chan)`.
+
+```go
+package main
+
+import (
+    "fmt",
+    "time"
+)
+
+func printMessage(text string) {
+    for i := 0, i < 2; i++ {
+        fmt.Println(text)
+        time.Sleep(800 * time.Millisecond)
+    }
+}
+
+func main() {
+    // Creating channels
+    var m1 chan string
+    m2 := make(chan string)
+
+    m2 <- "hello"     // Assigning the value to channel
+    message := <- m2  // Waiting for the value of the channel
+
+    go printMessage("A")
+    printMessage("B")
+
+    /*
+    * If we add go to both print statements, then our app would die without executing anything
+    * This is because though we would have started 2 goroutines, the main goroutine would reach the end of it's lifetime and the main process would be dropped, thus killing the program.
+    */
+
+    // <- m2
+    // Valid syntax to wait for the value of a channel
+
+    // Creating buffers
+    logs := make(chan string, 2)
+    logs <- "hello"
+    logs <- "world"
+    fmt.Println(<-logs)
+    fmt.Println(<-logs)
+    // If there are multiple goroutines, then the channels would wait for the values to be put in the buffer
+
+}
+```
+
+**Personal Opinion:** I hate threading. It's always one of these things that I want to avoid to any cost. But Go actually simplifies the same to a great extend!
 
 ## Closing Remarks
 
-`Go` remains true to it's name, and let's you go at a super speed into developement first. It's wierd to not have classes, objects and enums (specially when now there are langauges like `Rust` which consider enums their core strength), and the `if err != nil` pattern in nothing short of a huge pain, but it all start's to make a bit of sense if you look and reason about the core promises it tries to uphold.
+`Go` remains true to it's name, and let's you go at a super speed into developement first. It's wierd to not have classes, objects and enums (specially when now there are langauges like `Rust` which consider enums their core strength), and the `if err != nil` pattern in nothing short of a huge pain, but it all start's to make a bit of sense if you look and reason about the core promises it tries to uphold. I hate titlecasing every property, variable and function, but the simplicity it offers compensates for the same.
 
 It's a fun language to work with, and it's utility in the modern development landscape speaks for it's efficiency and reliability. It's good to know Go, and hopefully this guide wouldn't let it become a stranger again.
