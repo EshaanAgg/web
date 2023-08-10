@@ -1,50 +1,67 @@
 [
   {
     "logo": "vscode-icons:file-type-typescript-official",
-    "text": "TypeScript"
+    "text": "TypeScript",
+    "link": "https://www.typescriptlang.org/"
   },
   {
     "logo": "logos:react",
-    "text": "React"
+    "text": "React",
+    "link": "https://react.dev/"
   },
   {
     "logo": "logos:vue",
-    "text": "Vue"
+    "text": "Vue",
+    "link": "https://vuejs.org/"
   },
   {
     "logo": "simple-icons:astro",
-    "text": "Astro"
+    "text": "Astro",
+    "link": "https://vuejs.org/"
   },
   {
     "logo": "logos:nodejs-icon",
-    "text": "Node.js"
+    "text": "Node.js",
+    "link": "https://nodejs.org/"
   },
   {
     "logo": "simple-icons:express",
-    "text": "Express"
+    "text": "Express",
+    "link": "https://expressjs.com/"
   },
   {
     "logo": "logos:apollostack",
-    "text": "Apollo"
+    "text": "Apollo",
+    "link": "https://www.apollographql.com/"
   },
   {
     "logo": "logos:graphql",
-    "text": "GraphQL"
+    "text": "GraphQL",
+    "link": "https://graphql.org/"
   },
   {
     "logo": "logos:mongodb",
-    "text": "MongoDB"
+    "text": "MongoDB",
+    "link": "https://www.mongodb.com/"
   },
   {
     "logo": "logos:mysql-icon",
-    "text": "MySQL"
+    "text": "MySQL",
+    "link": "https://www.mysql.com/"
+  },
+  {
+    "logo": "logos:go",
+    "text": "Go",
+    "link": "https://go.dev/"
   },
   {
     "logo": "logos:rust",
-    "text": "Rust"
+    "text": "Rust",
+    "link": "https://www.rust-lang.org/"
   },
   {
     "logo": "vscode-icons:file-type-python",
-    "text": "Python"
+    "text": "Python",
+    "link": "https://www.python.org/"
   }
 ]

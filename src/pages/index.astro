@@ -2,9 +2,18 @@
 import AppLayout from "@layouts/AppLayout.astro";
 import { Image } from "astro:assets";
 import authorImage from "../assets/me.jpeg";
-import technologies from "@data/technologies.json";
+import techArray from "@data/technologies.json";
 import Skill from "@components/Skill.astro";
 import { author } from "@data/socials";
+import { z } from "zod";
+
+const techSchema = z.object({
+  link: z.string().url(),
+  text: z.string().min(1).max(12),
+  logo: z.string().min(5)
+})
+
+const technologies = techArray.map((tech) => techSchema.parse(tech))
 ---
 
 <AppLayout>
@@ -49,7 +58,7 @@ import { author } from "@data/socials";
       I love exploring new libraries, programing languages and frameworks. For the better part of the last year, I have divided head first, into soo-many new frameworks and technologies that it is hard to keep track of! Here is a small overview of them!
     </p>
     <ul class="grid grid-cols-1 gap-3 sm:grid-cols-3 md:grid-cols-4">
-      {technologies.map((tech) => <Skill text={tech.text} logo={tech.logo} />)}
+      {technologies.map((tech) => <Skill link={tech.link} text={tech.text} logo={tech.logo} />)}
     </ul>
   </section>
 </AppLayout>

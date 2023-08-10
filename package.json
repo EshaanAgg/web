@@ -30,7 +30,8 @@
     "satori-html": "^0.3.2",
     "sharp": "^0.32.3",
     "tsm": "^2.3.0",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "zod": "^3.21.4"
   },
   "dependencies": {
     "@astrojs/preact": "^2.2.1",
