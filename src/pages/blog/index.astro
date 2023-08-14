@@ -8,7 +8,13 @@ import getReadingTime from "reading-time";
 const posts = (await getCollection("blog"))
   .filter((blog) => !blog.data.draft)
   .sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+    (a, b) => 
+      b.data.pinned == a.data.pinned 
+        // Sort by publishing date if they have the same pinned status
+        ?  b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+        // Prioritize pinned blogs
+        : Number(b.data.pinned) - Number(a.data.pinned)
+    
   );
 
 const title = "Blog | Eshaan Aggarwal";
@@ -38,6 +44,7 @@ const description =
               description={post.data.description}
               url={`/blog/${post.slug}/`}
               readingTime={getReadingTime(post.body).text}
+              tags={post.data.tags}
             />
           ))
         }

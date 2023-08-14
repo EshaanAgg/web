@@ -6,6 +6,8 @@ updatedDate: 2023-08-10
 draft: false
 hero: "./images/go.png"
 heroAlt: "Go Gopher with the heading 'Languages I Used to Know, Featuring Go Lang'"
+tags: ["Go"]
+pinned: true
 ---
 
 I am not an honest person. I like to list a whole catalog of languages under my belt, and call myself procifient in every one of them. But the reality is, I am like a kid in a candy store, hopping from the lastest framework and language to the the next one. While this is very fun to do, the sad consequence of the same is, I often find myself forgetting and getting confused in frameworks I earlier worked with.

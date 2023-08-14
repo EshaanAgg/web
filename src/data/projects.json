@@ -102,5 +102,13 @@
     "description": "My solutions for Advent of Code '22 problems, written in the language that will save us from cpp.",
     "languages": ["Rust"],
     "role": "author"
+  },
+  {
+    "name": "GophMail",
+    "stars": 0,
+    "url": "https://github.com/EshaanAgg/GophMail",
+    "description": "Generate and send thousands of mails from templates and CSV's, without ever leaving your terminal.",
+    "languages": ["Go"],
+    "role": "maintainer"
   }
 ]
