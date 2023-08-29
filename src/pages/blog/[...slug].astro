@@ -27,6 +27,7 @@ const { Content } = await post.render();
   url={post.slug}
   updatedDate={frontmatter.updatedDate}
   readingTime={getReadingTime(post.body).text}
+  external={frontmatter.external}
   >
   <Content />
 </BlogLayout>

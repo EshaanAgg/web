@@ -2,33 +2,36 @@
 title: "Languages I Used to Know: Go"
 description: A quick guide to Go syntax, features and conventions for the forgetful minds like me.
 pubDate: 2023-08-09
-updatedDate: 2023-08-10
+updatedDate: 2023-08-30
 draft: false
 hero: "./images/go.png"
 heroAlt: "Go Gopher with the heading 'Languages I Used to Know, Featuring Go Lang'"
 tags: ["Go"]
 pinned: true
+external:
+  link: https://blogs.copsiitbhu.co.in/languages-i-used-to-know-go
+  platform: Hashnode
 ---
 
-I am not an honest person. I like to list a whole catalog of languages under my belt, and call myself procifient in every one of them. But the reality is, I am like a kid in a candy store, hopping from the lastest framework and language to the the next one. While this is very fun to do, the sad consequence of the same is, I often find myself forgetting and getting confused in frameworks I earlier worked with.
+I am not an honest person. I like to list a whole catalog of languages under my belt and call myself proficient in every one of them. But the reality is, I am like a kid in a candy store, hopping from the latest framework and language to the next one. While this is very fun to do, the sad consequence of the same is, I often find myself forgetting and getting confused in frameworks I worked with earlier.
 
-`Go` is no different. It was a language that I first picked up as a freshman, and after toying with it for a fornight, I just never looked back it. Now indeed, it is just [a language that I used to know](https://www.youtube.com/watch?v=8UVNT4wvIGY). This is a guide of dummies like me, who know a language, but need quick notes on syntax, so that they back to using the same.
+`Go` is no different. It was a language that I first picked up as a freshman, and after toying with it for a fortnight, I just never looked back on it. Now indeed, it is just [**a language that I used to know**](https://www.youtube.com/watch?v=8UVNT4wvIGY). This is a guide for dummies like me, who know a language, but need quick notes on syntax so that they get back to using the same.
 
-**Full disclosure:** This is `NOT` intended for complete beginners who have no exposure to `Go`, and won't be explanatory in nature for the most part. It's not even going to be an article, but just code snippets and bullets listing things I feel are important! But I will try to have the right balance of conscise and detailed, covering all the essentials, and hopefully more! It's meant to serve as a guide and cheatsheet to all the paradigms that Go relies on, so that you can quicky dive head first into writing some Go with best practices by the community.
+**Full disclosure:** This is `NOT` intended for complete beginners who have no exposure to `Go`, and won’t be explanatory for the most part. It’s not even going to be an article, but just code snippets and bullets listing things I feel are essential! But I will try to have the right balance of concise and detailed, covering all the essentials, and hopefully more! It’s meant to serve as a guide, and cheat sheet to all the paradigms that Go relies on so that you can quickly dive head first into writing some Go with best practices by the community.
 
-Tweet at me to let me know what you think about it! Let's get started.
+Tweet to let me know what you think about it! Let’s get started.
 
 ---
 
-## About Go
+## **About Go**
 
-#### Core Promises
+#### **Core Promises**
 
 - Efficient compilation
 - Efficient execution
 - Easy to code (Does not offer a lot of flexibility to developers in terms of how to write their code)
 
-#### Characteristics
+#### **Characteristics**
 
 - Strong static type system
 - C-inspired syntax (But definitely not a superset of C)
@@ -37,54 +40,50 @@ Tweet at me to let me know what you think about it! Let's get started.
 - Garbage collected
 - Single binary compilation
 - Knows the existence of network requests and concurrency execution
-- Library-free experience for strings, network, compression, file management and testing
+- Library-free experience for strings, network, compression, file management, and testing
 - Cross-platform and backwards compatible
-- Can generate executable binaries for different platforms and OS. compile to WebAssembly and even transpile to frontend JavaScript (`GopherJS`)
-- Powerful CLI
-- Opiniated and concise
+- Can generate executable binaries for different platforms and operating systems. Compile to WebAssembly and even transpile to frontend JavaScript (`GopherJS`)
+- Powerful CLI for dependency management
+- Opinionated and concise
 
 ---
 
-## Language Basics
+## **Language Basics**
 
-#### About the language
+#### **About the language**
 
 - No styling freedom
 - Case sensitive
 - No classes and exceptions
-- Existence of semi-colons to separate sentences, but the best practise is `not` to use them unless required
-- No paranthesis needed for boolean conditions or values
+- Existence of semi-colons to separate sentences, but the best practice is `not` to use them unless required
+- No parentheses are needed for boolean conditions or values
 - No ternary operator
 - No `break` statement is needed while working with `switch`. However, you can `fallthrough` to the next case if needed.
 - You can use the `switch` statement with conditions as cases as well.
 - We can emulate a `while` loop just by using a boolean expression with the `for` loop itself.
 
-#### Functions
+#### **Functions**
 
 - Function arguments can have default values
 - Functions can return more than one value at once
-- Funtions can return labelled variables
-- Functions recieve arguments always by value, and thus we need to use pointers to pass memory addresses to make changes to references.
-- There is no concept of function overloading (multiple declarations of funtions with the same name but different function signatures) in Go.
-- `panic` is used to crash your program and halt it's entire execution.
-- `defer` is used to delay the execution of a function to the end of the current function. It maintain's a stack, and thus the functions run in the reverse order of the order they were defered in (in the same scope).
+- Functions can return labelled variables
+- Functions receive arguments always by value, and thus we need to use pointers to pass memory addresses to make changes to references.
+- There is no concept of function overloading (multiple declarations of functions with the same name but different function signatures) in Go.
+- `panic` is used to crash your program and halt its entire execution.
+- `defer` is used to delay the execution of a function to the end of the current function. It maintains a stack, and thus the functions run in the reverse order of the order they were deferred in (in the same scope).
 
-#### Packages and Modules
+#### **Packages and Modules**
 
 - Every file must be within a package. Only one package (`main`) does not need to be a folder.
 - A folder is a `package`. Packages can have simple names (services) or URLs (libraries). Files in the same folder belong to the same package.
 - The `main` function acts like an entry point to a package.
-- The folder name and the package name mentioned in the files can be differenent (though it is highly recommended that you keep them the same!) But all the files in a folder must contain the same package name.
-
-- `Module` is a group of packages. It contains a `go.mod` file with configuration and metadata. CLI can be used to manipulate the module (`go mod init`, `go build`, `go run`, `go test` etc.)
-- Each module must have atleast one file with any name, but with `package main` and a function called `main`.
-
+- The folder name and the package name mentioned in the files can be different (though it is highly recommended that you keep them the same!) But all the files in a folder must contain the same package name.
+- `module` is a group of packages. It contains a `go.mod` file with configuration and metadata. CLI can be used to manipulate the module (`go mod init`, `go build`, `go run`, `go test` etc.)
+- Each module must have at least one file with any name but with `package main` and a function called `main`.
 - Functions and global (package) variables are shared between all the files in the same package. They can be used directly without being imported.
-- Functions, variables and types that are `TitleCase` ARE exported to other packages, while others in `camelCase` can be only imported in the files of the package.
+- Functions, variables, and types that are `TitleCase` are exported to other packages, while others in `camelCase` can be only imported into the files of the package.
 
-#### Code Examples
-
-###### General Syntax
+#### **General Syntax**
 
 ```go
 package main
@@ -127,11 +126,11 @@ func increment (x *int) {
 }
 ```
 
-<br />
+#### Using Packages
 
-###### Using Packages
+```go
+// File: main.go
 
-```go title="main.go"
 package main
 
 // "cli" is the name of the current current module as defined in go.mod
@@ -142,42 +141,42 @@ func main() {
 }
 ```
 
-<br />
+```go
+// File: data/constants.go
 
-```go title="data/constants.go"
 package data
 
-const Text = "This test is exported from the module."
+const Text = "This text is exported from the module."
 ```
 
 ---
 
-## Key Trivia
+## **Key Trivia**
 
 - When working with web and JSON, every number is converted to `float64`.
-- Offers functions like `print` and `println` which can be used to print and debug code. But the same are not guranteed to work on every platform. Thus using the `fmt` package is the industry standard.
+- Offers functions like `print` and `println` which can be used to print and debug code. But the same are not guaranteed to work on every platform. Thus using the `fmt` package is the industry standard.
 - Strings are multi-line by default.
 - Does not support string templates. You can use the `fmt.Sprintf` which is a `printf` function, but instead of putting text on the console, it returns a string.
-- Provides a default `init` function while is executed even before the `main` function, irrespective of the package or the file it is present it. Typically, it is used to initalise some values and variables.
-- The same `.go` file can have multiple copies of the `init` function, and they would be executed in the order they appear in the file (definiton order).
+- Provides a default `init` function while is executed even before the `main` function, irrespective of the package or the file it is present in. Typically, it is used to initialize some values and variables.
+- The same `.go` file can have multiple copies of the `init` function, and they would be executed in the order they appear in the file (definition order).
 - Each variable type can be used as a global function to cast other variables to that type.
 
 ---
 
-## Collections
+## **Collections**
 
 - `Arrays`: Fixed length (`[5] int`)
-- `Slices`: Similar to dynmic length arrays, but they are actually chunks of arrays (`[]int`)
-- `Maps`: Key-value dictonaries (`map[keyType]valueType`)
+- `Slices`: Similar to dynamic length arrays, but they are actually chunks of arrays (`[]int`)
+- `Maps`: Key-value dictionaries (`map[keyType]valueType`)
 - Provides support for Generics from version `1.8` onwards.
-- You can use the `{}` syntax like in C to initalise arrays.
+- You can use the `{}` syntax like in C to initialize arrays.
 - Collections are not objects (nothing is an object actually), so we use global functions to work with them, such as `len` and `cap`.
 
 ---
 
-## Error Design Pattern
+## **Error Design Pattern**
 
-Since we don't have exceptions in Go, this is the typical design pattern that we mostly follow for handling errors.
+Since we don’t have exceptions in Go, this is the typical design pattern that we mostly follow for handling errors.
 
 ```go
 func readUser(id int) (user, err) {
@@ -196,9 +195,9 @@ func main() {
 
 ---
 
-## Working with Types, Structures and Interfaces
+## **Working with Types, Structures, and Interfaces**
 
-You can create `alias` in Go by using the `type` keyboard along with the `=` operator. You can also create new types, which are first class citizens in the language. They have an associated base type, and can have other methods.
+You can create `alias` in Go by using the `type` keyboard along with the `=` operator. You can also create new types, which are first-class citizens in the language. They have an associated base type and can have other methods.
 
 ```go
 package main
@@ -217,17 +216,17 @@ func main() {
 }
 ```
 
-**Structures** kind of replace the class idea in Go. It is a data type with strongly typed properties which have a default constructor. You can add methods to the same.
+**Structures** kind of replace the class idea in Go. It is a data type with strongly typed properties that have a default constructor. You can add methods to the same.
 
-- We can't have our own "custom custructor" for structs, but we typically use a factory for the same.
-- To model inheritance, we use "embedding" of one structure into the other.
-- The properties of the 'embedded' struct are not accessible in the constructor of the 'embedding' struct. We can use a factory to initalise them properly.
-- This is not exactly OOP, but some similarity is indeed present.
-- If we embed struct `A` into struct `B`, and then have a common property `X`, then by default we would be accessing `B`'s `X`. To access the other, we need to explicity say `B.A.X`. (This is one of the things I loved about Go. Everything is so clear and there is no ambiguity. You have to be explicit about what you want, so that you don't get any runtime wierdness!)
+- We can’t have our own “custom constructor” for structs, but we typically use a factory for the same.
+- To model inheritance, we use the “embedding” of one structure into the other.
+- The properties of the ‘embedded’ struct are not accessible in the constructor of the ‘embedding’ struct. We can use a factory to initialize them properly.
+- This is not precisely OOP, but some similarity is indeed present.
+- If we embed a struct `A` into a struct `B` and they share a common property `X`, then by default we would be accessing `B`’s `X`. To access the other, we need to say explicitly `B.A.X`. (This is one of the things I loved about Go. Everything is so clear and there is no ambiguity. You have to be explicit about what you want so that you don’t get any runtime weirdness!)
 
 **Interfaces** are a definition of methods. They emulate polymorphism from OOP. They have implicit implementation and can be embedded in other interfaces as well.
 
-- You don't need to declare manually that a struct is "implementing" an interface. Define the required methods on the struct, define the interface, and you are good to go!
+- You don’t need to declare manually that a struct is “implementing” an interface. Define the required methods on the struct, define the interface, and you are good to go!
 
 ```go
 package main
@@ -276,7 +275,7 @@ func main() {
     u1 = User {id: 1, name: "John"}
     u2 := User {2, "Doe"}
     msg := u2.PrettyPrint()
-	fmt.Println(msg)
+  fmt.Println(msg)
 
     emp := NewEmployee(1, "Harry", 1)
     fmt.Println(emp.id, emp.name, emp.employeeId)
@@ -294,9 +293,9 @@ func main() {
 
 ---
 
-## Goroutines and Channels
+## **Goroutines and Channels**
 
-A `goroutine` is the Go way of using threads. We can open a goroutine by just invoking any function with a `go` prefix. They can communicate through channels, which are a special type of variable. A `channel` contains a value of any kind. A routine can define a value for a channel and other routine can wait for that value. Channels can be buffered or not. To avoid deadlocks, you have to close the channels before ending the program with `close(chan)`.
+A `goroutine` is the Go way of using threads. We can open a goroutine by just invoking any function with a `go` prefix. They can communicate through channels, which are a particular type of variable. A `channel` contains a value of any kind. A routine can define a value for a channel, and other routines can wait for that value. Channels can be buffered or not. To avoid deadlocks, you have to close the channels before ending the program with `close(chan)`.
 
 ```go
 package main
@@ -343,10 +342,10 @@ func main() {
 }
 ```
 
-**Personal Opinion:** I hate threading. It's always one of these things that I want to avoid to any cost. But Go actually simplifies the same to a great extend!
+**Personal Opinion:** I hate threading. It’s always one of these things that I want to avoid at any cost. But Go actually simplifies the same to a great extent!
 
-## Closing Remarks
+## **Closing Remarks**
 
-`Go` remains true to it's name, and let's you go at a super speed into developement first. It's wierd to not have classes, objects and enums (specially when now there are langauges like `Rust` which consider enums their core strength), and the `if err != nil` pattern in nothing short of a huge pain, but it all start's to make a bit of sense if you look and reason about the core promises it tries to uphold. I hate titlecasing every property, variable and function, but the simplicity it offers compensates for the same.
+`Go` remains true to its name and lets you go at a super speed into development first. It’s weird not to have classes, objects, and enums (especially when now there are languages like `Rust` which consider enums their core strength), and the `if err != nil` pattern is nothing short of a huge pain, but it all start’s to make a bit of sense if you look and reason about the core promises it tries to uphold. I hate title casing every property, variable, and function, but the simplicity it offers compensates for the same.
 
-It's a fun language to work with, and it's utility in the modern development landscape speaks for it's efficiency and reliability. It's good to know Go, and hopefully this guide wouldn't let it become a stranger again.
+It’s a fun language to work with, and its utility in the modern development landscape speaks for its efficiency and reliability. It’s good to know Go, and hopefully, this guide wouldn’t let it become a stranger again.

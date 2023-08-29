@@ -12,7 +12,12 @@ const blogCollection = defineCollection({
       updatedDate: z.date().optional(),
       tags: z.string().array().optional(),
       pinned: z.boolean().default(false),
-      external: z.boolean().default(false),
+      external: z
+        .object({
+          link: z.string().url(),
+          platform: z.string(),
+        })
+        .optional(),
     }),
 });
 
