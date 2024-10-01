@@ -2,7 +2,8 @@
 title: "Placements '24: Resources & Advice"
 description: Collection of all the resources I used as all the advices that worked the best for me.
 pubDate: 2024-12-01
-pinned: true
+pinned: false
+draft: true
 tags: ["placements", "2024"]
 ---
 
