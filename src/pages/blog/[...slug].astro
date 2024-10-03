@@ -1,7 +1,7 @@
 ---
+import getReadingTime from "reading-time";
 import BlogLayout from "@layouts/BlogLayout.astro";
 import { CollectionEntry, getCollection } from "astro:content";
-import getReadingTime from "reading-time";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");

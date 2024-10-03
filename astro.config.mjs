@@ -1,9 +1,11 @@
-import { defineConfig, sharpImageService } from "astro/config";
-import tailwind from "@astrojs/tailwind";
-import sitemap from "@astrojs/sitemap";
-import { readFileSync } from "node:fs";
-import expressiveCode from "astro-expressive-code";
 import preact from "@astrojs/preact";
+import sitemap from "@astrojs/sitemap";
+import tailwind from "@astrojs/tailwind";
+import expressiveCode from "astro-expressive-code";
+import { defineConfig, sharpImageService } from "astro/config";
+import { readFileSync } from "node:fs";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 
 /* Define the code-rendering options
  * Reference: https://github.com/expressive-code/expressive-code/blob/main/packages/astro-expressive-code/README.md#configuration
@@ -40,6 +42,10 @@ export default defineConfig({
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
     },
+  },
+  markdown: {
+    rehypePlugins: [rehypeKatex],
+    remarkPlugins: [remarkMath],
   },
 });
 

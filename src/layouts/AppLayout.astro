@@ -1,9 +1,10 @@
 ---
+import "@fontsource-variable/inter";
+
 import Link from "@components/Link.astro";
-import { twitter, author, defaultMeta } from "@data/socials";
 import navigation from "@data/navigation.json";
 import ThemeToggle from "@components/ThemeToggle";
-import "@fontsource-variable/inter";
+import { twitter, author, defaultMeta } from "@data/socials";
 
 interface Props {
   title?: string;
@@ -31,14 +32,14 @@ const canonicalURL = new URL(Astro.url).href;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    
+
     <title>{title}</title>
 
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="canonical" href={canonicalURL} />
     <meta name="title" content={title} />
     <meta name="description" content={description} />
-    
+
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
@@ -57,7 +58,7 @@ const canonicalURL = new URL(Astro.url).href;
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="follow, index" />
     <meta name="author" content={author} />
-    
+
     {
       pubDate && (
         <meta
@@ -66,7 +67,14 @@ const canonicalURL = new URL(Astro.url).href;
         />
       )
     }
-    
+
+    <!-- Katex -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.css"
+      integrity="sha384-NFTC4wvyQKLwuJ8Ez9AvPNBv8zcC2XaQzXSMvtORKw28BdJbB2QE8Ka+OyrIHcQJ"
+      crossorigin="anonymous"
+    />
   </head>
 
   <body
@@ -78,33 +86,32 @@ const canonicalURL = new URL(Astro.url).href;
       >Skip to main content</a
     >
 
-    
     <!-- Navigation -->
     <nav
-    class="mb-16 mx-auto overflow-x-auto px-4 sm:overflow-x-visible w-5/6 max-w-min rounded-full ring-1 dark:ring-zinc-700/80 ring-zinc-200 bg-white/60 dark:bg-zinc-800/60 sm:w-auto"
+      class="mb-16 mx-auto overflow-x-auto px-4 sm:overflow-x-visible w-5/6 max-w-min rounded-full ring-1 dark:ring-zinc-700/80 ring-zinc-200 bg-white/60 dark:bg-zinc-800/60 sm:w-auto"
     >
-    <ul class="flex items-center justify-start">
-      {
-        navigation.map((item) => (
-          <li>
-            <Link {...item} />
+      <ul class="flex items-center justify-start">
+        {
+          navigation.map((item) => (
+            <li>
+              <Link {...item} />
             </li>
-            ))
-          }
+          ))
+        }
 
-          <!-- Add the Theme Toggle Switch in the navigation bar -->
-          <div class="m-1 p-1">
-            <ThemeToggle client:only="preact"/>
-          </div>
+        <!-- Add the Theme Toggle Switch in the navigation bar -->
+        <div class="m-1 p-1">
+          <ThemeToggle client:only="preact" />
+        </div>
       </ul>
     </nav>
-    
+
     <main class="px-6 lg:px-0 mx-auto max-w-3xl" id="main-content">
       <slot />
     </main>
-  
   </body>
 </html>
+
 <style>
   nav {
     -ms-overflow-style: none; /* Internet Explorer 10+ */
@@ -117,21 +124,22 @@ const canonicalURL = new URL(Astro.url).href;
 
 <!-- Setting the dark mode theme -->
 <script is:inline>
+  // Creating theme as an Immediately Invoked Functional Expression (IIFE)
+  const theme = (() => {
+    // If the theme already exists, fetch the same
+    if (typeof localStorage !== "undefined" && localStorage.getItem("theme"))
+      return localStorage.getItem("theme");
 
-// Creating theme as an Immediately Invoked Functional Expression (IIFE)
-const theme = (() => {
-  // If the theme already exists, fetch the same
-  if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) return localStorage.getItem("theme");
+    // Check the prefered colour scheme of the user
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches)
+      return "dark";
 
-  // Check the prefered colour scheme of the user
-  if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+    // Return the default as light if no theme preference is found
+    return "light";
+  })();
 
-  // Return the default as light if no theme preference is found
-  return "light";
-})();
+  if (theme === "light") document.documentElement.classList.remove("dark");
+  else document.documentElement.classList.add("dark");
 
-if (theme === "light") document.documentElement.classList.remove("dark");
-else document.documentElement.classList.add("dark");
-
-window.localStorage.setItem("theme", theme);
+  window.localStorage.setItem("theme", theme);
 </script>

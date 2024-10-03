@@ -1,11 +1,11 @@
 ---
-import AppLayout from "@layouts/AppLayout.astro";
-import { Image } from "astro:assets";
-import authorImage from "../assets/me.jpeg";
-import techArray from "@data/technologies.json";
-import Skill from "@components/Skill.astro";
-import { author } from "@data/socials";
 import { z } from "zod";
+import { Image } from "astro:assets";
+import { author } from "@data/socials";
+import authorImage from "../assets/me.jpeg";
+import Skill from "@components/Skill.astro";
+import AppLayout from "@layouts/AppLayout.astro";
+import techArray from "@data/technologies.json";
 
 const techSchema = z.object({
   link: z.string().url(),

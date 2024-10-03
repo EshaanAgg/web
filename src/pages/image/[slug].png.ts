@@ -1,10 +1,10 @@
-import satori from "satori";
-import { html } from "satori-html";
-import { Resvg } from "@resvg/resvg-js";
 import InterRegular from "@fontsource/inter/files/inter-latin-400-normal.woff";
 import InterBold from "@fontsource/inter/files/inter-latin-700-normal.woff";
-import { getCollection } from "astro:content";
+import { Resvg } from "@resvg/resvg-js";
 import type { APIContext } from "astro";
+import { getCollection } from "astro:content";
+import satori from "satori";
+import { html } from "satori-html";
 
 const dimensions = {
   width: 1200,
