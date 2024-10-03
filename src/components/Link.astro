@@ -11,8 +11,10 @@ let isActive: boolean;
 
 if (!href) isActive = false;
 else if (href === "/") isActive = href === Astro.url.pathname;
-else isActive = Astro.url.pathname.includes(typeof href === "string" ? href : href.href);
-
+else
+  isActive = Astro.url.pathname.includes(
+    typeof href === "string" ? href : href.href,
+  );
 ---
 
 <a

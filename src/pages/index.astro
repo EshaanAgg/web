@@ -10,10 +10,10 @@ import techArray from "@data/technologies.json";
 const techSchema = z.object({
   link: z.string().url(),
   text: z.string().min(1).max(12),
-  logo: z.string().min(5)
-})
+  logo: z.string().min(5),
+});
 
-const technologies = techArray.map((tech) => techSchema.parse(tech))
+const technologies = techArray.map((tech) => techSchema.parse(tech));
 ---
 
 <AppLayout>
@@ -39,9 +39,11 @@ const technologies = techArray.map((tech) => techSchema.parse(tech))
         class="max-w-prose font-normal dark:text-zinc-400 text-zinc-600 sm:max-w-sm md:max-w-xl leading-relaxed"
       >
         Welcome to my slice of the internet! I am a pre-final year student in
-        Computer Science Engineering at the Indian Institute of Technology, Varanasi. 
-        <br>
-        In my free time, I listen to music, rant about TypeScript, build stuff and experiment with new technologies.
+        Computer Science Engineering at the Indian Institute of Technology,
+        Varanasi.
+        <br />
+         In my free time, I listen to music, rant about TypeScript, build stuff
+        and experiment with new technologies.
       </p>
     </div>
   </header>
@@ -55,10 +57,17 @@ const technologies = techArray.map((tech) => techSchema.parse(tech))
     <p
       class="max-w-prose mb-8 font-normal dark:text-zinc-400 text-zinc-600 leading-relaxed"
     >
-      I love exploring new libraries, programing languages and frameworks. For the better part of the last year, I have divided head first, into soo-many new frameworks and technologies that it is hard to keep track of! Here is a small overview of them!
+      I love exploring new libraries, programing languages and frameworks. For
+      the better part of the last year, I have divided head first, into soo-many
+      new frameworks and technologies that it is hard to keep track of! Here is
+      a small overview of them!
     </p>
     <ul class="grid grid-cols-1 gap-3 sm:grid-cols-3 md:grid-cols-4">
-      {technologies.map((tech) => <Skill link={tech.link} text={tech.text} logo={tech.logo} />)}
+      {
+        technologies.map((tech) => (
+          <Skill link={tech.link} text={tech.text} logo={tech.logo} />
+        ))
+      }
     </ul>
   </section>
 </AppLayout>

@@ -34,9 +34,9 @@ In addition to reading about the questions from here, please do search for the c
 # Squarepoint Capital
 
 - The company had came for three roles on our campus:
-  1. Quant Desk Analyst
-  2. Software Developer
-  3. Infrastructure Engineer
+  1.  Quant Desk Analyst
+  2.  Software Developer
+  3.  Infrastructure Engineer
 
 ## Quant Desk Analyst
 
@@ -98,28 +98,65 @@ A mock API endpoint was provided, to which we had to make an API call to fetch t
 # AQR Capital
 
 - The test pattern is more or less constant across the years.
-- 20-25 MCQs & 2 coding questions
-- MCQs are based on C++ & Java, OOPS, DBMS and other core CS concepts.
+- 20 MCQs & 2 coding questions
+- MCQs are based on Java, OOPS, DBMS and other core CS concepts.
 - There is slightly more preference given to Java questions and OOPS.
 
 The coding questions are relatively easy as compared to other companies, but the MCQs are a bit tricky and time-consuming. I would highly recommend practicing MCQs from GeeksforGeeks and other platforms before giving the test. SQL is one of the most important topics for AQR, so make sure you are well-versed with it.
 
+Also, AQR is known for having wierd (more often that not) atleast one wrong test-case in their OAs, so if you finish early and are stuck on the last test-case, it might be better to skip it! In both my intern as well as placement exams, one test-case was wrong in one of the questions. AQR also does not run the same number of test-cases for everyone, so it's possible that you might get a different number of test-cases than your friend.
+
 ### PYQs
 
-1. There is a river from point $0$ to $L$. You need to cross the river by stepping on stones. There are $n$ stones present in the river at the points $arr[i]$. During your journey, if the max jump that you make is $k$, and the number of jumps that you make is $x$, then the cost associated with the journey is equal to $k*k + c*x$ where $c$ is fixed constant. Calculate the minimum cost to cross the river.
+1. There is a river from point $0$ to $L$. You need to cross the river by stepping on stones. There are $n$ stones present in the river at the points $arr[i]$. During your journey, if the max jump that you make is $k$, and the number of jumps that you make is $x$, then the cost associated with the journey is equal to $k^2 + cx$ where $c$ is fixed constant. Calculate the minimum cost to cross the river.
 
 - $arr[i]$, $L \leq 10^9$
 - $n \leq 1000$
+- $c \leq 10^5$
 
-2. Given a DAG with atmost $1000$ nodes, print the two largest strongly connected components in the graph. Also print the shortest path between the two components. If there are multiple shortest paths, you need to print the path that with "extreme" vertices for the component. (Proper clarifications on the meaning of the "extreme" vertices was not given)
+1. Given a DAG with atmost $1000$ nodes, print the two largest strongly connected components in the graph. Also print the shortest path between the two components. If there are multiple shortest paths, you need to print the path that with "extreme" vertices for the component. (Proper clarifications on the meaning of the "extreme" vertices was not given)
 
-3. MCQ questions based on the following topics were given:
+2. MCQ questions based on the following topics were given:
    - Marker & Functional Interfaces in Java
    - Type of Relationships: `IS`, `HAS` & `USES`
+
+### Online Assessment
+
+1. MCQs (18) and Fill-in-the-blanks (2) were asked. The primary topics of the same were:
+
+   - SQL
+   - Java
+     - Assertions & Exceptions
+     - Break & Skip Statements
+     - `Stream` & `ParallelStream` in Java
+     - Static members and methods
+   - Design Principles
+     - Single Responsibility Principle (SRP)
+     - Open-Closed Principle (OCP)
+     - Liskov Substitution Principle (LSP)
+     - Interface Segregation Principle (ISP)
+   - OOPS
+     - Inheritance
+     - Polymorphism
+     - Encapsulation
+     - Abstraction
+
+2. You are given an an array of scores $arr[i]$ of $n$ students. You need to arrange them such that the highest score is the middle, the second highest score is to the left of the highest score, the third highest score is to the right of the highest score, the fourth highest score is to the left of the second highest score, and so on.
+
+Example:
+
+```
+Input: [1, 2, 3, 4, 5]
+Output: [2, 4, 5, 3, 1]
+```
+
+3. The question involved around calculating the sum of the nodes of a binary tree which had exactly two children. The tree nodes were given in a non-convental way (as a string of `L` and `R` characters denoting the path that you need to take to reach the node from the root).
 
 ---
 
 # Graviton Research Capital
+
+Graviton is known for it's subjective tests. It did not visit our campus, but I had a few friends who gave the test. Each test had 3-4 questions, and partial & step marking was present.
 
 ## PYQs
 
@@ -163,7 +200,7 @@ bool transaction(Entity &sender, Entity &receiver, int amount);
 
 2. There is a lift in a multi-level building. The probability of the lift going up is $0.2$, going down is $0.3$ and staying still is $0.5$. At floor $0$, the probability of going up is $0.2$ and staying is $0.8$. Assume infinite floors in the building. What is the proportion of time you are going to stay at level $0$?
 
-3. There is a sequence of cards with some facing down and some facing up. If there are $n$ cards facing up, then you will flip the $n$th card from the left. You keep doing this until all the cards are facing down. Let the total number of cards be $P$.
+3. There is a sequence of cards with some facing down and some facing up. If there are $n$ cards facing up, then you will flip the $n^{th}$ card from the left. You keep doing this until all the cards are facing down. Let the total number of cards be $P$.
 
 - It is it always possible to bring all the cards facing down irrespective of the initial positioning?
 - If it is possible to face all cards down, what is the expected length of sequence of moves?

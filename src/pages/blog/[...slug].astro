@@ -28,6 +28,7 @@ const { Content } = await post.render();
   updatedDate={frontmatter.updatedDate}
   readingTime={getReadingTime(post.body).text}
   external={frontmatter.external}
-  >
+  draft={frontmatter.draft}
+>
   <Content />
 </BlogLayout>
