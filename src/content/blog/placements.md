@@ -179,6 +179,21 @@ for (int i = 0; i < m; i++)
 cout << sum << endl;
 ```
 
+<br>
+<details>
+<summary>Solution</summary>
+
+We need to add the numbers in the range $128$ to $255$, all of which have their $7$th bit always set. Thus if a number's $7$th bit is set, we can add it to the result, otherwise we can ignore it. We can use the following code snippet to achieve the same:
+
+```cpp
+for (int i = 0; i < m; i++) {
+  int toAdd = (data[i] >> 7) & 1;
+  sum += toAdd * data[i];
+}
+```
+
+</details>
+
 2. There are $n$ datapoints given, each with coordinates $(x, y)$. Each data point can spread upto a max distance of $r$ units. What is the minimum value of $r$ so that all the datapoints can talk to each other? (Two datapoints can talk to each other if the distance between them is less than or equal to $r$. Datapoints can talk in a chain, i.e. if $A$ can talk to $B$ and $B$ can talk to $C$, then $A$ can talk to $C$)
 
 Constraints:
@@ -186,13 +201,159 @@ Constraints:
 - $n \leq 1000$
 - $x$, $y \leq 25000$
 
-3. There are $n$ players in a game, each with a certain number of gold chips denoted by $arr[i]$. The maximum number of gold chips that a player can have is denoted by $capacity[i]$. Initially, you have $arr[0]$ gold chips. You can give your gold chips to other players to improve your rank. If a player has more gold chips than its capacity, then that player disqualifies and your rank improves. Find an algorithm to get your best rank.
+<details>
+<summary>Solution</summary>
 
-4. Build a transaction fucntion that may run parallely on multiple cores. The signature for the same is:
+We observe the fact that if the datapoints can talk to each other at a distance of $r$, then:
+
+- The graph formed by the datapoints is a single connected component.
+- All these datapoints would be able to be communicate with each other for any $r' > r$ as well.
+
+Thus using these two facts, we can use binary search to find the minimum value of $r$ for which the graph is a single connected component. For each value of $r$, we can use loop over all the pairs of datapoints, connect them if the distance between them is less than or equal to $r$ and then check if the graph is a single connected component or not (using DFS, BFS or Union Find).
+
+The overall complexity of the solution would be $O(n^2 \log MAX(x,y))$ which is feasible for the given constraints.
+
+</details>
+
+3. There are $n$ players in a game, each with a certain number of gold chips denoted by $arr[i]$. The maximum number of gold chips that a player can have is denoted by $capacity[i]$. You are the player at index $0$ and thus initially have $arr[0]$ gold chips. You can give your gold chips to other players to improve your rank. If a player has more gold chips than its capacity, then that player disqualifies and your rank improves. Find an algorithm to get your best rank.
+
+<details>
+<summary>Solution</summary>
+
+We can use a combination of greedy & brute force approach to solve this problem. Let's say we have decided that we want to eliminate some people by giivng them our gold chips. It would always be ideal for us to give our coins to the player with the lowest $capacity[i] - arr[i]$ value. This exchange would increase our rank by $1$ due to elimination, but also might decrease our rank by $x$ due to now more player having more coins than me.
+
+We can efficiently simulate all the possible number of coins that we can spend by maintaing two priority queues:
+
+- One to keep track of the players that I can eliminate, ordered by the difference of their capacity and current coins.
+- One to keep track of players who have coins lesser than me.
+
+We can then simulate the process of giving coins to the players and updating the ranks. The overall complexity of the solution would be $O(n \log n)$.
+
+```cpp
+// Returns the rank as the number of people having lesser coins than me
+int bestRank(vector<int> arr, vector<int> cap) {
+
+    priority_queue<pair<int, int>> lesserThanMe; // Max Heap -> <coins, index>
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> canEliminate; // Min Heap -> <capacity - coins + 1, index>
+
+    for (int i = 1; i < arr.size(); ++i) {
+        if (arr[i] < arr[0])
+            lesserThanMe.push({arr[i], i});
+        else
+            canEliminate.push({cap[i] - arr[i] + 1, i});
+    }
+
+    int ans = lesserThanMe.size();
+
+    // Loop while I can eliminate some players
+    while (!canEliminate.empty() && arr[0] >= canEliminate.top().first) {
+        auto [diff, index] = canEliminate.top();
+        canEliminate.pop();
+
+        arr[0] -= diff; // Update my coins
+
+        // Add all the newly eligible players to the canEliminate heap
+        while (!lesserThanMe.empty() && arr[0] < lesserThanMe.top().first) {
+            auto [coins, i] = lesserThanMe.top();
+            lesserThanMe.pop();
+            canEliminate.push({cap[i] - arr[i] + 1, i});
+        }
+
+        ans = min(ans, (int)lesserThanMe.size());
+    }
+
+    return ans;
+}
+```
+
+This code still requires some better handling around ties and how to determine ranks if two people have the same number of coins, but the general idea is the same.
+
+</details>
+
+4. Build a transaction function that may run parallely on multiple cores with the signature:
 
 ```cpp
 bool transaction(Entity &sender, Entity &receiver, int amount);
 ```
+
+<br>
+<details>
+<summary>Solution</summary>
+
+The question is not very clear, but the main idea is to ensure that the transaction function is thread-safe. You can use locks to ensure that only one thread can access the function at a time, and we can assume that these locks are available on the `Entity` class itself. A simple implementation would look like:
+
+```cpp
+#include <iostream>
+#include <mutex>
+#include <thread>
+#include <vector>
+
+class Entity {
+public:
+    Entity(int id, int initial_balance) : id(id), balance(initial_balance) {}
+
+    int getBalance() const { ... }
+    void updateBalance(int amount) { ... } // Not thread-safe
+    int getId() const { ... }
+
+private:
+    int id;
+    int balance;
+    std::mutex mtx;
+
+public:
+    // Thread-safe transfer method (synchronization within entity)
+    bool transferTo(Entity &receiver, int amount) {
+        std::scoped_lock lock(mtx, receiver.mtx);
+
+        if (balance < amount) {
+            return false;
+        }
+
+        updateBalance(-amount);
+        receiver.updateBalance(amount);
+        return true;
+    }
+};
+
+bool transaction(Entity &sender, Entity &receiver, int amount) {
+    return sender.transferTo(receiver, amount);
+}
+
+int main() {
+    Entity alice(1, 1000);
+    Entity bob(2, 500);
+
+    std::vector<std::thread> threads;
+
+    // Launch multiple transactions in parallel
+    for (int i = 0; i < 5; ++i) {
+        threads.emplace_back([&]() {
+            int amount = rand() % 150;
+            if (transaction(alice, bob, amount)) {
+                std::cout << "Success!\n";
+            } else {
+                std::cout << "Failed!\n";
+            }
+        });
+    }
+
+    // Wait for all threads to finish
+    for (auto &t : threads) {
+        t.join();
+    }
+
+    std::cout << "Final balance of Alice: " << alice.getBalance() << "\n";
+    std::cout << "Final balance of Bob: " << bob.getBalance() << "\n";
+
+    return 0;
+}
+
+```
+
+[This article](https://medium.com/@abhishekjainindore24/mutex-in-c-threads-part-1-45aeac3ab62d) can be helpful to understand the concept of mutexes in C++ if you haven't seem them before. [Scoped locks](https://medium.com/@satyajeetjha06/scoped-lock-c-2d77aa08ed77) are a neat C++ 17 feature that can be used to lock multiple mutexes at once without the risk of deadlocks.
+
+</details>
 
 ### Quant Analyst
 
@@ -202,7 +363,7 @@ bool transaction(Entity &sender, Entity &receiver, int amount);
 
 3. There is a sequence of cards with some facing down and some facing up. If there are $n$ cards facing up, then you will flip the $n^{th}$ card from the left. You keep doing this until all the cards are facing down. Let the total number of cards be $P$.
 
-- It is it always possible to bring all the cards facing down irrespective of the initial positioning?
+- Is it always possible to bring all the cards facing down irrespective of the initial positioning?
 - If it is possible to face all cards down, what is the expected length of sequence of moves?
 
 4. There is a uniform distribution in the range $[0, 1]$. Ram and Shyam get $2$ numbers from this range at random. Both only know about the number that they have received. The player having a higher value wins. Ram has a chance to redraw another number at random from the distribution. Assuming that both the players play optimally, how many times will Ram choose to redraw?
