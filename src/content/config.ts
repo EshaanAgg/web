@@ -7,11 +7,12 @@ const blogCollection = defineCollection({
       hero: image().optional(),
       heroAlt: z.string().optional(),
       description: z.string().max(160).min(80),
-      draft: z.boolean().default(false),
+      draft: z.boolean().default(true),
       pubDate: z.date(),
       updatedDate: z.date().optional(),
       tags: z.string().array().optional(),
       pinned: z.boolean().default(false),
+      requireLatex: z.boolean().default(false),
       external: z
         .object({
           link: z.string().url(),

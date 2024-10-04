@@ -31,7 +31,6 @@ const fullDate = pubDate.toLocaleDateString("en", {
     class="block text-sm tracking-wide dark:text-zinc-400 text-zinc-600"
   >
     {fullDate} | {readingTime}
-    {draft ? " | Draft" : ""}
   </time>
   <a
     class="text-lg before:absolute before:inset-0 font-semibold dark:text-zinc-100 text-zinc-700"
@@ -50,6 +49,15 @@ const fullDate = pubDate.toLocaleDateString("en", {
             </li>
           ))
         : null
+    }
+
+    <!-- Add a tag for draft blogs -->
+    {
+      draft && (
+        <li class="dark:bg-white bg-blue-500 text-white dark:text-black rounded-md px-2 py-1 text-sm">
+          Draft
+        </li>
+      )
     }
   </ul>
 </li>

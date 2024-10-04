@@ -1,10 +1,10 @@
 ---
-title: "Placements '24: Assesments"
+title: "Placements '24: Assessments"
 description: A brief of all the online assessments that I witnessed during the season of 2024.
 pubDate: 2024-09-29
 updateDate: 2024-10-03
-draft: true
 pinned: true
+requireLatex: true
 tags: ["placements", "2024"]
 ---
 
@@ -221,6 +221,6 @@ bool transaction(Entity &sender, Entity &receiver, int amount);
    2. Find the total number of labelled trees of $n$ vertices using this reduction.
    3. Find the number of labelled trees with $10$ vertices whose degree of $i$th vertex is $a[i]$ where $a[i] = [5,4,2,1,1,1,1,1,1,1]$.
 
-8. Let $A$ be an $n \times n$ diagonal matrix with characteristic polynomial $(x - c*1)^{d_1} (x - c_2)^{d_2} * ... * (x - c_k)^{d_k}$ where $c_1, c_2, ..., c_k$ are distinct. Let $V$ be the vector space of all $n \times n$ matrices $B$ such that $AB = BA$. Prove that the dimension of $V$ is $d_1^2 + d_2^2 + ... + d_k^2$.
+8. Let $A$ be an $n \times n$ diagonal matrix with characteristic polynomial $(x - c_1)^{d_1} (x - c_2)^{d_2} * ... * (x - c_k)^{d_k}$ where $c_1, c_2, ..., c_k$ are distinct. Let $V$ be the vector space of all $n \times n$ matrices $B$ such that $AB = BA$. Prove that the dimension of $V$ is $d_1^2 + d_2^2 + ... + d_k^2$.
 
 ---

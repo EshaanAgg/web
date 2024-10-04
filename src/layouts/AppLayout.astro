@@ -14,6 +14,7 @@ interface Props {
     alt: string;
   };
   pubDate?: Date;
+  requireLatex?: boolean;
 }
 
 const {
@@ -21,6 +22,7 @@ const {
   description = defaultMeta.description,
   ogImage = defaultMeta.ogImage,
   pubDate,
+  requireLatex = false,
 } = Astro.props;
 
 const ogImageURL = new URL(ogImage.src, Astro.site).href;
@@ -69,12 +71,16 @@ const canonicalURL = new URL(Astro.url).href;
     }
 
     <!-- Katex -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.css"
-      integrity="sha384-NFTC4wvyQKLwuJ8Ez9AvPNBv8zcC2XaQzXSMvtORKw28BdJbB2QE8Ka+OyrIHcQJ"
-      crossorigin="anonymous"
-    />
+    {
+      requireLatex && (
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.css"
+          integrity="sha384-NFTC4wvyQKLwuJ8Ez9AvPNBv8zcC2XaQzXSMvtORKw28BdJbB2QE8Ka+OyrIHcQJ"
+          crossorigin="anonymous"
+        />
+      )
+    }
   </head>
 
   <body
