@@ -2,20 +2,22 @@
 title: "Placements '24: Assessments"
 description: A brief of all the online assessments that I witnessed during the season of 2024.
 pubDate: 2024-09-29
-updateDate: 2024-10-03
+updateDate: 2024-10-06
 pinned: true
 requireLatex: true
 tags: ["placements", "2024"]
 ---
 
-Sitting was placements is a huge rollercoster ride, but having some idea of what to expect can make the ride a bit smoother. Here is a brief of all the online assessments (patterns, questions & tips) that I either personally gave or heard about from my peers during the season of 2024.
+Sitting for placements is a huge rollercoster ride, but having some idea of what to expect can make the ride a bit smoother. Here is a brief of all the online assessments (patterns, questions & tips) that I either personally gave or heard about from my peers during the season of 2024.
 
 - [GreyOrange](#greyorange)
 - [Squarepoint Capital](#squarepoint-capital)
 - [AQR Capital](#aqr-capital)
 - [Graviton Research Capital](#graviton-research-capital)
+- [Samsung Research Institute Noida](#samsung-research-institute-noida)
+- [Codenation (Trilogy Innovations)](#codenation-trilogy-innovations)
 
-In addition to reading about the questions from here, please do search for the companies on Leetcode Discuss or Job Overflow. People even post about the questions in Codeforces blogs many a times, so a bit of time searching about PYQs and questions on different campuses can be very beneficial.
+In addition to reading about the questions from here, please do search for the companies on Leetcode Discuss or Job Overflow. Sometimes people even post about OA questions in Codeforces blogs, so spending a bit of time searching for such questions (from past years or from different campuses) can help you gain an unexpected edge!
 
 ---
 
@@ -383,5 +385,486 @@ int main() {
    3. Find the number of labelled trees with $10$ vertices whose degree of $i$th vertex is $a[i]$ where $a[i] = [5,4,2,1,1,1,1,1,1,1]$.
 
 8. Let $A$ be an $n \times n$ diagonal matrix with characteristic polynomial $(x - c_1)^{d_1} (x - c_2)^{d_2} * ... * (x - c_k)^{d_k}$ where $c_1, c_2, ..., c_k$ are distinct. Let $V$ be the vector space of all $n \times n$ matrices $B$ such that $AB = BA$. Prove that the dimension of $V$ is $d_1^2 + d_2^2 + ... + d_k^2$.
+
+---
+
+# Samsung Research Institute Noida
+
+- The test is conducted on their own software, which works only on Windows, lags a lot, and is generally quite a pain to work with. You can use their inbuilt IDE, Eclipse or Visual Studio to write the code.
+- 3 - 4 hours are given to solve a single question, and the questions are generally on the easier to medium side.
+- The questions are primarily from the `Recursion`, `Dynamic Programming`, `Bitmasking` and `Graph Theory` topics.
+- The questions are very frequently repeated, so it's a good idea to go through the previous year questions. You can view the same from [this very helpful repository](https://github.com/s-kachroo/SamsungPractice/).
+- Some of the seniors also mentioned that in some tests, the standard library functions were disabled, so you might need to implement them yourself. Some common topics to brush up upon before the test include:
+  - Sorting Algorithms
+  - Heaps and Priority Queues
+  - Queue and Stack
+  - Custom Comparator Functions
+  - Arrays (`vector.h` might not be allowed)
+
+## Question
+
+There are $n$ fishing spots on a lake, numbered from $1$ to $n$. There are $m$ fishermen waiting to get in. There are $3$ gates, located at positions $x[i]$ and having $arr[i]$ employees at gate $i$. The distance between consecutive spots is $1$, and the distance between the gate and the nearest spot is also $1$. Only $1$ gate can be opened at a time and all fishermen of that gate must occupy spots before next gate is open. Each fisherman will occupy the nearest spot to the gate greedily. It can be seen that all the employees at a gate will occupy a fixed position, except the last one who might have $2$ spots to choose from. Write a program to return sum of minimum distance that the fishermen need to walk.
+
+Constraints:
+
+- $n \leq 100$
+- $1 \leq x[i] \leq n$
+- $1 \leq arr[i] \leq 60$
+- It is guaranteed that the fishermen will be able to occupy atleast one spot.
+
+---
+
+# Codenation (Trilogy Innovations)
+
+- 2 hour test is conducted with 4 questions
+- The company is known for asking very diffcult questions. There is partial marking for the test cases.
+- Questions are very frequently repeated across the campuses in the same year, and not so much with the previous years.
+
+## Questions
+
+1. An array is considered valid if there is no subarray longer than $B$ where all elements are identical. Additionally, the array can only contain integers from the range $[1, C]$. Determine the number of valid arrays of length $A$. Since the result can be very large, return it modulo $10^9+7$.
+
+Problem Constraints:
+
+- $1 \leq A \leq 10^9$
+- $1 \leq B \leq min(50, A)$
+- $1 \leq C \leq 10^5$
+
+<details>
+<summary>Solution</summary>
+
+If the array length was upto $10^5$, then we could have used a simple DP solution where we can define $dp[i]$ as the number of valid suffixes starting from index $i$. As a part of the transition at index $i$, we can take the new element to occur $x$ times (between $1$ and $B$), and thus add the value for $dp[i + x]$. Further, the number of possible values of this new element would be $C$ if the index is $0$, and would be $C - 1$ otherwise (as it cannot be equal to the previous element). The overall complexity of this solution would be $O(A * B)$.
+
+But this solution is not feasible for $A = 10^9$. We will make use of binary matrix exponentiation to solve this problem.
+
+Let us maintain a matrix $M_l$ of size $B$ where $M[j]$ at any point denotes how many valid arrays exist with the last element of the array occuring $j$ times for the current length $l$. We can then define the transition to the next matrix $M_{l+1}$ representing the length $l + 1$ as:
+
+- For $j = 1$, we can a new element (with $C - 1$ possible values) to each of the $j$ elements in the previous array. Thus $M_{l+1}[1] = (C - 1) * (\sum_{j = 1}^{B} M_l[j])$.
+- For $j \neq 1$, we can only transition using the same element as the previous one. Thus $M_{l+1}[j] = M_l[j - 1]$.
+
+We can see that these transitions are independent of the vlaue of $l$!
+
+Using these facts, we can define a transition matrix $X$ of size $B \times B$ where $X[i][j]$ denotes the number of ways to transition from $i$ (length $l$) to $j$ (length $l + 1$).
+
+$\begin{array}{l} M_{l+1} = M_l \times \begin{bmatrix} C-1 & C-1 & C-1 & \cdots & C-1\\ 1 & 0 & 0 & \cdots & 0\\ 0 & 1 & 0 & \cdots & \vdots \\ \vdots & \ddots & \ddots & 0 & \vdots \\ 0 & \cdots & 0 & 1 & 0 \end{bmatrix} \\ \end{array}$
+
+$\begin{array}{l}  M_1 = \begin{bmatrix} C-1 & C-1 & C-1 & \cdots & C-1\\  \end{bmatrix} \\ \end{array}$
+
+Then we can set the state for the initial matrix of length $1$ as $M_1[1] = C$ and $M_1[j] = 0$ for $j \neq 1$. We can then calculate the matrix $M$ for length $A$ as $M_A = M * X^{A - 1}$.
+
+The overall complexity of this solution would be $O(B^3 \log A)$ where $B^3$ is the complexity of matrix multiplication and $\log A$ is the complexity of matrix exponentiation.
+
+```cpp
+long long MOD = 1e9 + 7;
+
+class Matrix
+{
+public:
+    vector<vector<long long>> arr;
+
+    Matrix(vector<vector<long long>> arr) : arr(arr) {}
+
+    Matrix multiply(Matrix &b)
+    {
+        int Y = arr.size(), X = b.arr[0].size();
+        vector<vector<long long>> res(Y, vector<long long>(X, 0));
+
+        for (int y = 0; y < Y; y++)
+            for (int x = 0; x < X; x++)
+                for (int k = 0; k < arr[0].size(); k++)
+                {
+                    res[y][x] += arr[y][k] * b.arr[k][x];
+                    res[y][x] %= MOD;
+                }
+
+        return Matrix(res);
+    }
+
+    Matrix power(long long n)
+    {
+        int Y = arr.size();
+
+        // Start with identity matrix
+        vector<vector<long long>> iden(Y, vector<long long>(Y));
+        for (int i = 0; i < Y; i++)
+            iden[i][i] = 1;
+
+        Matrix a = Matrix(arr);
+        Matrix res = Matrix(iden);
+
+        while (n)
+        {
+            if (n % 2 == 1)
+                res = res.multiply(a);
+            a = a.multiply(a);
+            n >>= 1;
+        }
+
+        return res;
+    }
+};
+
+int solve(int A, int B, int C)
+{
+    vector<vector<long long>> l0(1, vector<long long>(B, 0));
+    l0[0][0] = C;
+
+    vector<vector<long long>> tr(B, vector<long long>(B, 0));
+    for (int i = 0; i < B; i++)
+    {
+        tr[i][0] = C - 1;
+        if (i + 1 < B)
+            tr[i][i + 1] = 1;
+    }
+
+    Matrix m = Matrix(l0), t = Matrix(tr);
+    t = t.power(A - 1);
+    Matrix res = m.multiply(t);
+
+    long long ans = 0;
+    for (int i = 0; i < B; i++)
+    {
+        ans += res.arr[0][i];
+        ans %= MOD;
+    }
+
+    return ans;
+}
+```
+
+</details>
+
+2. Given is the pseudocode below to find a target number $i$ between $l$ and $r$ (both inclusive):
+
+```cpp
+while (l < r) {
+    int mid = (l + r) / 2;
+    if (i < mid) r = mid - 1;
+    else if (i > mid) l = mid + 1;
+    else {
+        print("Found");
+        break;
+    }
+}
+```
+
+You are required to answer $q$ queries, where in each query, you will be provided with values $l$ and $r$. For each query, determine what is the probability that the above code will fail to print "Found" when any value $i$ (where $l$ <= $i$ <= $r$) is chosen?
+
+Express this probability as an integer where the fraction is $\frac{P}{Q}$ and $gcd(P, Q) = 1$. You should compute $P * Q^{-1}$ modulo $10^9+7$, where $Q^{-1}$ is the modular inverse of $Q$ modulo $10^9+7$.
+
+Problem Constraints:
+
+- $1 \leq A[i][0] \leq A[i][1] \leq 10^6$
+
+<details>
+<summary>Solution</summary>
+
+It can be observed that the output of the code only depends on the length of the array that we are searching in, and the actual values of $l$ and $r$ are irrelevant. Thus we can simplify the problem to finding the probability that the code will fail to print "Found" for an array of length $n$.
+
+Let us calculate the value $cnt[i]$ where $cnt[i]$ denotes the number of values of $i$ such that the code will print `Found` for an array of length $i$. It can be seen that in the base case $cnt[0] = cnt[1] = 0$ (as the algorithm chooses the wrong endpoint in these cases).
+
+For $i \geq 2$, we can see that the code will always print `Found` for the middle element of the array. After that the problem would be reduced to counting the number of valid values in the left and right subarrays. Thus we can define the following recursive formula:
+
+- If $i$ is even, then $cnt[i] = 1 + cnt[i/2] + cnt[i - i/2 - 1]$ as
+  $i - i/2 - 1$ is the number of elements in the left subarray, and $i/2$ is the number of elements in the right subarray.
+- If $i$ is odd, then $cnt[i] = 1 + 2*cnt[i/2]$ as both the left and right subarrays would have the same number of elements.
+
+Once we have these counts, finding the required probability is trivial.
+
+```cpp
+long long MOD = 1e9 + 7;
+
+long long power(long long a, long long b)
+{
+    long long res = 1;
+
+    while (b)
+    {
+        if (b % 2 == 1)
+        {
+            res *= a;
+            res %= MOD;
+        }
+        a *= a;
+        a %= MOD;
+        b >>= 1;
+    }
+
+    return res;
+}
+
+vector<int> solve(vector<vector<int>> queries)
+{
+    const int MAXN = 1e6;
+    vector<long long> cnt(MAXN + 1, 0);
+
+    for (int i = 2; i <= MAXN; i++)
+    {
+        int k = i / 2;
+        if (i % 2 == 1)
+            cnt[i] = 1LL + 2LL * cnt[k];
+        else
+            cnt[i] = 1LL + cnt[k] + cnt[k - 1];
+        cnt[i] %= MOD;
+    }
+
+    int n = queries.size();
+    vector<int> ans;
+
+    for (auto q : queries)
+    {
+        int l = q[1] - q[0] + 1;
+        long long pr = (l - cnt[l]) * power(l, MOD - 2);
+        pr %= MOD;
+        ans.push_back(pr);
+    }
+
+    return ans;
+}
+```
+
+</details>
+
+3. You are given an array $arr$ consisting of $N$ integers. You are also given $q$ queries. Each query consists of three integers $X$, $Y$, and $Z$. For each query find the largest contiguous subarray $B$ starting from index $X$, whose $Y$th bit is set, and then update each of its elements $B_j$ with $B_j \oplus Z$ where $\oplus$ denotes the bitwise XOR operator.
+
+Your task is to print the total number of updates performed after $q$ queries. Given a $2D$ array $mat$ that represents the queries:
+
+- $mat[i][0] = X$
+- $mat[i][1] = Y$
+- $mat[i][2] = Z$
+
+Problem Constraints:
+
+- $1 \leq N \leq 10^5$
+- $0 \leq arr[i] \leq 10^9$
+- $1 \leq q \leq 10^5$
+- $1 \leq X \leq N$
+- $0 \leq Y \leq 30$
+- $0 \leq Z \leq 10^9$
+
+<details>
+<summary> Solution </summary>
+
+This question is quite an exercise on segment trees with lazy proportion & binary search. Let us create `30` segment trees, on for each bit in the number of the arrays. This segment tree needs to support the following operations:
+
+- Getting the sum of the elements in a range. This can be done using the standard segment tree.
+- Flipping all the values in a range. This can be done using the lazy propagation technique and setting the value of a tree node to $l - nodeValue$ where $l$ is the length of the range and $nodeValue$ is the current value of the node (this shows that all the $1$s in the range are flipped to $0$ and vice versa).
+
+Now, wherenever we get a query, we can do the following:
+
+- Perform a binary search to find the rightmost index where the $Y$th bit is set. When checking for an index $r$ starting from $idx$, we need to check that $sum(idx, r) = r - idx + 1$ where $sum$ is the sum returned by the segment tree of bit $Y$.
+- Then for all the bits $i$ set in $Z$, we can flip the values in the range $[idx, r]$ for the segment tree of bit $i$.
+
+The overall complexity of the solution would be $O(30 * Q * (N \log^2 N + N \log N))$, which requires careful implementation to pass the time limits.
+
+```cpp
+int MAX_BITS = 30;
+
+class SegTree
+{
+public:
+    int n, bit;
+    vector<int> tree, lazy;
+
+    SegTree(int bit, vector<int> &arr)
+    {
+        this->bit = bit;
+        n = arr.size();
+
+        tree.resize(4 * n);
+        build(1, 0, n - 1, arr);
+        lazy.assign(4 * n, 0);
+    }
+
+    void build(int v, int l, int r, vector<int> &arr)
+    {
+        if (l == r)
+            tree[v] = (arr[l] >> bit) & 1;
+        else
+        {
+            int m = (l + r) / 2;
+            build(2 * v, l, m, arr);
+            build(2 * v + 1, m + 1, r, arr);
+            tree[v] = tree[2 * v] + tree[2 * v + 1];
+        }
+    }
+
+    void push(int v, int l, int m, int r)
+    {
+        if (!lazy[v])
+            return;
+
+        tree[2 * v] = (m - l + 1) - tree[2 * v];
+        lazy[2 * v] ^= 1;
+
+        tree[2 * v + 1] = (r - (m + 1) + 1) - tree[2 * v + 1];
+        lazy[2 * v + 1] ^= 1;
+
+        lazy[v] = 0;
+    }
+
+    void update(int v, int l, int r, int ql, int qr)
+    {
+        if (ql > qr)
+            return;
+
+        if (l == ql && r == qr)
+        {
+            // Convert the cnt of 1 to cnt of 0's
+            tree[v] = (r - l + 1) - tree[v];
+            lazy[v] ^= 1;
+            return;
+        }
+
+        int m = (l + r) / 2;
+        push(v, l, m, r);
+
+        update(2 * v, l, m, ql, min(qr, m));
+        update(2 * v + 1, m + 1, r, max(m + 1, ql), qr);
+        tree[v] = tree[2 * v + 1] + tree[2 * v];
+    }
+
+    int query(int v, int l, int r, int ql, int qr)
+    {
+        if (ql > qr)
+            return 0;
+        if (ql == l && qr == r)
+            return tree[v];
+
+        int m = (l + r) / 2;
+        push(v, l, m, r);
+
+        int q1 = query(2 * v, l, m, ql, min(qr, m));
+        int q2 = query(2 * v + 1, m + 1, r, max(m + 1, ql), qr);
+        return q1 + q2;
+    }
+
+    void update(int l, int r)
+    {
+        update(1, 0, n - 1, l, r);
+    }
+
+    int query(int l, int r)
+    {
+        return query(1, 0, n - 1, l, r);
+    }
+};
+
+int solve(vector<int> arr, vector<vector<int>> que)
+{
+    int totOps = 0;
+    int n = arr.size();
+
+    vector<SegTree> tr;
+    for (int bit = 0; bit < MAX_BITS; bit++)
+        tr.push_back(SegTree(bit, arr));
+
+    for (auto q : que)
+    {
+        int idx = q[0] - 1, bit = q[1] - 1, z = q[2];
+
+        int l = idx, r = n - 1;
+        int ans = -1;
+        while (l <= r)
+        {
+            int m = (l + r) / 2;
+            if (tr[bit].query(idx, m) == m - idx + 1)
+            {
+                ans = m;
+                l = m + 1;
+            }
+            else
+                r = m - 1;
+        }
+
+        if (ans != -1)
+        {
+            totOps += ans - idx + 1;
+            for (int i = 0; i < MAX_BITS; i++)
+                if ((z >> i) & 1)
+                    tr[i].update(idx, ans);
+        }
+    }
+
+    return totOps;
+}
+```
+
+</details>
+
+4. You are a book collector aiming to sell your collection of $A$ books. The books are arranged in a line with the $i$th book to the left of the $(i + 1)$th book. The thickness of each book is represented by an array $B$ (where $B[i]$ is the thickness of the $i$th book) and each book has a unique thickness.
+
+To enhance the appeal of your books, you can apply a special protective covering to some of them. However, this cover is expensive and thus you want tp minimize its use while ensuring the following conditions are met:
+
+- You should apply the cover to at least one book.
+- If you apply the cover to the $i$th book, you must also apply the cover all books that are thicker than the $i$th book.
+- There must exist at least one subarray (contiguous segment) of books of size at least $C$ such that the number of books with the protective cover is greater than the number of books without the cover.
+
+Your task is to determine the smallest number of books on which you should apply the protective cover to satify the above conditions.
+
+Problem Constraints:
+
+- $1 \leq A \leq 10^5$
+- $1 \leq B[i] \leq A (1 \leq i < j \leq n, B[i] \neq B[j])$
+- $1 \leq C \leq A$
+
+<details>
+<summary> Solution </summary>
+
+Let us fix the minimum thickness of the book that we must cover as $t$. It can easilu be argued that if there exists a subarray satisfying the third condition for $t$, then the same subarray would also be valid for all $t' < t$. This gives us the idea that we can binary search on the minimum thickess $t$ hoping to maximize the same.
+
+To check if there is a subarray that satifies condition 3 for a particular $t$, we can make the following construction: Create a new array $b$ where $b[i] = 1$ if $arr[i] \geq t$ else it is $-1$. Now the third question reduces to finding if there is a subarray of atleast size $C$ in $b$ such that the sum of the elements in the subarray is greater than $0$.
+
+This is a pretty standard problem which can be solved with the concepts of prefix sums and minimums (Reading about [2 Sum problem on Leetcode](https://leetcode.com/problems/two-sum/description/) and all it's possible extensions) in $O(N)$ time. Thus the overall complexity of the solution would be $O(N \log A)$ where $A$ is the maximum thickness of the book.
+
+```cpp
+bool checkValid(int mi, int n, vector<int> &base, int k)
+{
+    vector<int> arr(n), pre(n + 1), preMin(n + 1);
+
+    for (int i = 0; i < n; i++)
+        arr[i] = base[i] >= mi ? 1 : -1;
+
+    for (int i = 1; i <= n; i++)
+    {
+        pre[i] = arr[i - 1] + pre[i - 1];
+        preMin[i] = min(pre[i], preMin[i - 1]);
+    }
+
+    for (int i = k; i <= n; i++)
+        if (pre[i] - preMin[i - k] > 0)
+            return true;
+
+    return false;
+}
+
+int solve(int n, vector<int> arr, int k)
+{
+    int l = 0, r = *max_element(arr.begin(), arr.end());
+    int ans = -1;
+
+    while (l <= r)
+    {
+        int m = l + (r - l) / 2;
+        if (checkValid(m, n, arr, k))
+        {
+            // Update the answer count
+            ans = 0;
+            for (int i : arr)
+                if (i >= m)
+                    ans++;
+
+            // Update the bounds
+            l = m + 1;
+        }
+        else
+            r = m - 1;
+    }
+
+    return ans;
+}
+```
+
+</details>
 
 ---

@@ -33,4 +33,4 @@ I have no plans of updating them, and they probably won't make any sense if you 
 
 #### PS
 
-Computer networks in also usually included in CS concepts, but I decided to skip them in the interest of time. A very few companies ask questions from this topic (like Cisco) and for very specific roles (like Network Engineer). You might want to read about them if you are interested in such roles.
+Computer networks in also usually included in CS concepts, but I decided to skip them in the interest of time. A very few companies ask questions from this topic (like `Cisco`) and for very specific roles (like Network Engineer). You might want to read about them if you are interested in such roles.
