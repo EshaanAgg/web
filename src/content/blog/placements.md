@@ -2,7 +2,7 @@
 title: "Placements '24: Assessments"
 description: A brief of all the online assessments that I witnessed during the season of 2024.
 pubDate: 2024-09-29
-updateDate: 2024-10-06
+updateDate: 2024-10-07
 pinned: true
 requireLatex: true
 tags: ["placements", "2024"]
@@ -51,6 +51,24 @@ Two coding questions were asked which were same for all the students were asked.
 <summary>Spoiler</summary>
 
 You can read about [question 2](https://leetcode.com/discuss/interview-question/5846629/SquarePoint-OA-Desk-Quant) here. The question actually turns out to be NP Complete, and thus the best you can do is brute force and try all orderings. In the OA to pass the questions, you had to use the (incorrect) greedy approach, where you would always choose the element whose deletion would result in the maximum number of deletions. To solve it in actual constraints, you can [try this](https://codeforces.com/gym/101246/problem/C) on Codeforces.
+
+</details>
+
+3. You are given an array of size $n$. You can change any number in the array to any value, and the cost of changing the same is absolute difference of new number and old number. Find the minimum cost to make the array either non-increasing or non-decreasing.
+
+Example:
+
+```
+Input: 1 3 5 4 7
+Output: 1
+Explanation: It can be changed to 1 3 5 5 7 (cost to change 4 to 5 is 1)
+```
+
+<br>
+<details>
+<summary>Spoiler</summary>
+
+You can first try solving this [similar question](https://www.geeksforgeeks.org/minimum-incrementdecrement-to-make-array-non-increasing/) and then try to modify the solution to fit the constraints of the question.
 
 </details>
 
@@ -231,7 +249,7 @@ We can efficiently simulate all the possible number of coins that we can spend b
 
 We can then simulate the process of giving coins to the players and updating the ranks. The overall complexity of the solution would be $O(n \log n)$.
 
-```cpp
+```cpp showLineNumbers
 // Returns the rank as the number of people having lesser coins than me
 int bestRank(vector<int> arr, vector<int> cap) {
 
@@ -284,7 +302,7 @@ bool transaction(Entity &sender, Entity &receiver, int amount);
 
 The question is not very clear, but the main idea is to ensure that the transaction function is thread-safe. You can use locks to ensure that only one thread can access the function at a time, and we can assume that these locks are available on the `Entity` class itself. A simple implementation would look like:
 
-```cpp
+```cpp showLineNumbers
 #include <iostream>
 #include <mutex>
 #include <thread>
@@ -420,7 +438,7 @@ Constraints:
 - The company is known for asking very diffcult questions. There is partial marking for the test cases.
 - Questions are very frequently repeated across the campuses in the same year, and not so much with the previous years.
 
-## Questions
+## Other Campus Questions
 
 1. An array is considered valid if there is no subarray longer than $B$ where all elements are identical. Additionally, the array can only contain integers from the range $[1, C]$. Determine the number of valid arrays of length $A$. Since the result can be very large, return it modulo $10^9+7$.
 
@@ -444,7 +462,7 @@ Let us maintain a matrix $M_l$ of size $B$ where $M[j]$ at any point denotes how
 
 We can see that these transitions are independent of the vlaue of $l$!
 
-Using these facts, we can define a transition matrix $X$ of size $B \times B$ where $X[i][j]$ denotes the number of ways to transition from $i$ (length $l$) to $j$ (length $l + 1$).
+Using these facts, we can define a transition matrix $X$ of size $B \times B$ to denote the number of ways to transition from current length $l$ to the next length $l + 1$.
 
 $\begin{array}{l} M_{l+1} = M_l \times \begin{bmatrix} C-1 & C-1 & C-1 & \cdots & C-1\\ 1 & 0 & 0 & \cdots & 0\\ 0 & 1 & 0 & \cdots & \vdots \\ \vdots & \ddots & \ddots & 0 & \vdots \\ 0 & \cdots & 0 & 1 & 0 \end{bmatrix} \\ \end{array}$
 
@@ -454,7 +472,7 @@ Then we can set the state for the initial matrix of length $1$ as $M_1[1] = C$ a
 
 The overall complexity of this solution would be $O(B^3 \log A)$ where $B^3$ is the complexity of matrix multiplication and $\log A$ is the complexity of matrix exponentiation.
 
-```cpp
+```cpp showLineNumbers
 long long MOD = 1e9 + 7;
 
 class Matrix
@@ -548,7 +566,7 @@ while (l < r) {
 }
 ```
 
-You are required to answer $q$ queries, where in each query, you will be provided with values $l$ and $r$. For each query, determine what is the probability that the above code will fail to print "Found" when any value $i$ (where $l$ <= $i$ <= $r$) is chosen?
+You are required to answer $q$ queries, where in each query, you will be provided with values $l$ and $r$. For each query, determine what is the probability that the above code will fail to print "Found" when any value $i$ (where $l \leq i \leq $r$) is chosen?
 
 Express this probability as an integer where the fraction is $\frac{P}{Q}$ and $gcd(P, Q) = 1$. You should compute $P * Q^{-1}$ modulo $10^9+7$, where $Q^{-1}$ is the modular inverse of $Q$ modulo $10^9+7$.
 
@@ -571,7 +589,7 @@ For $i \geq 2$, we can see that the code will always print `Found` for the middl
 
 Once we have these counts, finding the required probability is trivial.
 
-```cpp
+```cpp showLineNumbers
 long long MOD = 1e9 + 7;
 
 long long power(long long a, long long b)
@@ -645,7 +663,7 @@ Problem Constraints:
 <details>
 <summary> Solution </summary>
 
-This question is quite an exercise on segment trees with lazy proportion & binary search. Let us create `30` segment trees, on for each bit in the number of the arrays. This segment tree needs to support the following operations:
+This question is quite an exercise on segment trees with lazy proportion & binary search. Let us create $30$ segment trees, on for each bit in the number of the arrays. This segment tree needs to support the following operations:
 
 - Getting the sum of the elements in a range. This can be done using the standard segment tree.
 - Flipping all the values in a range. This can be done using the lazy propagation technique and setting the value of a tree node to $l - nodeValue$ where $l$ is the length of the range and $nodeValue$ is the current value of the node (this shows that all the $1$s in the range are flipped to $0$ and vice versa).
@@ -657,7 +675,7 @@ Now, wherenever we get a query, we can do the following:
 
 The overall complexity of the solution would be $O(30 * Q * (N \log^2 N + N \log N))$, which requires careful implementation to pass the time limits.
 
-```cpp
+```cpp showLineNumbers
 int MAX_BITS = 30;
 
 class SegTree
@@ -817,7 +835,7 @@ To check if there is a subarray that satifies condition 3 for a particular $t$, 
 
 This is a pretty standard problem which can be solved with the concepts of prefix sums and minimums (Reading about [2 Sum problem on Leetcode](https://leetcode.com/problems/two-sum/description/) and all it's possible extensions) in $O(N)$ time. Thus the overall complexity of the solution would be $O(N \log A)$ where $A$ is the maximum thickness of the book.
 
-```cpp
+```cpp showLineNumbers
 bool checkValid(int mi, int n, vector<int> &base, int k)
 {
     vector<int> arr(n), pre(n + 1), preMin(n + 1);
@@ -866,5 +884,39 @@ int solve(int n, vector<int> arr, int k)
 ```
 
 </details>
+
+## Questions
+
+1. A cryptarithm is a mathematical puzzle where the goal is to find the correspondence between letters and digits such that the given arithmetic equation consisting of letters holds true. Given a cryptarithm as an array of strings $crypt$, count the number of its valid solutions.
+
+The solution is valid if each letter represents a different digit, and the leading digit of a multi-digit number is not zero. The cryptarithm contains only capital letters and does not contain any leading zeros. $crypt$ has the following structure: $[wordl, word2, word3]$, which stands for the $word1 + word2 = word3$ cryptarithm. Is is guranteed that the length of the cryptarithm is $3$.
+
+Constraints:
+
+- $1 \leq crypt[i].length \leq 35$
+- $A \leq crypt[i][j] \leq Z$
+
+2. You are given a string of the form `a/b+c/d` where $a, b, c, d$ are integers upto $2000$. You need to calculate the value $\frac{a}{b} + \frac{c}{d}$ in the simplest form as $\frac{p}{q}$ where $p$ and $q$ are coprime integers. Return a string of the form `p/q`.
+
+3. You are given an array called $balance$ where $balance[i]$ denotes the balance of the $i$th account. You are also given an array $requests$ where $requests[i]$ denotes the $i$th transaction request. Each transaction request is a string of the form `timestamp [withdraw|deposit] amount accountIdx`. You need to process these requests subject to the following conditions:
+
+- The timestamps are processed in increasing order & in seconds.
+- A transaction may be invalid if the account balance is less than the amount to be withdrawn or the `accountIdx` is invalid.
+- As soon as you encouter an invalid transaction, you need to stop processing the requests. If the $1$ based index of the first invalid transaction is $i$, you need to return a vector with a single element equal to $-i$.
+- If all the transactions are valid, you need to return the final balance of all the accounts.
+- The bank has an additional offer. Whenever amount $x$ is withdrawn from an account, the bank automatically credits a cashbacks $c = \lfloor \frac{2x}{100} \rfloor$ to the account after $24$ hours of the withdrawn.
+- Return the balances just after processing the last transaction, and do not wait for the pending cashbacks (if any) to complete.
+
+4. You are given two `ListNode` heads $a$ and $b$. Each list represents a huge number, and each list node represents exactly $4$ digits of the number. You need to return the sum of the two numbers as a linked list. The numbers may have leading zeros. (For example, if $a = [1, 20, 333, 4124]$ then it actually represents the number $1000200033304124$)
+
+```cpp
+class ListNode {
+public:
+    int val;
+    ListNode *next;
+
+    ListNode(int val) : val(val), next(nullptr) {}
+};
+```
 
 ---
