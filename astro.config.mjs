@@ -1,4 +1,3 @@
-import mdx from "@astrojs/mdx";
 import remarkMath from "remark-math";
 import preact from "@astrojs/preact";
 import { readFileSync } from "node:fs";
@@ -21,8 +20,7 @@ export default defineConfig({
         showCopyButton: true,
         showLineNumbers: false,
       }
-    }),
-    mdx()
+    }) 
   ],
   site: "https://eshaanagg.netlify.app/",
   image: {
