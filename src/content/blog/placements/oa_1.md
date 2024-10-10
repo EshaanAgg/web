@@ -220,7 +220,7 @@ Also, AQR is known for having wierd (more often that not) atleast one wrong test
    Output: [2, 4, 5, 3, 1]
    ```
 
-3. The question involved around calculating the sum of the nodes of a binary tree which had exactly two children. The tree nodes were given in a non-convental way (as a string of `L` and `R` characters denoting the path that you need to take to reach the node from the root).
+3. The question revolved around calculating the sum of the nodes of a binary tree which had exactly two children. The tree nodes were given in a non-convental way (as a string of `L` and `R` characters denoting the path that you need to take to reach the node from the root).
 
 ---
 
