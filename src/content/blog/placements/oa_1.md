@@ -16,9 +16,12 @@ Sitting for placements is a huge rollercoster ride, but having some idea of what
 - [Graviton Research Capital](#graviton-research-capital)
 - [Samsung Research Institute Noida](#samsung-research-institute-noida)
 - [Codenation (Trilogy Innovations)](#codenation-trilogy-innovations)
-- [Zomato](#zomato)
+- [Deustche Bank](#deustche-bank)
+- [26 Miles Capital](#26-miles-capital)
 
 In addition to reading about the questions from here, please do search for the companies on Leetcode Discuss or Job Overflow. Sometimes people even post about OA questions in Codeforces blogs, so spending a bit of time searching for such questions (from past years or from different campuses) can help you gain an unexpected edge!
+
+PS. I have tried to add the solutions of the problems from the time that I had solved them to as many problems as possible, but they may not be necessarily correct. Please raise an issue [here](https://github.com/EshaanAgg/web/issues) if you find any mistakes, either in the solutions or in the content of the blog!
 
 ---
 
@@ -679,7 +682,7 @@ Constraints:
    }
    ```
 
-   You are required to answer $q$ queries, where in each query, you will be provided with values $l$ and $r$. For each query, determine what is the probability that the above code will fail to print "Found" when any value $i$ (where $l \leq i \leq $r$) is chosen?
+   You are required to answer $q$ queries, where in each query, you will be provided with values $l$ and $r$. For each query, determine what is the probability that the above code will fail to print "Found" when any value $i$ (where $l \leq i \leq r$) is chosen?
 
    Express this probability as an integer where the fraction is $\frac{P}{Q}$ and $gcd(P, Q) = 1$. You should compute $P * Q^{-1}$ modulo $10^9+7$, where $Q^{-1}$ is the modular inverse of $Q$ modulo $10^9+7$.
 
@@ -1054,65 +1057,164 @@ Constraints:
 
 ---
 
-# Zomato
+# Deustche Bank
 
-## Other Campuses Questions
+## Other Campus Questions
 
-1.  You are given the edges that form a tree with the root as $0$. A traversal of the tree is generated in the following manner:
+A lot of these questions have been mixed with questions that were asked in the internship season of 2024 for Deustche Bank!
 
-    - An empty queue $q$ is initialized and the node $0$ is pushed into it.
-    - While the queue is not empty, the front element is popped and all its children are pushed into the queue in any arbitary order.
-    - The popped element is added to the traversal.
+1.  You are given a binary string $s$ of length $n$. What is the largest prime number whose binary representation can be formed by deleting some digits from the string $s$? The length of the string $s$ is at most $20$.
 
-    You are given multiple traversals of the tree, and you need to find which of the traversals provided can be a valid BFS order traversal of the same.
+    <details>
+    <summary>Solution</summary>
 
-     <details>
-     <summary> Solution </summary>
+    Since the length of the string is at most $20$, we can generate all the prime numbers up to $2^{20} - 1$ and store their binary representations in a trie. Then, we can perform a DFS on the trie to find the largest prime number that can be formed as a subsequence of the given string, by greeding selecting the next bit from the string.
 
-    We can use the provided traversal to order the nodes of the tree in the particular order. We can then generate the BFS traversal of the tree and compare it with the provided traversal.
-
-    Time Complexity: $O(Q * N \log N)$
+    Time Complexity: $O(2^n + 2n)$
 
     ```cpp showLineNumbers
-    bool checkTraversal(int n, vector<set<int>> &g, vector<int> &traversal) {
-        if (traversal.size() != n)
-            return false;
+    class Node
+    {
+    public:
+        Node *ch[2];
+        int val;
 
-        vector<int> idx(n, -1);
-        for (int i = 0; i < n; i++)
-            idx[traversal[i]] = i;
-        for (int i = 0; i < n; i++)
-            if (idx[i] == -1)
-                return false;
+        Node()
+        {
+            ch[0] = ch[1] = NULL;
+            val = -1;
+        }
+    };
 
-        for (auto &ch: g) sort(ch.begin(), ch.end(), [&](int a, int b) { return idx[a] < idx[b]; });
+    class Trie
+    {
+    public:
+        Node *root;
 
-        queue<int> q;
-        q.push(0);
-        vector<int> tr;
-        while (!q.empty()) {
-            int u = q.front();
-            q.pop();
-            tr.push_back(u);
-            for (auto &v: g[u])
-                q.push(v);
+        Trie()
+        {
+            root = new Node();
         }
 
-        return tr == traversal;
+        void insert(int x)
+        {
+            int org = x;
+
+            string bits = "";
+            while (x)
+            {
+                bits += (x & 1) + '0';
+                x >>= 1;
+            }
+            reverse(bits.begin(), bits.end());
+
+            Node *cur = root;
+            for (char bit : bits)
+            {
+                if (cur->ch[bit - '0'] == NULL)
+                    cur->ch[bit - '0'] = new Node();
+                cur = cur->ch[bit - '0'];
+            }
+            cur->val = org;
+        }
+    };
+
+    void dfs(Node *cur, int idx, string &s, int &ans)
+    {
+        if (cur->val != -1)
+            ans = max(ans, cur->val);
+
+        int nextZeroIdx = -1, nextOneIdx = -1;
+        while (idx < s.size() && (nextZeroIdx == -1 || nextOneIdx == -1))
+        {
+            if (s[idx] == '0' && nextZeroIdx == -1)
+                nextZeroIdx = idx;
+            else if (s[idx] == '1' && nextOneIdx == -1)
+                nextOneIdx = idx;
+            idx++;
+        }
+
+        if (nextZeroIdx != -1 && cur->ch[0] != NULL)
+            dfs(cur->ch[0], nextZeroIdx + 1, s, ans);
+
+        if (nextOneIdx != -1 && cur->ch[1] != NULL)
+            dfs(cur->ch[1], nextOneIdx + 1, s, ans);
     }
 
-    vector<bool> show(vector<vector<int>> edges, vector<vector<int>> traversals) {
-        int n = edges.size() + 1;
+    int solve(string s)
+    {
+        int MAXN = 0;
 
-        vector<vector<int>> g(n);
-        for (auto &e : edges) {
-            g[e[0]].push_back(e[1]);
-            g[e[1]].push_back(e[0]);
+        int n = s.size();
+        for (int i = 0; i < n; i++)
+            if (s[i] == '1')
+                MAXN |= (1 << (n - 1 - i));
+
+        vector<int> isPrime(MAXN + 1, 1);
+        isPrime[0] = isPrime[1] = 0;
+        for (int i = 2; i * i <= MAXN; i++)
+            if (isPrime[i])
+                for (int j = i * i; j <= MAXN; j += i)
+                    isPrime[j] = 0;
+
+        Trie trie;
+        for (int i = 1; i <= MAXN; i++)
+            if (isPrime[i])
+                trie.insert(i);
+
+        int ans = -1;
+        dfs(trie.root, 0, s, ans);
+
+        return ans;
+    }
+    ```
+
+    On second thought, we have a simpler implementation available since $n$ is small. We can directly use bitmasks to generate all the subsequences of the provided string and check if the number formed by the same is prime or not. The complexity of this solution would be $O(2^n \cdot n + A \log \log A)$ where $A = 2^n$.
+
+    </details>
+
+2.  You are given a string $s$ of length $n$ containing only the characters $a$ and $b$. Find the lexographically smallest subsequence of $s$ of length $k$ with atleast $x$ $b$'s. Return an empty string if no such subsequence exits.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq k \leq n$
+    - $0 \leq x \leq n$
+
+     <details>
+     <summary>Solution</summary>
+
+    Take the $b$ characters from the end of the string as much as possible, and then take the $a$ characters from the beginning of the string as much as possible. There is some edge case handling required related to the count of the characters. The time complexity of the solution is $O(n)$.
+
+    ```cpp showLineNumbers
+    string solve(int s, int k, int x) {
+        int n = s.size();
+        if (k > n) return "";
+
+        int cntA = 0, cntB = 0;
+        for (int i = 0; i < n; i++) {
+            if (s[i] == 'a') cntA++;
+            else cntB++;
         }
 
-        vector<bool> ans;
-        for (auto &tr : traversals)
-            ans.push_back(checkTraversal(n, g, tr));
+        if (cntB < x) return "";
+
+        int useA = min(cntA, k - x);
+        int useB = k - useA;
+
+        vector<int> idx, AIdx, BIdx;
+        for (int i = 0; i < n; i++) {
+            if (s[i] == 'a') AIdx.push_back(i);
+            else BIdx.push_back(i);
+        }
+
+        for (int i = 0; i < useA; i++) idx.push_back(AIdx[i]);
+        reverse(BIdx.begin(), BIdx.end());
+        for (int i = 0; i < useB; i++) idx.push_back(BIdx[i]);
+
+        sort(idx.begin(), idx.end());
+        string ans = "";
+        for (int i : idx) ans += s[i];
 
         return ans;
     }
@@ -1120,128 +1222,1143 @@ Constraints:
 
      </details>
 
-2.  You are given an string $s$. You are also given two strings $t$ and $u$ which are both initially empty. You can perform either of the two operations in a tunr:
+3.  You are given a grid of size $n \times m$ containg some free cells (marked as `.`) and some blocked cells (marked as `#`). You take $1$ minute to travel from one cell to the other. You can only move horizontally or vertically. You are given the coordinates of the starting cell and the ending cell. Find the minimum time required to reach the ending cell from the starting cell.
 
-    - Append the first character of $s$ to the end of $t$.
-    - Append the last character of $t$ to the end of $u$.
+    Constraints:
 
-    You need to apply these operations such that all the end all the characters from $s$ are shifted to $u$, and the generated string $u$ is the lexicographically smallest possible. Return the lexicographically smallest string $u$ that can be generated.
+    - $1 \leq n, m \leq 10^3$
+    - $1 \leq x_1, y_1, x_2, y_2 \leq n$
 
-    <details>
-    <summary> Solution </summary>
+4.  A number is called beautiful if it atleast contains one bit as $0$, and atmost $3$ bits as $0$ in it's binary representation. Given multiple queries of the form $[l, r]$, find the sum of the cubes of all the beautiful numbers in the range $[l, r]$. Print the sum modulo $998244353$.
 
-    This question can be solved with the help of stack and using a greedy approach. In the stack, we try to maintain all the elements that we can processed till now (it acts like our string $t$). We greedily process the characters from $a$ to $z$, always travelling to their rightmost occurence and trying to add them to the string $u$. Before processing any character, we also check our stack to see it has some smaller character than the current one, and if it does, we pop it out and add it to the string $u$.
+    Constraints:
 
-    Time Complexity: $O(N)$ where $N$ is the length of the string $s$.
-
-    ```cpp showLineNumbers
-    string solve(string s)
-    {
-        int n = s.size();
-
-        vector<int> lastOccur(26, -1);
-        for (int i = 0; i < n; i++)
-            lastOccur[s[i] - 'a'] = i;
-
-        stack<char> st;
-        string ans = "";
-
-        int lastIdx = -1;
-        for (char cur = 'a'; cur <= 'z'; cur++)
-        {
-            if (lastOccur[cur - 'a'] == -1 || lastOccur[cur - 'a'] <= lastIdx)
-                continue;
-
-            while (!st.empty() && st.top() <= cur)
-            {
-                ans += st.top();
-                st.pop();
-            }
-
-            while (lastIdx < lastOccur[cur - 'a'])
-            {
-                lastIdx++;
-                if (s[lastIdx] == cur)
-                    ans += cur;
-                else
-                    st.push(s[lastIdx]);
-            }
-        }
-
-        while (!st.empty())
-        {
-            ans += st.top();
-            st.pop();
-        }
-
-        return ans;
-    }
-    ```
-
-    </details>
-
-3.  You are given a string $s$ that has lowercase English characters. You are also given an integer $n$. You need to generate a string $x$ of length $n$ such that:
-
-    - All of characters present in $s$ must be present in the string.
-    - We will then make a string of length $t$ by repeatedly adding the string $x$ to it untill the string $t$ can be re-arranged to have the string $s$ as a substring.
-    - The generated string $t$ should be of the minimum possible length. If there are multiple possible $t$ with the same length, it should be so that the generated string $t$ is lexicographically smallest.
-
-    Return the string $x$ that would generate the string $t$.
+    - $1 \leq l \leq r \leq 10^{18}$
+    - $1 \leq q \leq 2 \cdot 10^5$
 
     <details>
     <summary>Solution</summary>
 
-    It is clear that we need to minimse the number of copies of the string $x$ that we need to add to the string $t$. We can binary search on this value of copies needed, and then generate the string $x$ greedily by adding the minimum number of characters needed to fullfill condition $2$, and pad the rest of the spaces with the character $a$.
-
-    Time Complexity: $O(N + 26 \log N)$ where $N$ is the length of the string $s$.
+    We can use a simple brute force to generate all the possible beautiful numbers, and then use prefix sums and binary search to calculate the sum of the cubes of these numbers in any range. The time complexity of the solution is $O(60^4 + q \log N)$ where $N$ is the total number of beautiful numbers ($N \leq 10^5$).
 
     ```cpp showLineNumbers
-    bool canGenerate(int copies, int n, vector<int> &cnt)
+    int main()
     {
-        int total = 0;
-        for (int i = 0; i < 26; i++)
-            total += (cnt[i] + copies - 1) / copies;
-        return total <= n;
+        int MAX_BITS = 60;
+
+        set<long long> validNumbers;
+
+        for (int len = 1; len <= MAX_BITS; len++)
+        {
+            long long allSet = (1LL << len) - 1;
+
+            // The last bit is always set, thus the last variable is only upto len - 1
+            // 1 unset
+            for (int i = 0; i < len - 1; i++)
+                validNumbers.insert(allSet ^ (1LL << i));
+
+            // 2 unset
+            for (int i = 0; i < len; i++)
+                for (int j = i + 1; j < len - 1; j++)
+                    validNumbers.insert(allSet ^ (1LL << i) ^ (1LL << j));
+
+            // 3 unset
+            for (int i = 0; i < len; i++)
+                for (int j = i + 1; j < len; j++)
+                    for (int k = j + 1; k < len - 1; k++)
+                        validNumbers.insert(allSet ^ (1LL << i) ^ (1LL << j) ^ (1LL << k));
+        }
+
+        long long MOD = 998244353;
+
+        vector<long long> preSum, arr;
+        for (long long x : validNumbers)
+        {
+            arr.push_back(x);
+            x %= MOD;
+            x = (((x * x) % MOD) * x) % MOD;
+            long long last = preSum.empty() ? 0 : preSum.back();
+            preSum.push_back((last + x) % MOD);
+        }
+
+        int q;
+        cin >> q;
+
+        while (q--)
+        {
+            long long l, r;
+            cin >> l >> r;
+
+            int idxLow = lower_bound(arr.begin(), arr.end(), l) - arr.begin();
+            int idxUp = upper_bound(arr.begin(), arr.end(), r) - arr.begin() - 1;
+            long long ans = 0;
+            if (idxUp >= idxLow)
+            {
+                ans = preSum[idxUp];
+                if (idxLow > 0)
+                    ans = (ans - preSum[idxLow - 1] + MOD) % MOD;
+            }
+
+            cout << ans << endl;
+        }
+    }
+    ```
+
+    </details>
+
+    <details>
+    <summary>Extension</summary>
+
+    If the question revolved around finding the number of beautiful numbers in the range $[l, r]$, or just the sum of all the beautiful numbers in the range $[l, r]$, then we could have used a simple digit DP based approach to solve the problem (as addition is distributive over modulo operation). The time complexity of the solution would have been $O(Q \cdot (64 \cdot 4 \cdot 2 \cdot 2 \cdot 2)\cdot 2)$.
+
+    ```cpp showLineNumbers
+    long long MOD = 998244353;
+    using pll = pair<long long, long long>;
+
+    // idx: Current index
+    // cnt0: Number of 0's in the number
+    // eq: Whether the number is equal to the given number
+    // started: Whether the number has started (to avoid leading zeros)
+    pll countWithSum(int idx, int cnt0, bool eq, bool started, string &s, pll dp[][4][2][2])
+    {
+        if (idx == s.size())
+            return {cnt0 > 0, 0};
+
+        if (dp[idx][cnt0][eq][started].first != -1)
+            return dp[idx][cnt0][eq][started];
+
+        long long ways = 0, sum = 0;
+        int maxDigit = eq ? (s[idx] - '0') : 1;
+
+        for (int bit = 0; bit <= maxDigit; bit++)
+        {
+            bool newStarted = started || (bit == 1);
+            int newCnt0 = cnt0 + (newStarted && (bit == 0));
+            bool newEq = eq && (bit == maxDigit);
+
+            if (newCnt0 > 3)
+                continue;
+
+            auto [waysToAdd, sumToAdd] = countWithSum(idx + 1, newCnt0, newEq, newStarted, s, dp);
+            ways += waysToAdd;
+            ways %= MOD;
+
+            sum += sumToAdd;
+            if (bit == 1)
+                sum += waysToAdd * ((1LL << (s.size() - 1 - idx)) % MOD);
+            sum %= MOD;
+        }
+
+        return dp[idx][cnt0][eq][started] = {ways, sum};
     }
 
-    string generate(int n, string s)
+    string getBinary(long long x)
     {
-        vector<int> neededCnt(26, 0);
-        for (char ch : s)
-            neededCnt[ch - 'a']++;
-
-        int l = 0, r = s.size();
-        int minCopies = -1;
-        while (l <= r)
-        {
-            int mid = (l + r) / 2;
-            if (canGenerate(mid, n, neededCnt))
-            {
-                minCopies = mid;
-                r = mid - 1;
-            }
-            else
-                l = mid + 1;
-        }
-
-        if (minCopies == -1)
-            return "";
-
-        int usedSpaces = 0;
-        vector<int> usedCnt(26, 0);
-        for (int i = 0; i < 26; i++)
-        {
-            usedCnt[i] = (neededCnt[i] + minCopies - 1) / minCopies;
-            usedSpaces += usedCnt[i];
-        }
-        usedCnt[0] += n - usedSpaces;
-
         string ans = "";
-        for (int i = 0; i < 26; i++)
-            ans += string(usedCnt[i], 'a' + i);
+        while (x)
+        {
+            ans += (x & 1) + '0';
+            x >>= 1;
+        }
+        reverse(ans.begin(), ans.end());
+        return ans;
+    }
+
+    long long getSum(string s)
+    {
+        int n = s.size();
+        pll dp[n][4][2][2];
+        memset(dp, -1, sizeof(dp));
+
+        auto [ways, sum] = countWithSum(0, 0, 1, 0, s, dp);
+        return sum;
+    }
+
+    vector<int> countBeautifulNumbers(vector<pll> queries)
+    {
+        vector<int> ans;
+
+        for (auto [l, r] : queries)
+        {
+            string L = getBinary(l - 1);
+            string R = getBinary(r);
+
+            long long cntL = getSum(L);
+            long long cntR = getSum(R);
+
+            ans.push_back((cntR - cntL + MOD) % MOD);
+        }
 
         return ans;
     }
     ```
 
     </details>
+
+5.  You are given a tree with $n$ vertices, and each vertice has a colour as $0$ or $1$. For a node, we define the beauty of the vertex as the number of paths in the subtree of the node that have different colours of the ending points. Find the beauty of each node in the tree when the tree is rooted at vertex $1$.
+
+    <details>
+    <summary>Solution</summary>
+
+    We can perform a simple DFS to calculate the number of nodes with colour $0$ and colour $1$ in the subtree of each node. The beauty of a node is then the product of the number of nodes with colour $0$ and colour $1$ in the subtree of the node. The time complexity of the solution is $O(n)$.
+
+    ```cpp showLineNumbers
+    vector<int> getBeauty(int n, string col, vector<vector<int>> &edges)
+    {
+        vector<vector<int>> g(n);
+        for (auto &e : edges)
+        {
+            e[0]--, e[1]--;
+            g[e[0]].push_back(e[1]);
+            g[e[1]].push_back(e[0]);
+        }
+
+        vector<vector<int>> subCnt(n, vector<int>(2));
+
+        function<void(int, int)> dfs = [&](int u, int p) -> void
+        {
+            subCnt[u][col[u] - '0'] = 1;
+
+            for (int v : g[u])
+            {
+                if (v == p)
+                    continue;
+                dfs(v, u);
+                subCnt[u][0] += subCnt[v][0];
+                subCnt[u][1] += subCnt[v][1];
+            }
+        };
+
+        dfs(0, -1);
+
+        vector<int> ans(n);
+        for (int i = 0; i < n; i++)
+            ans[i] = subCnt[i][0] * subCnt[i][1];
+        return ans;
+    }
+    ```
+
+    </details>
+
+6.  Given a sequence of $n$ integers $(a_1, a_2, \ldots, a_n)$, you need to perform the following operation and return the obtained result.
+
+    - For a given integer $x$, calculate the value of the expression $min_{i = 1}^{j = n - x + 1} (fun(a_i, a_{i + 1}, \ldots, a_{i + x -1}))$, where $fun(a_i, a_{i + 1}, \ldots, a_{i + x -1})$ is the rightmost number with the highest number of distinct prime factors in the sequence $(a_i, a_{i + 1}, \ldots, a_{i + x -1})$.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^6$
+    - $1 \leq x \leq n$
+    - $0 \leq a_i \leq 10^6$
+
+    <details>
+    <summary>Solution</summary>
+
+    We can use the Sieve of Eratosthenes to compute the number of distinct prime factors of each number in the sequence. Then, we can use a sliding window of size $x$ and a priority queue to find the rightmost number with the highest number of distinct prime factors in the window. The priority queue would store the number of divisors of the element as well as it's index. The time complexity of the solution is $O(A \log A + n \log x)$ where $A$ is the maximum value of $a_i$.
+
+    ```cpp showLineNumbers
+    int getCntPrime(int n, vector<int> &spf)
+    {
+        int cnt = 0;
+        while (n > 1)
+        {
+            int p = spf[n];
+            cnt++;
+            while (n % p == 0)
+                n /= p;
+        }
+
+        return cnt;
+    }
+
+    int getValue(vector<int> &arr, int x)
+    {
+        int mx = 0, n = arr.size();
+        for (int i = 0; i < n; i++)
+            mx = max(mx, arr[i]);
+
+        vector<int> spf(mx + 1);
+        for (int i = 0; i <= mx; i++)
+            spf[i] = i;
+
+        for (int i = 2; i <= mx; i++)
+            if (spf[i] == i)
+                for (int j = i * i; j <= mx; j += i)
+                    if (spf[j] == j)
+                        spf[j] = i;
+
+        int ans = 1e9;
+        priority_queue<pair<int, int>> pq;
+
+        for (int i = 0; i < x - 1; i++)
+            pq.push({getCntPrime(arr[i], spf), i});
+
+        for (int i = x - 1; i < n; i++)
+        {
+            pq.push({getCntPrime(arr[i], spf), i});
+
+            while (pq.top().second <= i - x)
+                pq.pop();
+            ans = min(ans, arr[pq.top().second]);
+        }
+
+        return ans;
+    }
+    ```
+
+    </details>
+
+7.  A function $S(x)$ is defined as the sum of all the divisors for the number $x$. The function $F(x)$ is defined as the sum of $S(y)$ for all the divisors $y$ of $x$. Given two numbers $l$ and $r$, find the sum of $F(x)$ for all the numbers in the range $[l, r]$ modulo $998244353$.
+
+    Constraints:
+
+    - $1 \leq l \leq r \leq 10^6$
+
+    <details>
+    <summary>Solution</summary>
+
+    We can use a simple sieve like approach to calculate the sum of divisors of all the numbers in the range $[1, r]$. Then, we can again apply this sieve like approach to the sum of divisors to calculate the sum of $F(x)$ for all the numbers in the range $[1, r]$. The time complexity of the solution is $O(r \log r)$.
+
+    ```cpp showLineNumbers
+    long long MOD = 998244353;
+
+    long long getSum(int l, int r)
+    {
+        vector<long long> sumDiv(r + 1, 0);
+        for (int i = 1; i <= r; i++) {
+            for (int j = i; j <= r; j += i) {
+                sumDiv[j] += i;
+            }
+        }
+
+        vector<long long> sumF(r + 1, 0);
+        for (int i = 1; i <= r; i++) {
+            for (int j = i; j <= r; j += i) {
+                sumF[j] += sumDiv[i];
+            }
+        }
+
+        long long ans = 0;
+        for (int i = l; i <= r; i++) {
+            ans += sumF[i];
+            ans %= MOD;
+        }
+
+        return ans;
+    }
+    ```
+
+    This approach can easily be extended with precomputation to calculate the sum of $F(x)$ for all the numbers in the range $[l, r]$ in $O(1)$ time for multiple queries.
+    </details>
+
+8.  Given an array of size $N$ containing integers, find the minimum possible sum of that can be formed be adding the elements in the array. You can perform the following operation at most once:
+
+    - Select an index. If the sum of all the elements in the array up to the selected index is a multiple of the element present at the index. divide the sum up to the selected index by the element present at the index.
+    - After dividing, you do not have to add this element to the resultant sum.
+    - After this operation is performed, you will have to add the remaining elements to the resultant sum.
+    - Note that the chosen index is excluded from the prefix sum and the suffix sum. If the chosen index is $0$, then it should be included in the prefix sum.
+
+    Constraints:
+
+    - $1 \leq N \leq 10^6$
+    - $1 \leq A_i \leq 10^6$
+
+    <details>
+    <summary>Solution</summary>
+
+    We can use a prefix sum and a suffix sum to calculate the sum of all the elements in the array. Then, we can iterate over all the elements in the array and calculate the sum of all the elements in the array excluding the current element. The time complexity of the solution is $O(N)$.
+
+    ```cpp showLineNumbers
+    long long solve(vector<int> &arr) {
+        int n = arr.size();
+
+        vector<long long> prefix(n), suffix(n);
+        prefix[0] = arr[0];
+        for (int i = 1; i < n; i++) {
+            prefix[i] = prefix[i - 1] + arr[i];
+        }
+        suffix[n - 1] = arr[n - 1];
+        for (int i = n - 2; i >= 0; i--) {
+            suffix[i] = suffix[i + 1] + arr[i];
+        }
+
+        long long ans = prefix[n - 1];
+
+        for (int i = 0; i < n; i++) {
+            long long pre = i == 0 ? 0 : prefix[i - 1];
+            long long suf = i == n - 1 ? 0 : suffix[i + 1];
+
+            if (pre % arr[i] == 0) {
+                ans = min(ans, pre / arr[i] + suf);
+            }
+        }
+
+        return ans;
+    }
+    ```
+
+    </details>
+
+9.  Given an integer array $arr$ of integers of length $n$, find the largest possible value $x$ such that atleast $k$ elements of the array are divisible by the same.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq k \leq n$
+    - $1 \leq arr[i] \leq 10^6$
+
+    <details>
+    <summary>Solution</summary>
+
+    We can precompute all the divisors of all the numbers upto $10^6$ using the Sieve of Eratosthenes. Then, we can iterate over all the divisors of any number in the array, and check if it a valid divisor satifying the condition. Since a number till $10^6$ can have atmost $128$ divisors, this solution would work in $O(n \cdot 128 + A \log A)$ time where $A$ is $10^6$ for precomputation. We would need careful handling of the case when the numbers are $0$, and a streamlined implementation to avoid TLE in a $1$ second time limit.
+
+    ```cpp showLineNumbers
+    void precomputeDivisors(int n, vector<vector<int>> &divisors)
+    {
+        divisors.resize(n + 1);
+        for (int i = 1; i <= n; i++)
+            for (int j = i; j <= n; j += i)
+                divisors[j].push_back(i);
+    }
+
+    int main()
+    {
+        const int MAXA = 1e6 + 10;
+        vector<vector<int>> divisors;
+        precomputeDivisors(MAXA, divisors);
+
+        vector<int> cnt(MAXA, 0);
+
+        function<void()> solve = [&]() -> void
+        {
+            int n, k;
+            cin >> n >> k;
+            vector<int> arr;
+            int cntZero = 0;
+
+            for (int i = 0; i < n; i++)
+            {
+                int x;
+                cin >> x;
+                arr.push_back(x);
+                if (x == 0) cntZero++;
+            }
+
+            if (cntZero >= k)
+            {
+                cout << "1000000000\n";
+                return;
+            }
+
+            int maxEle = -1;
+            for (int ele : arr)
+                for (int div : divisors[ele])
+                {
+                    cnt[div]++;
+                    if (cnt[div] >= k - cnt[0])
+                        maxEle = max(maxEle, div);
+                }
+
+            cout << maxEle << "\n";
+
+            for (int ele : arr)
+                for (int div : divisors[ele])
+                    cnt[div]--;
+        };
+
+        int t;
+        cin >> t;
+
+        while (t--)
+            solve();
+    }
+    ```
+
+    </details>
+
+10. You are given two integer arrays $A$ and $B$ of length $n$ consisiting of non-negative integers. You have to select $K$ numbers from $B$, and then take the bitwise OR of all the elements of $A$ one at a time with each of the selected elements. The score of this operation is the sum of the $n \cdot K$ bitwise OR operations. Find the minimum value of $K$ such that a score of atleast $M$ can be achieved.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq M \leq 10^9$
+    - $0 \leq A[i], B[i] \leq 10^9$
+
+11. [Increasing Frequency](https://codeforces.com/contest/1082/problem/E)
+
+    <details>
+    <summary> Solution </summary>
+
+    ```cpp
+    int maxSubarraySum(vi &arr)
+    {
+        int n = arr.size();
+        int maxSum = 0, sum = 0;
+
+        for (int i = 0; i < n; i++)
+        {
+            sum = max(arr[i], sum + arr[i]);
+            maxSum = max(maxSum, sum);
+        }
+
+        return maxSum;
+
+    }
+
+    void solution()
+    {
+    int n, c;
+    cin >> n >> c;
+
+        vi arr(n);
+        unordered_map<int, vi> idx;
+        range(i, 0, n)
+        {
+            cin >> arr[i];
+            idx[arr[i]].pb(i);
+        }
+
+        vi freC(n);
+        freC[0] = arr[0] == c;
+        range(i, 1, n)
+            freC[i] = freC[i - 1] + (arr[i] == c);
+
+        int ans = freC[n - 1];
+        for (auto &[ele, id] : idx)
+        {
+            if (ele == c)
+                continue;
+            vector<int> arr;
+            arr.pb(1);
+            for (int i = 1; i < id.size(); i++)
+            {
+                int l = id[i - 1], r = id[i];
+                arr.push_back(-(freC[r] - freC[l]));
+                arr.push_back(1);
+            }
+            ans = max(ans, freC.back() + maxSubarraySum(arr));
+        }
+
+        cout << ans << endl;
+
+    }
+
+    ```
+
+    </details>
+
+12. You are given three arrays $l$, $r$ and $a$, which represents that the $i^{th}$ client was making $a[i]$ requests to the server per second for the duration $[l[i], r[i]]$. Find the minimum requests per second that this server should be able to handle to serve all the requests.
+
+    <details>
+    <summary>Solution</summary>
+
+    We can use a line sweep algorithm to solve this problem. We can iterate over all the requests and add the requests to the server at the start time of the request, and remove the requests from the server at the end time of the request. We can then iterate over all the times and calculate the number of requests that the server should be able to handle at that time. The time complexity of the solution is $O(n \log n)$.
+
+    ```cpp showLineNumbers
+
+    long long solve(vector<int> a, vector<int> l, vector<int> r)
+    {
+        using pll = pair<long long, long long>;
+        priority_queue<pll, vector<pll>, greater<pll>> pq;
+
+        for (int i = 0; i < a.size(); i++)
+        {
+            pq.push({l[i], a[i]});
+            pq.push({r[i] + 1, -a[i]});
+        }
+
+        long long curLoad = 0, maxLoad = 0;
+
+        while (!pq.empty())
+        {
+            auto [_, load] = pq.top();
+            pq.pop();
+
+            curLoad += load;
+            maxLoad = max(maxLoad, curLoad);
+        }
+
+        return maxLoad;
+    }
+    ```
+
+    </details>
+
+13. You are given the initial positions of Alice and Bob as $(x_1, y_1)$ and $(x_2, y_2)$. You are also given $n$ apples at the positions $(x_i, y_i)$. Alice and Bob need to collect all of the apples in the order they are given. The distance between the two points is the Manhattan distance. Find the minimum distance that Alice and Bob need to travel to collect all the apples.
+
+    Constraints:
+
+    - $1 \leq n \leq 2000$
+    - $1 \leq x_i, y_i \leq 10^9$
+
+    <details>
+    <summary> Solution </summary>
+
+    We can use a simple Djikstra to solve this question where the state is represented as $(i, j)$, where $i$ is the index of the apple that Alice is currently at, and $j$ is the index of the apple that Bob is currently at. The time complexity of the solution is $O(n^2 \log n)$.
+
+    ```cpp showLineNumbers
+    long long getDis(pair<int, int> a, pair<int, int> b)
+    {
+        return abs(a.first - b.first) + abs(a.second - b.second);
+    }
+
+    void solve()
+    {
+        int n;
+        cin >> n;
+
+        int x1, y1, x2, y2;
+        cin >> x1 >> y1 >> x2 >> y2;
+
+        vector<pair<int, int>> apples;
+        apples.push_back({x1, y1});
+        apples.push_back({x2, y2});
+
+        for (int i = 0; i < n; i++)
+        {
+            int x, y;
+            cin >> x >> y;
+            apples.push_back({x, y});
+        }
+
+        int m = apples.size();
+
+        vector<vector<long long>> dis(m, vector<long long>(m, 1e18));
+        priority_queue<vector<long long>, vector<vector<long long>>, greater<vector<long long>>> pq;
+
+        dis[0][1] = 0;
+        pq.push({0, 0, 1});
+
+        while (!pq.empty())
+        {
+            auto t = pq.top();
+            pq.pop();
+
+            int idx1 = t[1], idx2 = t[2];
+            long long d = t[0];
+            if (dis[idx1][idx2] != d)
+                continue;
+
+            if (idx1 == m - 1 || idx2 == m - 1)
+            {
+                cout << d << endl;
+                return;
+            }
+
+            int next = max(idx1, idx2) + 1;
+            // Move idx1
+            if (dis[next][idx2] > d + getDis(apples[idx1], apples[next]))
+            {
+                dis[next][idx2] = d + getDis(apples[idx1], apples[next]);
+                pq.push({dis[next][idx2], next, idx2});
+            }
+
+            // Move idx2
+            if (dis[idx1][next] > d + getDis(apples[idx2], apples[next]))
+            {
+                dis[idx1][next] = d + getDis(apples[idx2], apples[next]);
+                pq.push({dis[idx1][next], idx1, next});
+            }
+        }
+
+        cout << -1 << endl;
+    }
+
+    int main()
+    {
+        int TEST_CASES;
+        cin >> TEST_CASES;
+        while (TEST_CASES--)
+            solve();
+        return 0;
+    }
+    ```
+
+    </details>
+
+14. Count the number of $k$ periodic subsequences of a string $s$ of length $n$.
+
+    - A string is $k$ periodic if $x_{i} = x_{i + k}$ for all valid indexes $i$ in the string.
+    - An empty string is also $k$ periodic.
+
+    Constraints:
+
+    - $1 \leq n \leq 20$
+    - $1 \leq k \leq 20$
+
+    <details>
+    <summary>Solution</summary>
+
+    Since the value of $n$ is small, we can just generate all the subsequences and check if it is $k$ periodic. The time complexity of the solution is $O(2^n \cdot k)$.
+
+    ```cpp
+    int solve(string s, int k) {
+        int ans = 0;
+        int n = s.size();
+
+        for (int i = 0; i < (1 << n); i++) {
+            vector<int> idx;
+
+            for (int j = 0; j < n; j++)
+                if ((i >> j) & 1)
+                    idx.push_back(j);
+
+            bool valid = 1;
+
+            for (int j = 0; j < min((int) idx.size(), k); j++) {
+                for (int nxt = j + k; nxt < idx.size(); nxt += k) {
+                    if (s[idx[j]] != s[idx[nxt]]) {
+                        valid = 0;
+                        break;
+                    }
+                }
+            }
+
+            ans += valid;
+        }
+
+        return ans;
+    }
+    ```
+
+    </details>
+
+15. Given an undirected tree with $N$ nodes such that there exists a path between any two nodes. For the $i^{th}$ node, a positive integer value $A[i]$ is associated with it. You also have a special positive integer $K$ and you may perform the following operation zero or more times on the given tree: Choose an edge and update the value of the nodes connected with that edge with bitwise XOR of its current value and $K$. Formally, $A[i] = (A[i] \oplus K)$ for all $i$ connected to the chosen edge. Find the maximum value of $sum_{i=1}^{i=N} A[i]$ if you can perform the above operations any number of times.
+
+    <details>
+    <summary>Solution</summary>
+
+    It can be realized that the structure of the tree does not matter, and the only effective constraint that we have is that we can take the XOR of the nodes with $K$ in pairs only (you can do so by applying the operation on all the edges in the path between the two chosen nodes). Thus, we can use a simple greedy approach to solve this problem. The time complexity of the solution is $O(N \log N)$ due to sorting.
+
+    ```cpp showLineNumbers
+
+    int solve(vector<int> arr, vector<vector<int>> edges, int k)
+    {
+        vector<int> incr;
+        int sum = 0, n = arr.size();
+
+        for (int i = 0; i < arr.size(); i++)
+        {
+            sum += arr[i];
+            incr.push_back((arr[i] ^ k) - arr[i]);
+        }
+
+        sort(incr.begin(), incr.end(), greater<int>());
+
+        for (int i = 0; i + 1 < n; i += 2)
+        {
+            if (incr[i] > 0 && incr[i + 1] > 0)
+            {
+                sum += incr[i] + incr[i + 1];
+                continue;
+            }
+
+            if (incr[i] > 0 && incr[i + 1] <= 0)
+            {
+                if (incr[i] + incr[i + 1] > 0)
+                    sum += incr[i] + incr[i + 1];
+            }
+            break;
+        }
+
+        return sum;
+    }
+    ```
+
+    </details>
+
+16. You are given an array $arr$ of $n$ elements. For each index $i$, find the length of the smallest subarray starting at the index $i$ and having a non-negative sum. If there is no such subarray for an index, set the answer as $0$ for that index.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $-10^9 \leq arr[i] \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+    We will use a stack to solve this problem. We will iterate over the array from left to right and maintain a stack of indices that have not found a valid subarray for them. Whenever we get an element, if it is non-negative we can set it's answer as $1$ directly and try to pop the elements from the stack that be paired with the current index. If we get a negative element, we will push the index to the stack always.
+
+    We will maintain prefix sums to do this computation in constant time for each index. The time complexity of the solution is $O(n)$.
+
+    ```cpp showLineNumbers
+    vector<int> solve(vector<int> &arr)
+    {
+        int n = arr.size();
+
+        vector<long long> pre(n);
+        pre[0] = arr[0];
+        for (int i = 1; i < n; i++)
+            pre[i] = pre[i - 1] + arr[i];
+
+        vector<int> ans(n);
+        stack<int> st;
+
+        for (int i = 0; i < n; i++)
+        {
+            if (arr[i] < 0)
+                st.push(i);
+            else
+            {
+                ans[i] = 1;
+                while (!st.empty() && pre[i] - (st.top() == 0 ? 0 : pre[st.top() - 1]) >= 0)
+                {
+                    ans[st.top()] = i - st.top() + 1;
+                    st.pop();
+                }
+            }
+        }
+
+        return ans;
+    }
+    ```
+
+    </details>
+
+17. [Count Increasing Quadruples](https://leetcode.com/problems/count-increasing-quadruplets/description/)
+
+    <details>
+    <summary>Solution</summary>
+
+    In such questions, often the trick is to fix the middle elements. Thus we will brute force over the pairs of $(j, k)$ and then find the number of elements less than $arr[k]$ and greater than $arr[j]$ in the range $[0, j - 1]$ and $[k + 1, n - 1]$ respectively. Counting the number of elements less than or a greater than a particular number in a range is typically done with a merge sort tree, but since here the elements are given to be in the range $[1, n]$, we can use simple precomputation to solve the problem. The time complexity of the solution is $O(n^2)$.
+
+    ```cpp showLineNumbers
+    class Solution
+    {
+    public:
+        long long countQuadruplets(vector<int> &arr)
+        {
+            int n = arr.size();
+
+            vector<vector<int>> left(n, vector<int>(n + 1, 0));
+            // left[i][j] = Count of numbers <= j till index i
+            for (int j = arr[0]; j <= n; j++)
+                left[0][j] = 1;
+            for (int i = 1; i < n; i++)
+                for (int j = 0; j <= n; j++)
+                    left[i][j] = left[i - 1][j] + (arr[i] <= j);
+
+            vector<vector<int>> right(n, vector<int>(n + 1, 0));
+            // right[i][j] = Count of numbers >= j from index [i, n-1]
+            for (int j = 0; j <= arr[n - 1]; j++)
+                right[n - 1][j] = 1;
+            for (int i = n - 2; i >= 0; i--)
+                for (int j = 0; j <= n; j++)
+                    right[i][j] = right[i + 1][j] + (arr[i] >= j);
+
+            long long ans = 0;
+            for (int j = 1; j < n - 2; j++)
+                for (int k = j + 1; k < n - 1; k++)
+                {
+                    if (arr[k] >= arr[j])
+                        continue;
+                    long long l = left[j - 1][arr[k] - 1];
+                    long long r = arr[j] == n ? 0 : right[k + 1][arr[j] + 1];
+
+                    ans += l * r;
+                }
+
+            return ans;
+        }
+    };
+    ```
+
+    </details>
+
+18. You are given a directed tree of $n$ nodes in the form of an array $arr$ such that there is an edge from the node $arr[i]$ to the node $i + 1$ for $1 \leq i < n$. In one operation you can break any edge of this tree, and thus divide the same into two subtrees. Apply this operation repeatedly so that each of the final subtrees is a directed chain, and the total sum of the squares of length of each directed chain is maximized. Return the maximum possible sum of the squares of the lengths of the directed chains. It is gaurenteed that all the nodes are reachable from the root node $1$.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+
+    <details> 
+    <summary>Solution</summary>
+
+    It is clear that we should follow a greedy approach where we try to maximise the length of each of the chains. Since the chains are directed, we will intially take the longest paths from the root node to the leaves, and then try to maximise the length of the chains on the other edges. Refer to the following code for the implementation. The time complexity of the solution is $O(n)$.
+
+    ```cpp showLineNumbers
+    // Returns the maximum depth in the subtree
+    // and the rest of the child paths to the paths vector
+    int dfs(int u, vector<vector<int>> &g, vector<int> &paths)
+    {
+        if (g[u].empty())
+            return 1;
+
+        vector<int> allDepths;
+        for (int v : g[u])
+            allDepths.push_back(dfs(v, g, paths));
+
+        sort(allDepths.begin(), allDepths.end(), greater<int>());
+        for (int i = 1; i < allDepths.size(); i++)
+            paths.push_back(allDepths[i]);
+
+        return 1 + allDepths[0];
+    }
+
+    int solve(int n, vector<int> &arr)
+    {
+        vector<vector<int>> g(n);
+
+        for (int i = 0; i < n - 1; i++)
+            g[arr[i] - 1].push_back(i + 1);
+
+        vector<int> paths;
+        paths.push_back(dfs(0, g, paths));
+
+        int ans = 0;
+        for (int i = 0; i < paths.size(); i++)
+            ans += paths[i] * paths[i];
+        return ans;
+    }
+    ```
+
+    </details>
+
+19. There is an empty container. You want to support 2 types of queries:
+
+    1.  `1 V X`: Insert an element in the container with value $V$ and weight $X$.
+    2.  `2 V 0`: Let $n$ be the number of bits in the binary representation of $V$. Consider all the elements in the container till now. You need to count the number of elements which when divided by $2^i$ have a remainder of $V$, and also return the sum of the weights of these elements.
+
+    Constraints:
+
+    - $1 \leq 1 \leq 2 \cdot 10^5$
+    - If the query is of type $1$, then $1 \leq V, X \leq 10^9$
+    - If the query is of type $2$, then $1 \leq V \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+    Since a number upto $10^9$ can have atmost $30$ bits, we can maintain the count of different modulo values and the sum of powers for each possible length of the binary representation of the number. We can use a map to store the count of different modulo values and the sum of weights for each length of the binary representation of the number. The time complexity of the solution is $O(30 \cdot Q)$.
+
+    ```cpp showLineNumbers
+    vector<pair<int, long long>> solve(vector<vector<int>> queries)
+    {
+        int MAX_BITS = 31;
+        vector<unordered_map<int, long long>> powerSum(MAX_BITS), cnt(MAX_BITS);
+
+        vector<pair<int, long long>> ans;
+        for (auto q : queries)
+        {
+            if (q[0] == 1)
+            {
+                int v = q[1], x = q[2];
+                for (int i = 0; i < MAX_BITS; i++)
+                {
+                    int mask = (1 << (i + 1)) - 1;
+                    powerSum[i][v & mask] += x;
+                    cnt[i][v & mask]++;
+                }
+            }
+            else
+            {
+                int v = q[1], v2 = q[1];
+
+                int bitCnt = 0;
+                while (v2)
+                {
+                    bitCnt++;
+                    v2 >>= 1;
+                }
+
+                ans.push_back({cnt[bitCnt - 1][v], powerSum[bitCnt - 1][v]});
+            }
+        }
+
+        return ans;
+    }
+    ```
+
+    </details>
+
+20. You are given two binary strings $S$ and $Q$ of length $n$ consisting of only $0$ and $1$. Consider a non-empty substring $S_1$ of $S$ and a non-empty substring $Q_1$ of $Q$ of the same length. Let $X$ be the string obtained as the XOR of $S_1$ and $Q_1$.
+
+    The score of these two strings is defined as $floor(\frac{len(X)}{2^{X_{10}}})$ where $X_{10}$ is the decimal representation of $X$ and $len(X)$ is the length of the string $X$.
+
+    Find the maximum possible score that can be obtained by choosing the strings $S_1$ and $Q_1$.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^3$
+
+    <details>
+    <summary>Solution</summary>
+
+    The key observation is that since the score is defined as $floor(\frac{len(X)}{2^{X_{10}}})$, the numerator of the fraction can be at max $3000$. To have a non-zero score, the value of $2^{X_{10}}$ must be less than or equal to $3000$, then the value of $X_{10}$ must be less than or equal to $11$. Thus, we can be sure that the binary representation of $X$ will have at most $4$ bits (without non-leading zeroes). To compute the number of leading zeroes in the number at every position, we can use a simple precomputation. The time complexity of the solution is $O(n^2)$.
+
+    ```cpp showLineNumbers
+    int solve(string &s, string &t)
+    {
+        int n = s.size();
+
+        // The max common substring of s and t ending at s[i] and t[j]
+        // 1 indexed
+        vector<vector<int>> maxPre(n + 1, vector<int>(n + 1, 0));
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= n; j++)
+            {
+                if (s[i - 1] == t[j - 1])
+                    maxPre[i][j] = maxPre[i - 1][j - 1] + 1;
+                else
+                    maxPre[i][j] = 0;
+            }
+
+        int maxScore = 0;
+        for (int lenSub = 1; lenSub <= 4; lenSub++)
+        {
+            for (int i = 0; i < n - lenSub; i++)
+                int a = stoi(s.substr(i, lenSub));
+
+                for (int j = 0; j < n - lenSub; j++)
+                {
+                    int b = stoi(t.substr(j, lenSub));
+                    int len = lenSub + maxPre[i][j];
+                    int score = len / (1 << (a ^ b));
+                    maxScore = max(maxScore, score);
+                }
+        }
+
+        return maxScore;
+    }
+    ```
+
+    </summary>
+
+## Online Assessment Questions
+
+1. You are given a string $s$ and an $arr$ of integers, both of length $n$. You can swap indexes $i$ and $j$ of the string $s$ if $arr[i] = arr[j]$. Find the lexographically smallest string $s$ you can obtain after performing some (possible zero) swaps.
+
+   - $1 \leq n \leq 10^5$
+
+2. There are $n$ types of objects, and each has a cost denoted by $arr[n]$. In some operations, you can either:
+
+   - Choose an index $i$, pay $arr[i]$ and get $1$ object of type $i$.
+   - Pay cost $x$, and transform all the objects of type $i$ to type $i + 1$. The object of type $n$ is converted to type $1$. The cost of the objects is only related to their index and not their type.
+
+   Find the minimum cost to get $1$ object of each type.
+
+   - $1 \leq n \leq 10^3$
+   - $1 \leq arr[i] \leq 10^9$
+   - $1 \leq x \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+   Suppose that you perform the second operation $k$ times. Then you would need to add the fixed cost $k \cdot x$ to the total cost. After that, for each object of type $i$, you would be able to buy it in the minimum of the cost in the range $arr[i]$ to $arr[i + k]$. Thus loop over the number of times you perform the second operation and find the minimum cost using sliding windows for each object of type $i$. If you use a set with the sliding window, the complexity is $O(n^2 \log n)$ which passed comfortably.
+
+   </details>
+
+3. You are given an array of strings $arr$. A permuation of the $arr$ is called valid if for any two strings in the array that have a common prefix, all the strings between them also have atleast that common prefix. For example, the ordering `[a, aa, aab]` and `[a, aab, aa]` are both valid, but `[hi, ho, hi]` is not. Find the number of valid permutations of the array.
+
+   - $1 \leq n \leq 10^3$
+   - $1 \leq arr[i].size() \leq 10^3$
+
+   - Example: For the array `["a", "aa", "aaa", "aaaa"]`, the answer is $8$.
+   - Example 2: For the array `["ivo", "ja", "jo"]`, the answer is $4$.
+
+   <details>
+   <summary>Solution</summary>
+
+   This question can be solved with the help of a trie. Each prefix of a word denotes a split point, where all the next nodes can be arranged in any specific order. We would also need to add an extra dummy character to denote the end of the word. In the OA, when using pointers to allocate the memory for nodes of the trie, a `MLE` verdict was given. Thus, we need to use a vector of nodes to store the trie nodes. The time complexity of the solution is $O(n \cdot m)$ where $m$ is the maximum length of the string.
+
+   ```cpp showLineNumbers
+   long long mod = 1e9 + 7;
+   vector<long long> fac;
+
+   class Node
+   {
+   public:
+       vector<int> ch;
+
+       Node() : ch(vector<int>(27, -1)) {}
+   };
+
+   class Trie
+   {
+       vector<Node> nodes;
+
+   public:
+       Trie()
+       {
+           nodes.clear();
+           nodes.emplace_back(Node());
+       }
+
+       void insert(string &s)
+       {
+           s += 'z' + 1;
+           int cur = 0;
+           for (char ch : s)
+           {
+               int childIdx = ch - 'a';
+               if (nodes[cur].ch[childIdx] == -1)
+               {
+                   nodes[cur].ch[childIdx] = nodes.size();
+                   nodes.emplace_back(Node());
+               }
+               cur = nodes[cur].ch[childIdx];
+           }
+       }
+
+       long long dfs(int nodeIdx)
+       {
+           long long ans = 1;
+           int cnt = 0;
+
+           for (int i = 0; i < 27; i++)
+           {
+               if (nodes[nodeIdx].ch[i] == -1)
+                   continue;
+               cnt++;
+               ans *= dfs(nodes[nodeIdx].ch[i]);
+               ans %= mod;
+           }
+
+           ans *= fac[cnt];
+           ans %= mod;
+
+           return ans;
+       }
+   };
+
+   int solve(vector<string> &words)
+   {
+       fac.resize(30);
+       fac[0] = 1;
+       for (int i = 1; i < 30; i++)
+           fac[i] = (fac[i - 1] * i) % mod;
+
+       Trie trie;
+       for (string &s : words)
+           trie.insert(s);
+
+       return trie.dfs(0);
+   }
+   ```
+
+    </details>
+
+# 26 Miles Capital
+
+There were $20$ questions in the test, which had to be solved in $60$ minutes. Out of the same, $2$ were coding questions which were different for each candidate. The rest of the questions were MCQs from the topics of finance, probablity, data interpretation, and logical reasoning. The MCQs were also shuffled between the candidates.
+
+## Coding Questions
+
+1. Find all the distinct palindromic substrings of the given string $s$. The length of $s$ is upto $5 \cdot 10^3$.
+
+   <details>
+   <summary>Solution</summary>
+
+   You can fix the center of the palindrome, and then iterate creating odd and even length palindromes from that center. The time complexity of the solution is $O(n^2)$. To find the unique palindromes, you can use rolling hash to convert all the substrings to a number in constant time and push them to a set, thus adding an additonal $O(\log n)$ factor to the runtime. As luck would have it, the test cases of the questions were weak, and a $O(n^3)$ solution where I generated the substring between the two indexes and then pushed it to a set passed the test cases.
+
+   </details>
+
+2. [Count paths that can form a palindrome in a tree](https://leetcode.com/problems/count-paths-that-can-form-a-palindrome-in-a-tree/description/)
+
+3. You are given an unidirected tree of $n$ nodes, where each node has a value $arr[i]$ which is rooted at node $1$. In one operation, you can select a node and delete the entire subtree of that node (along with it). The cost of one such operation is $x$. The final score of the tree is the sum of the values in the tree after all the operations minus the total cost of the operations. What is the maximum possible score that can be obtained?
+
+   - $1 \leq n \leq 10^5$
+   - $-10^9 \leq arr[i] \leq 10^9$
+   - $1 \leq x \leq 10^9$
+
+4. You are given a string $s$ that contains spaces, commas, brackets, $0$, $1$ and logical operators such as `&`, `|` and `!`. The string given will always represent a valid boolean expression in prefix notation, and would be bracketted appropriately to convey the precedence. Find the value of the boolean expression.
+
+   - Example: `| [& [! 1] 0 [! [! 0]]] [& 0 0]` would evaluate to `0`.
