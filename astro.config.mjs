@@ -7,6 +7,7 @@ import { defineConfig, sharpImageService } from "astro/config";
 import { readFileSync } from "node:fs";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
+import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
@@ -26,24 +27,33 @@ export default defineConfig({
       },
     }),
   ],
+
   site: "https://eshaanagg.netlify.app/",
+
   image: {
     service: sharpImageService(),
   },
+
   compressHTML: false,
+
   build: {
     inlineStylesheets: "auto",
   },
+
   vite: {
     plugins: [rawFonts([".ttf", ".woff"])],
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
     },
   },
+
   markdown: {
     rehypePlugins: [rehypeKatex],
     remarkPlugins: [remarkMath],
   },
+
+  output: "server",
+  adapter: netlify()
 });
 
 // Vite plugin to import fonts

@@ -31,12 +31,13 @@
     "prettier-plugin-tailwindcss": "^0.4.1",
     "satori": "^0.10.2",
     "satori-html": "^0.3.2",
-    "sharp": "^0.32.4",
+    "sharp": "^0.32.6",
     "tsm": "^2.3.0",
     "typescript": "^5.1.6",
     "zod": "^3.21.4"
   },
   "dependencies": {
+    "@astrojs/netlify": "^5.5.3",
     "@astrojs/preact": "^3.5.3",
     "@expressive-code/plugin-line-numbers": "^0.37.0",
     "preact": "^10.16.0",
