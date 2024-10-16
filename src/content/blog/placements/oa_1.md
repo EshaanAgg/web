@@ -2,7 +2,7 @@
 title: "Placements '24: Assessments [Part 1]"
 description: A brief of all the online assessments that I witnessed during the season of 2024.
 pubDate: 2024-10-08
-updateDate: 2024-10-08
+updateDate: 2024-10-17
 pinned: true
 requireLatex: true
 tags: ["placements", "2024"]
@@ -1689,7 +1689,7 @@ A lot of these questions have been mixed with questions that were asked in the i
     <summary> Solution </summary>
 
     ```cpp
-    int maxSubarraySum(vi &arr)
+    int maxSubarraySum(vector<int> &arr)
     {
         int n = arr.size();
         int maxSum = 0, sum = 0;
@@ -1706,20 +1706,20 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     void solution()
     {
-    int n, c;
-    cin >> n >> c;
+        int n, c;
+        cin >> n >> c;
 
-        vi arr(n);
-        unordered_map<int, vi> idx;
-        range(i, 0, n)
+        vector<int> arr(n);
+        unordered_map<int, vector<int>> idx;
+        for (int i = 0; i < n; i++)
         {
             cin >> arr[i];
             idx[arr[i]].pb(i);
         }
 
-        vi freC(n);
+        vector<int> freC(n);
         freC[0] = arr[0] == c;
-        range(i, 1, n)
+        for (int i = 1; i < n; i++)
             freC[i] = freC[i - 1] + (arr[i] == c);
 
         int ans = freC[n - 1];
@@ -1728,7 +1728,7 @@ A lot of these questions have been mixed with questions that were asked in the i
             if (ele == c)
                 continue;
             vector<int> arr;
-            arr.pb(1);
+            arr.push_back(1);
             for (int i = 1; i < id.size(); i++)
             {
                 int l = id[i - 1], r = id[i];
@@ -1739,7 +1739,6 @@ A lot of these questions have been mixed with questions that were asked in the i
         }
 
         cout << ans << endl;
-
     }
 
     ```
@@ -2251,8 +2250,8 @@ A lot of these questions have been mixed with questions that were asked in the i
    - $1 \leq n \leq 10^3$
    - $1 \leq arr[i].size() \leq 10^3$
 
-   - Example: For the array `["a", "aa", "aaa", "aaaa"]`, the answer is $8$.
-   - Example 2: For the array `["ivo", "ja", "jo"]`, the answer is $4$.
+   - `Example #1` For the array `["a", "aa", "aaa", "aaaa"]`, the answer is $8$.
+   - `Example #2` For the array `["ivo", "ja", "jo"]`, the answer is $4$.
 
    <details>
    <summary>Solution</summary>

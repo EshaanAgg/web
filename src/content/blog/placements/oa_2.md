@@ -2,7 +2,7 @@
 title: "Placements '24: Assessments [Part 2]"
 description: A brief of all the online assessments that I witnessed during the season of 2024.
 pubDate: 2024-10-08
-updateDate: 2024-10-08
+updateDate: 2024-10-17
 pinned: true
 requireLatex: true
 tags: ["placements", "2024"]
@@ -14,6 +14,11 @@ This is the second part of the series on online assessments that I witnessed dur
 - [PACE Stock Broking](#pace-stock-broking)
 - [HiLabs Technologies](#hilabs-technologies)
 - [InMobi](#inmobi)
+- [Dream 11](#dream-11)
+- [Netradyne](#netradyne)
+- [Microsoft](#microsoft)
+- [Google](#google)
+- [Plutus Research](#plutus-research)
 
 ---
 
@@ -542,6 +547,8 @@ This is the second part of the series on online assessments that I witnessed dur
 
 # HiLabs Technologies
 
+The company repeated the coding questions across campuses, even if the gap between the OA dates was more than $3$ days. MCQs questions were also partially repeated across campuses, both for the SDE and DS roles.
+
 ## Other Campus Questions
 
 1.  You are given a graph with $n$ nodes and $m$ edges. The graph is undirected and unweighted. A bridge is an edge that, if removed, will increase the number of connected components in the graph. Find the number of pairs of nodes $(u, v)$ in the graph such that $u \leq v$ and any path between $u$ and $v$ contains exactly one bridge.
@@ -1045,7 +1052,270 @@ This is the second part of the series on online assessments that I witnessed dur
 
     </details>
 
----
+11. [Candle Problem](https://www.hackerearth.com/problem/algorithm/candle-problem/)
+
+12. You are given a tree with $n$ nodes with one node intially marked as black, and the rest marked as white. In one operation, you can colour any of the nodes black only if atleast one the neighbours of the node is black. Count the possible number of colourings of the tree. Return the answer modulo $10^9 + 7$.
+
+    <details>
+    <summary>Solution</summary>
+
+    We can use simple DFS to solve this problem. Let the $dfs$ function return the number of ways of colouring the subtree of $u$ (when the whole tree is rooted at $root$) and the node $u$ is coloured black. Then for every child node, we can either leave it white, resulting in $1$ way of colouring, or colour it black which can be calculated recursively by multiplying with the result of the $dfs$ function. All the ways for all the children are multiplied together to get the final result. The complexity of the solution is $O(n)$.
+
+    ```cpp showLineNumbers
+    long long mod = 1e9 + 7;
+
+    long long dfs(int u, int p, vector<vector<int>> &g)
+    {
+        long long ans = 1;
+        for (int v : g[u])
+        {
+            if (v == p)
+                continue;
+            ans *= (1 + dfs(v, u, g));
+            ans %= mod;
+        }
+        return ans;
+    }
+
+    int main()
+    {
+        int n;
+        cin >> n;
+
+        vector<vector<int>> g(n);
+        for (int i = 0; i < n - 1; i++)
+        {
+            int u, v;
+            cin >> u >> v;
+            u--, v--;
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+
+        int root;
+        cin >> root;
+        root--;
+
+        cout << dfs(root, -1, g) << endl;
+
+    }
+    ```
+
+    </details>
+
+13. When comparing two numbers, you need to first compare the sum of digits of the two numbers, and only if they are the same, then you need to compare the actual values of the numbers themselves. Given an array $arr$, for each index, find the index of the closest number to the right that is bigger than the number at the given index according to the comparision scheme specified above. If no such number exists, print $-1$.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq arr[i] \leq 10^9$
+
+14. You are given array $A$ of size $N$. You can make atmost $K$ operations on the same, where in each operation you can increase or decrease an element in array by $1$. Now, the beauty of array is frequency of most frequent element in the array. Output the maximum beauty that can be achieved in $K$ operations.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq k \leq 10^{18}$
+    - $-10^9 \leq arr[i] \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+    Let us first sort the array and try to binary search on the answer. It is clear that when we are checking the validity for an answer $x$, we would want some subarray of the sorted array to become all equal to $x$. Thus we can maintain a sliding window, and calculate the required number of operations for each window. It is a well known fact that given a sorted array, the median of the array is the point from where the number of operations required to make the array all equal by increments and decrements is minimum. We can use prefix sums to calculate the number of operations required to make the array all equal to $x$ in $O(1)$ time for any subarray. Thus the overall complexity of the solution is $O(n \log n)$.
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        int n;
+        long long k;
+        cin >> n >> k;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+        sort(arr.begin(), arr.end());
+
+        vector<long long> pre(n);
+        pre[0] = arr[0];
+        for (int i = 1; i < n; i++)
+            pre[i] = pre[i - 1] + arr[i];
+
+        auto getRangeSum = [&](int l, int r) -> long long
+        {
+            if (l > r)
+                return 0;
+            return pre[r] - (l == 0 ? 0 : pre[l - 1]);
+        };
+
+        auto getMinOpsAtIdx = [&](int l, int r, int m) -> long long
+        {
+            long long sum1 = getRangeSum(l, m - 1);
+            sum1 = (long long)(m - l) * arr[m] - sum1;
+
+            long long sum2 = getRangeSum(m, r);
+            sum2 = sum2 - (long long)(r - m + 1) * arr[m];
+
+            return sum1 + sum2;
+        };
+
+        auto getMinOps = [&](int l, int r) -> long long
+        {
+            int len = r - l + 1;
+            if (len % 2 == 1)
+                return getMinOpsAtIdx(l, r, l + len / 2);
+            else
+            {
+                long long m1 = l + len / 2 - 1, m2 = l + len / 2;
+                return min(getMinOpsAtIdx(l, r, m1), getMinOpsAtIdx(l, r, m2));
+            }
+        };
+
+        auto checkLength = [&](int l) -> bool
+        {
+            for (int i = 0; i <= n - l; i++)
+                if (getMinOps(i, i + l - 1) <= k)
+                    return true;
+            return false;
+        };
+
+        int ans = 0;
+        int l = 1, r = n;
+
+        while (l <= r)
+        {
+            int m = (l + r) / 2;
+            if (checkLength(m))
+            {
+                ans = m;
+                l = m + 1;
+            }
+            else
+                r = m - 1;
+        }
+
+        cout << ans << endl;
+    }
+    ```
+
+    </details>
+
+15. This question was asked in the Software Developer role, and a workspace was provided to work on the same. You are required to design a simple HTML page that accepts from the user the number of rows and columns, and then makes a table of the specified dimensions. There is bonus marking for CSS styling.
+
+    <details>
+    <summary>HTML Code</summary>
+
+    ```html
+    <!doctype html>
+    <html>
+      <head>
+        <title>Test</title>
+        <style>
+          body {
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 5px;
+          }
+
+          input {
+            margin-left: 5px;
+            margin-right: 5px;
+          }
+
+          table {
+            text-align: center;
+          }
+
+          tr:nth-child(even) {
+            background-color: lightgrey;
+          }
+
+          tr:hover {
+            background-color: lightcyan;
+          }
+
+          td {
+            border: 1px solid black;
+            margin: 0;
+            padding: 1px;
+          }
+        </style>
+      </head>
+
+      <body>
+        <center>
+          <form name="input-form">
+            <label for="rows" tabindex="1">Rows</label>
+            <input
+              type="number"
+              name="rows"
+              required
+              min="1"
+              max="10"
+              id="rows"
+            />
+            <label for="cols" tabindex="2">Columns</label>
+            <input
+              type="number"
+              name="cols"
+              required
+              min="1"
+              max="10"
+              id="cols"
+            />
+            <button type="submit" tabindex="3">Submit</button>
+            <button type="reset" tabindex="4">Reset</button>
+          </form>
+
+          <h2>Generated Table</h2>
+          <table id="main-table"></table>
+        </center>
+      </body>
+
+      <script>
+        const tableDiv = document.getElementById("main-table");
+        const form = document.forms["input-form"];
+
+        const resetValues = () => {
+          form["rows"].value = "";
+          form["cols"].value = "";
+        };
+
+        const handleSubmit = (event) => {
+          event.preventDefault();
+          const rows = +form["rows"].value,
+            cols = +form["cols"].value;
+          if (Number.isNaN(rows) || Number.isNaN(cols)) {
+            alert("Please enter valid value of rows and columns");
+            resetValues();
+            return;
+          }
+
+          if (rows == 0 || cols == 0) {
+            alert("Rows and columns can't be zero");
+            resetValues();
+            return;
+          }
+          plotTable(rows, cols);
+        };
+
+        const plotTable = (rows, cols) => {
+          tableDiv.innerHTML = "";
+          for (let r = 0; r < rows; r++) {
+            const rowEle = document.createElement("tr");
+            for (let c = 0; c < cols; c++) {
+              const colEle = document.createElement("td");
+              colEle.innerHTML = `Row ${r + 1} Col ${c + 1}`;
+              rowEle.appendChild(colEle);
+            }
+            tableDiv.appendChild(rowEle);
+          }
+        };
+
+        form.addEventListener("submit", handleSubmit);
+      </script>
+    </html>
+    ```
+
+    </details>
 
 # InMobi
 
@@ -1078,3 +1348,1183 @@ This is the second part of the series on online assessments that I witnessed dur
    </details>
 
 3. You are given a string $word$ of lowercase English letters. You need to select one index from it and remove the letter at that index from $word$ such that the frequency of every letter in $word$ is equal. Return `true` if it possible to do so in exactly one operation, or else return `false`.
+
+4. [X of a Kind in a Deck of Cards](https://leetcode.com/problems/x-of-a-kind-in-a-deck-of-cards/description/)
+
+5. [Fruits into Baskets](https://leetcode.com/problems/fruit-into-baskets/description/)
+
+6. [Longest Valid Parentheses](https://leetcode.com/problems/longest-valid-parentheses/description/)
+
+---
+
+# Dream 11
+
+## Other Campus Questions
+
+1.  Cricket is a team sport comprised of $11$ player each team has four types of player: Batsman, Bowler, All-Rounder, and Wicket Keeper. Dream11 is a fantasy cricket platform where users create their own cricket teams. You have decided to participate in Dream11 during the IPL season. The platform rewards prizes based on the maximum total value of your team. Your task is to create a cricket team based on certain constraints to win the reward.
+
+    Write a program to do so while adhering to the following constraints:
+
+    1. Your team must consist of $11$ players.
+    2. You have a budget of $B$ to spend on selecting players.
+    3. Each player has a price tag and a player value.
+    4. There are four types of player: Batsman, Bowler, All-Rounder, and Wicket Keeper.
+    5. Your team should have at least one Wicket Keeper, one All-Rounder, two Batsmen, two Bowlers.
+    6. Now given list of price and player values to determine the type of players:
+       - The first 20% of players are considered as Wicket Keepers. Note: Take the ceil of the number obtained.
+       - Batsmen are selected from odd positions (excluding the first 20%).
+       - Bowlers are selected from the even positions that are not divisible by 4 (excluding the first 20%).
+       - All-Rounders are selected from positions divisible by 4 (excluding the first 20%).
+       - Player index starts from zero. Please factor this in calculation of player types viz. Wicket Keeper, All-Rounder, Batsmen and Bowler.
+
+    Print the maximum total value $M$ which is the summation of the selected player values, that can be obtained while satisfying all the constraints and is within the budget else print `Insufficient Budget`.
+
+    `Constraints`
+
+    - $11 \leq N \leq 200$
+    - $1 \leq B \leq 1000$
+    - $1 \leq P \leq 20$
+    - $1 \leq V \leq 20$
+
+    ```
+    Example #1
+
+    12
+    4 3 3 6 5 2 8 8 2 7 8 2
+    2 1 1 2 3 6 1 6 2 7 6 3
+    50
+
+    Output #1: 34
+
+    Example #2
+
+    12
+    4 3 3 6 5 2 8 8 2 7 9 2
+    2 1 1 2 3 6 1 6 2 7 6 3
+    50
+
+    Output #2: Insufficient Budget
+    ```
+
+    <details>
+    <summary>Solution</summary>
+
+    We will use dynamic programming to solve this problem. We will maintain a $6$-dimensional DP array where the dimensions are the index of the player, the budget left, the number of Wicket Keepers, the number of All Rounders, the number of Bowlers, the number of Batsmen, and the total number of players. We would also need to space optimise the solution as the number of dimensions is too high. The time complexity of the solution is $O(n \cdot B \cdot 2 \cdot 2 \cdot 3 \cdot 3 \cdot 12 )$ which approximately equals $10^8$ operations.
+
+    ```cpp showLineNumbers
+    // 0 -> WK, 1 -> Bat, 2 -> Bowl, 3 -> All Rounder
+    int getType(int i, int n)
+    {
+        int wkCnt = ceil((double)n * 0.2);
+        if (i < wkCnt)
+            return 0;
+
+        if (i % 2 == 1)
+            return 1;
+
+        if (i % 4 == 0)
+            return 3;
+
+        return 2;
+    }
+
+    int main()
+    {
+        int n;
+        cin >> n;
+
+        vector<int> cost(n), val(n);
+        for (int i = 0; i < n; i++)
+            cin >> cost[i];
+        for (int i = 0; i < n; i++)
+            cin >> val[i];
+
+        int b;
+        cin >> b;
+
+        // idx, budget left, wk, all rounder, bowl, bat, total
+        int cur[b + 1][2][2][3][3][12], nxt[b + 1][2][2][3][3][12];
+        memset(cur, -1, sizeof(cur));
+        memset(nxt, -1, sizeof(nxt));
+
+        cur[b][0][0][0][0][0] = 0;
+
+        for (int idx = 0; idx < n; idx++)
+        {
+            for (int budLeft = 0; budLeft <= b; budLeft++)
+                for (int wk = 0; wk < 2; wk++)
+                    for (int ar = 0; ar < 2; ar++)
+                        for (int bowl = 0; bowl < 3; bowl++)
+                            for (int bat = 0; bat < 3; bat++)
+                                for (int tot = 0; tot < 12; tot++)
+                                {
+                                    if (cur[budLeft][wk][ar][bowl][bat][tot] == -1)
+                                        continue;
+
+                                    // Do not take the player
+                                    nxt[budLeft][wk][ar][bowl][bat][tot] = max(
+                                        nxt[budLeft][wk][ar][bowl][bat][tot],
+                                        cur[budLeft][wk][ar][bowl][bat][tot]);
+
+                                    // Buy the player
+                                    if (tot < 11 && budLeft >= cost[idx])
+                                    {
+                                        int ty = getType(idx, n);
+                                        int newBud = budLeft - cost[idx];
+                                        int newWk = wk | (ty == 0);
+                                        int newBat = min(bat + (ty == 1), 2);
+                                        int newBowl = min(bowl + (ty == 2), 2);
+                                        int newAr = ar | (ty == 3);
+
+                                        nxt[newBud][newWk][newAr][newBowl][newBat][tot + 1] = max(
+                                            nxt[newBud][newWk][newAr][newBowl][newBat][tot + 1],
+                                            cur[budLeft][wk][ar][bowl][bat][tot] + val[idx]);
+                                    }
+                                }
+
+            memcpy(cur, nxt, sizeof(nxt));
+            memset(nxt, -1, sizeof(nxt));
+        }
+
+        int ans = -1;
+        for (int left = 0; left <= b; left++)
+            ans = max(ans, cur[left][1][1][2][2][11]);
+
+        if (ans == -1)
+            cout << "Insufficient Budget" << endl;
+        else
+            cout << ans << endl;
+    }
+    ```
+
+    </details>
+
+2.  [Number of Ways to Decode the String](https://leetcode.com/problems/decode-ways-ii/description/)
+
+3.  You are given a rectangular grid with the bottom left corner as $(x_1, y_1)$ and the upper right corner as $(x_2, y_2)$. Find all the lattice points in the grid that are at a maximum distance of $r$ from the given point $(x_c, y_c)$. The distance between two points is the cartesian distance between them.
+
+    Constraints:
+
+    - $1 \leq x_1, y_1, x_2, y_2, x_c, y_c \leq 10^6$
+    - $x_1 \leq x_2$
+    - $y_1 \leq y_2$
+    - $1 \leq r \leq 10^6$
+
+    <details>
+    <summary>Solution</summary>
+
+    Since the coordinates are upto $10^6$ only, we can loop over any one coordinate and then use binary search on the other coordinate to find it's maximum and minimum possible value that allows it to be within the described circle. If we iterate over the coordinate $x$, we need to consider the position $y_c$ of the center and thus make three different cases for the same. Refer to the implementation for details. The time complexity of the solution is $O(X \log Y)$ where $X = x_2 - x_1$ and $Y = y_2 - y_1$.
+
+    ```cpp showLineNumbers
+    bool withinRange(int x1, int y1, int x2, int y2, long long r)
+    {
+        long long d = pow(x2 - x1, 2) + pow(y2 - y1, 2);
+        return d <= r * r;
+    }
+
+    // yc < y1
+    int getCountLower(int x, int y1, int y2, int xc, int yc, int ra)
+    {
+        if (!withinRange(x, y1, xc, yc, ra))
+            return 0;
+
+        int l = y1, r = y2;
+        int ans = -1;
+        while (l <= r)
+        {
+            int m = (l + r) / 2;
+            if (withinRange(x, m, xc, yc, ra))
+            {
+                ans = m;
+                l = m + 1;
+            }
+            else
+                r = m - 1;
+        }
+        return ans - y1 + 1;
+    }
+
+    // yc > y2
+    int getCountHiger(int x, int y1, int y2, int xc, int yc, int ra)
+    {
+        if (!withinRange(x, y2, xc, yc, ra))
+            return 0;
+
+        int l = y1, r = y2;
+        int ans = -1;
+        while (l <= r)
+        {
+            int m = (l + r) / 2;
+            if (withinRange(x, m, xc, yc, ra))
+            {
+                ans = m;
+                r = m - 1;
+            }
+            else
+                l = m + 1;
+        }
+
+        return y2 - ans + 1;
+    }
+
+    // y1 <= yc <= y2
+    int getCountMiddle(int x, int y1, int y2, int xc, int yc, int ra)
+    {
+        if (!withinRange(x, yc, xc, yc, ra))
+            return 0;
+
+        // Lower bound
+        int l = y1, r = yc;
+        int ans1 = -1;
+        while (l <= r)
+        {
+            int m = (l + r) / 2;
+            if (withinRange(x, m, xc, yc, ra))
+            {
+                ans1 = m;
+                r = m - 1;
+            }
+            else
+                l = m + 1;
+        }
+
+        // Upper bound
+        int ans2 = -1;
+        l = yc, r = y2;
+        while (l <= r)
+        {
+            int m = (l + r) / 2;
+            if (withinRange(x, m, xc, yc, ra))
+            {
+                ans2 = m;
+                l = m + 1;
+            }
+            else
+                r = m - 1;
+        }
+
+        return ans2 - ans1 + 1;
+    }
+
+    int solve(int x1, int y1, int x2, int y2, int xc, int yc, int r)
+    {
+        long long ans = 0;
+        for (int x = x1; x <= x2; x++)
+        {
+            if (yc < y1)
+                ans += getCountLower(x, y1, y2, xc, yc, r);
+            else if (yc > y2)
+                ans += getCountHiger(x, y1, y2, xc, yc, r);
+            else
+                ans += getCountMiddle(x, y1, y2, xc, yc, r);
+        }
+
+        return ans;
+    }
+    ```
+
+    </details>
+
+    <details>
+    <summary>Testing Script</summary>
+
+    If you want to test your own solution, you can use this script to generate random testcases and compare the output of your solution and the brute force solution.
+
+    ```cpp
+    int solveBrute(int x1, int y1, int x2, int y2, int xc, int yc, int r)
+    {
+        int ans = 0;
+        for (int x = x1; x <= x2; x++)
+            for (int y = y1; y <= y2; y++)
+                if (withinRange(x, y, xc, yc, r))
+                    ans++;
+        return ans;
+    }
+
+    int main()
+    {
+        mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+
+        int testCount = 2000;
+        int x1 = 50, y1 = 50, x2 = 150, y2 = 150;
+
+        for (int t = 0; t < testCount; t++)
+        {
+            int xc = uniform_int_distribution<int>(50, 250)(rng);
+            int yc = uniform_int_distribution<int>(-50, 250)(rng);
+            int r = uniform_int_distribution<int>(0, 200)(rng);
+
+            int a1 = solve(x1, y1, x2, y2, xc, yc, r);
+            int a2 = solveBrute(x1, y1, x2, y2, xc, yc, r);
+            if (a1 != a2)
+            {
+                cout << "Mismatched " << t + 1 << endl;
+                cout << x1 << " " << y1 << " " << x2 << " " << y2 << " " << xc << " " << yc << " " << r << endl;
+                cout << a1 << " " << a2 << endl;
+                return 0;
+            }
+        }
+
+        cout << "Passed" << endl;
+
+        return 0;
+    }
+    ```
+
+    </details>
+
+4.  You are given an undirected and connected graph with $n$ nodes. Intially you are at node $1$, and need to travel to node $n$. There are power boosters at $k$ nodes, and every time you arrive at a power booster node, your power is set to $p$, which allows you to walk cross $p$ edges. What is the minimum value of $p$ such that you can reach node $n$ from node $1$?
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq k \leq 10^5$
+
+    <details>
+    <summary>Non Optimal Solution</summary>
+
+    As with such minimization questions, we will use binary search to find the minimum value of $p$. Once we have a value of $p$, we can use a simple Djikstra to find if a valid path exists. The only change we need to make is if we arrive at a power booster node, we need to set the power to $p$ instead of further decrementing it.
+
+    You might expect the time complexity of the solution to be $O(m \log n \cdot \log m)$ where $m$ is the maximum number of edges in the graph due to Djikstra, but the same turns out to be in the order of $O(n^2)$ instead. This is because having power booster breaks the monotonicity of the distance function that Djikstra expects (Suppose you reach an intermediary power node that is still at a large distance from destination before the other power node that is at a smaller distance. Now you will recharge at that node (farther from destination) and do Djikstra from it which would be of no use as it is suboptimal and may not be able to reach the final destination from there)
+
+    ```cpp
+    int main()
+    {
+        int n, m;
+        cin >> n >> m;
+
+        vector<vector<int>> g(n);
+        for (int i = 0; i < m; i++)
+        {
+            int u, v;
+            cin >> u >> v;
+            u--, v--;
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+
+        int k;
+        cin >> k;
+        vector<int> power(n, 0);
+        for (int i = 0; i < k; i++)
+        {
+            int x;
+            cin >> x;
+            x--;
+            power[x] = 1;
+        }
+
+        auto check = [&](int p) -> bool
+        {
+            vector<int> dis(n, -1);
+
+            priority_queue<pair<int, int>> pq;
+            pq.push({p, 0});
+            dis[0] = p;
+
+            while (!pq.empty())
+            {
+                auto [ops, node] = pq.top();
+                pq.pop();
+
+                if (dis[node] != ops)
+                    continue;
+                if (node == n - 1)
+                    return 1;
+
+                if (power[node])
+                    ops = p;
+                if (ops == 0)
+                    continue;
+
+                for (int v : g[node])
+                {
+                    if (dis[v] < ops - 1)
+                    {
+                        dis[v] = ops - 1;
+                        pq.push({ops - 1, v});
+                    }
+                }
+            }
+
+            return 0;
+        };
+
+        int l = 1, r = m;
+        int ans = -1;
+        while (l <= r)
+        {
+            int mid = (l + r) / 2;
+            if (check(mid))
+            {
+                ans = mid;
+                r = mid - 1;
+            }
+            else
+                l = mid + 1;
+        }
+
+        cout << ans << endl;
+    }
+
+    ```
+
+    </details>
+
+    <details>
+    <summary>Optimal Solution</summary>
+
+    We will binary seach on the value of $p$. To check for a particular value of $p$, we will construct an new graph with the nodes $1$, $n$, and all the nodes which are at a distance of $\leq ceil(p / 2)$ from any power node. We will then just run a BFS to check if a path exists from $1$ to $n$ in this new graph. The time complexity of the solution is $O((n + m)\log m)$.
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        int n, m;
+        cin >> n >> m;
+
+        vector<vector<int>> g(n);
+        vector<pair<int, int>> edges;
+        for (int i = 0; i < m; i++)
+        {
+            int u, v;
+            cin >> u >> v;
+            u--, v--;
+            g[u].push_back(v);
+            g[v].push_back(u);
+            edges.push_back({u, v});
+        }
+
+        int k;
+        cin >> k;
+        vector<int> power;
+        for (int i = 0; i < k; i++)
+        {
+            int x;
+            cin >> x;
+            power.push_back(x - 1);
+        }
+        // Can consider n - 1 as power node as well
+        power.push_back(n - 1);
+
+        auto check = [&](int p) -> bool
+        {
+            vector<int> dis(n, -1);
+            queue<int> q;
+            for (int x : power)
+            {
+                dis[x] = 0;
+                q.push(x);
+            }
+
+            // Calculate distance from power nodes
+            int curDis = 0;
+            while (!q.empty())
+            {
+                int sz = q.size();
+                curDis++;
+                if (curDis > (p + 1) / 2)
+                    break;
+
+                while (sz--)
+                {
+                    int u = q.front();
+                    q.pop();
+
+                    for (int v : g[u])
+                    {
+                        if (dis[v] != -1)
+                            continue;
+                        dis[v] = curDis;
+                        q.push(v);
+                    }
+                }
+            }
+
+            // Build the new graph
+            vector<vector<int>> gn(n);
+            for (auto [u, v] : edges)
+                if (dis[u] != -1 && dis[v] != -1)
+                {
+                    gn[u].push_back(v);
+                    gn[v].push_back(u);
+                }
+
+            // Perform BFS to check if the node is reachable
+            vector<int> vis(n, 0);
+            queue<int> q2;
+            q2.push(0);
+            vis[0] = 1;
+
+            while (!q2.empty())
+            {
+                int u = q2.front();
+                q2.pop();
+                if (u == n - 1)
+                    return 1;
+
+                for (int v : gn[u])
+                {
+                    if (vis[v])
+                        continue;
+                    vis[v] = 1;
+                    q2.push(v);
+                }
+            }
+
+            return 0;
+        };
+
+        int l = 1, r = m;
+        int ans = -1;
+        while (l <= r)
+        {
+            int mid = (l + r) / 2;
+            if (check(mid))
+            {
+                ans = mid;
+                r = mid - 1;
+            }
+            else
+                l = mid + 1;
+        }
+
+        cout << ans << endl;
+    }
+
+    ```
+
+    </details>
+
+5.  [Count Number of Good Subsets](https://leetcode.com/problems/the-number-of-good-subsets/description/)
+
+    <details>
+    <summary>Solution</summary>
+
+    Since it is clear that only each number can be used at most once in a valid subset, we can maintain a map of the frequency of the elements present. We will use a bitmask to show which all prime numbers have been already been used in our product, and keep the other state as the number we are trying to add to the answer. The main trick behind the question is to first ignore all the occurences of $1$, and then add them later to the sets achieved by the other numbers. The time complexity of the solution is $O(2^{10} \cdot 10^2 + log(A))$ where $A$ is the count of maximum occurences of $1$, which can be $n$ in the worst case.
+
+    ```cpp showLineNumbers
+    class Solution
+    {
+        vector<int> primes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
+        long long mod = 1e9 + 7;
+        vector<vector<long long>> dp;
+
+        long long binPow(long long a, long long b, long long m)
+        {
+            long long ans = 1;
+            while (b)
+            {
+                if (b & 1)
+                    ans = (ans * a) % m;
+                a = (a * a) % m;
+                b >>= 1;
+            }
+
+            return ans;
+        }
+
+        pair<bool, int> getNewMask(int mask, int n)
+        {
+            for (int i = 0; i < 10; i++)
+                if (n % primes[i] == 0)
+                {
+                    if (n % (primes[i] * primes[i]) == 0)
+                        return {0, 0};
+                    if ((mask >> i) & 1)
+                        return {0, 0};
+                    mask |= (1 << i);
+                }
+
+            return {1, mask};
+        }
+
+        long long solve(int n, int mask, map<int, long long> &cnt)
+        {
+            if (n == 31)
+                return mask != 0;
+            if (dp[n][mask] != -1)
+                return dp[n][mask];
+
+            long long ans = solve(n + 1, mask, cnt);
+            auto x = getNewMask(mask, n);
+            if (x.first)
+                ans += (solve(n + 1, x.second, cnt) * cnt[n]) % mod;
+
+            return dp[n][mask] = ans % mod;
+        }
+
+    public:
+        int numberOfGoodSubsets(vector<int> &nums)
+        {
+            dp.assign(31, vector<long long>(1 << 10, -1));
+
+            map<int, long long> freq;
+            for (int x : nums)
+                freq[x]++;
+
+            long long ans = solve(2, 0, freq);
+            ans *= binPow(2, freq[1], mod);
+            ans %= mod;
+
+            return ans;
+        }
+    };
+    ```
+
+    </details>
+
+## Online Assessment Questions
+
+- There were 10 MCQs on C++, OS, and DBMS, and 2 coding questions.
+- The MCQs were partly repeated from those of other campuses and some were new. There was a particular focus on error handling in C++ and the basics of DBMS.
+- The coding questions did not run all the test cases. Only 2-3 sample test cases were visible, and the code would be evaluated later was the general feedback.
+
+1. Same question as Deutsche Bank: Question $13$ from the `Other Campus Questions` section.
+
+2. You are given upto $q$ queries of the type $[l, r, k]$, where in you have to find the $k^{th}$ beautiful number between $l$ and $r$. A number is said to be beautiful if it contains the substring $101$ in it's binary representation.
+   - $1 \leq q \leq 200$
+   - $1 \leq l \leq r \leq 10^{18}$
+   - $1 \leq k \leq 10^{18}$
+
+---
+
+# Netradyne
+
+The test usually involves 2 coding questions and 1 question involving writing a SQL query. The rest are MCQs from topics like:
+
+- Sitting arrangements
+- Percentages & Ratio-Proportion
+- Graphs & Data Interpretation
+- SQL
+- Operating System & Deadlock Synchronisation
+- DBMS Normalisation
+
+## Other Campus Questions
+
+1. The map contains islands named from $1$ to $n$. For any two islands $i$ and $j$, you can go to $j$ from $i$ only if $i$ divides $j$. Find the number of ways to reach island $n$ starting from island $1$. You can't move from island $i$ to $i$. There are $t$ test cases, each denoted by a single integer $n$, the island that you have to reach.
+
+   Constraints:
+
+   - $1 \leq t \leq 10^5$
+   - $1 \leq n \leq 10^6$
+
+    <details>
+    <summary>Solution</summary>
+
+   We can use a simple sieve like approach to compute all the divisors of all the numbers upto $10^6$ and then use a simple DP to precompute the number of ways for all the possible $n$. Then answering any query takes just $O(1)$ time. The time complexity of the solution is $O(A \log A + T)$ where $A = max(N)$.
+
+   ```cpp showLineNumbers
+   int main()
+   {
+       const int MAXN = 1e6 + 10;
+
+       long long MOD = 1e9 + 7;
+       vector<long long> dp(MAXN, 0);
+       dp[1] = 1;
+       for (int i = 1; i < MAXN; i++)
+       {
+           for (int j = 2 * i; j < MAXN; j += i)
+           {
+               dp[j] += dp[i];
+               dp[j] %= MOD;
+           }
+       }
+
+       int t;
+       cin >> t;
+       while (t--)
+       {
+           int n;
+           cin >> n;
+           cout << dp[n] <<details endl;
+       }
+   }
+   ```
+
+    </details>
+
+2. You are given an array of $n$ elements. In each step, you need to take the sum of the numbers at the odd indexes of the array ($1$ indexed), and remove all the even elements. Do this until only $1$ element is left in the array. What is the final sum obtained?
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+   - $-10^9 \leq arr[i] \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+   Writing the pattern for a couple of arrays by hand, we realize only the elements at index $i$ such that $i % 2^k = 1$ are added to the answer for every possible value of $k$ greater than $0$. Thus we can writing a simple simulation in $O(n \log n) time.
+
+   ```cpp
+   int main()
+   {
+       int n;
+       cin >> n;
+
+       vector<int> arr(n + 1);
+       for (int i = 1; i <= n; i++)
+           cin >> arr[i];
+
+       long long ans = 0;
+       for (int pow2 = 2; pow2 <= 2 * n; pow2 *= 2)
+           for (int i = 1; i <= n; i++)
+               if (i % pow2 == 1)
+                   ans += arr[i];
+
+       cout << ans << endl;
+   }
+   ```
+
+    </details>
+
+3. You are given an array of length $n$. You need to all the subsequences of the same of length $m$, and then calculate the score of the subsequence as the product of the first and last element of the subsequence. Return the minimum possible score of any subsequence.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+   - $-10^9 \leq arr[i] \leq 10^9$
+
+## Online Assessment Questions
+
+1. You are given an integer as a string $s$. In each iteration, you need to take the sum of the digits of the number with have their index divisible by $k$. Treat the obtained number as the original string and repeat this untill you obtain a simple digit sum. Return the same.
+
+2. You are looking to hire $n$ frontend and $m$ backend developers. There are $n + m$ candidates, each of which can be hired either as a frontend or backend developer. The cost of hiring the $i^{th}$ candidate as a frontend developer is $f[i]$ and the cost of hiring the $i^{th}$ candidate as a backend developer is $b[i]$. Find the minimum cost of hiring $n$ frontend and $m$ backend developers.
+
+   Constraints:
+
+   - $1 \leq n, m \leq 10^4$
+   - $1 \leq f[i], b[i] \leq 10^9$
+
+3. There was $1$ MCQ on aptitude, $1$ simple SQL query writing question, and $14$ MCQs from OS, C++ and data structures. A couple of the MCQ questions were repeated from the questions from other campuses.
+
+---
+
+# Microsoft
+
+## Other Campus Questions
+
+1. [Reorient Edges to Make All Paths Lead to Zero](https://leetcode.com/problems/reorder-routes-to-make-all-paths-lead-to-the-city-zero/description/)
+
+2. You are given $m$ square tiles of size $1 \times 1$ and $n$ square tiles of size $2 \times 2$. Your task is to create the largest square possible using the given tiles. The tiles can not overlap, and the resulting square can not have empty spaces in between. Return the side length of the square.
+
+   Constraints:
+
+   - $1 \leq m, n \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+   The key trick to realize is that if try to binary search over the length of the longest side of the square $s$, then the function would be moontonic sepearately for the cases of even and odd side lengths. This is due to the difference in the optimal greedy strategy to construct the squares:
+
+   1. For odd side lengths, you atleast need $2s - 1$ tiles of size $1 \times 1$ that can be used to fill two adjacent edges, and then you can fill the even square of side $s - 1$ with the remaining tiles.
+   2. For the even sides, use as many as possible tiles of size $2 \times 2$ to fill the square, and then fill the remaining gaps with the tiles of size $1 \times 1$.
+
+   Then we can simply perform two binary searches to find the maximum possible side length of the square. The time complexity of the solution is $O(\log A)$ where $A$ is the maximum possible side length of the square.
+
+   ```cpp showLineNumbers
+   int main()
+   {
+       using ll = long long;
+
+       ll n, m;
+       cin >> n >> m;
+
+       auto checkEvenSide = [&](ll s, ll n, ll m) -> bool
+       {
+           ll use2Sq = min(m, (s * s) / 4LL);
+           ll needOneSq = s * s - 4LL * use2Sq;
+           return needOneSq <= n;
+       };
+
+       auto checkOddSide = [&](ll s, ll n, ll m) -> bool
+       {
+           ll minOneSq = 2LL * s - 1;
+           if (n < minOneSq)
+               return 0;
+
+           return checkEvenSide(s - 1, n - minOneSq, m);
+       };
+
+       ll ansOdd = 0, l = 1, r = 1e9;
+       while (l <= r)
+       {
+           ll mid = (l + r) / 2;
+           if (checkOddSide(2LL * mid + 1, n, m))
+           {
+               ansOdd = 2LL * mid + 1;
+               l = mid + 1;
+           }
+           else
+               r = mid - 1;
+       }
+
+       ll ansEven = 0;
+       l = 0, r = 1e9;
+       while (l <= r)
+       {
+           ll mid = (l + r) / 2;
+           if (checkEvenSide(2LL * mid, n, m))
+           {
+               ansEven = 2LL * mid;
+               l = mid + 1;
+           }
+           else
+               r = mid - 1;
+       }
+
+       cout << max(ansOdd, ansEven) << endl;
+   }
+   ```
+
+    </details>
+
+---
+
+# Google
+
+## Other Campus Questions
+
+1. You are given an array $arr$ of length $n$ and two number $m$ and $l$. You can perform at max $m$ operations on the array, where in one operation you can select any subarray of $arr$ of length at most $l$, and decrement the value of all elements of the subarray by $1$. Determine the minimum value of the maximum element present in the array if the operations are performed optimally.
+
+- $1 \leq n \leq 10^5$
+- $1 \leq m \leq 10^5$
+- $1 \leq l \leq n$
+
+    <details>
+    <summary>Solution</summary>
+
+  It is clear that we can binary search on the answer. Once we have fixed the maximum element of the array, we can simply iterate over the array from left to right, and whenever we see an element that is greater that the currently fixed maximum, we would apply operations to it to bring it to the maximum. We would always greedily apply the operation to the largest possible subarray, that is of length $l$ as it would never worsen our answer. The application of range updates would require the difference array concept. The time complexity of the solution is $O(n \log A)$ where $A$ is the maximum possible value of the maximum element in the array.
+
+  ```cpp showLineNumbers
+  int main()
+  {
+      int n, m, l;
+      cin >> n >> m >> l;
+
+      vector<int> arr(n);
+      for (int i = 0; i < n; i++)
+          cin >> arr[i];
+
+      auto check = [&](int maxEle) -> bool
+      {
+          int opsLeft = m;
+          vector<int> diffArr(n + 1), curArr = arr;
+
+          for (int i = 0; i < n; i++)
+          {
+              if (i > 0)
+                  diffArr[i] += diffArr[i - 1];
+              curArr[i] += diffArr[i];
+
+              if (curArr[i] <= maxEle)
+                  continue;
+              int ops = curArr[i] - maxEle;
+              if (ops > opsLeft)
+                  return 0;
+              opsLeft -= ops;
+
+              diffArr[i] -= ops;
+              diffArr[i + l] += ops;
+          }
+
+          return 1;
+      };
+
+      int hi = 1e9, lo = -1e9;
+      int ans;
+      while (lo <= hi)
+      {
+          int mid = (lo + hi) / 2;
+          if (check(mid))
+          {
+              ans = mid;
+              hi = mid - 1;
+          }
+          else
+              lo = mid + 1;
+      }
+      cout << ans << endl;
+  }
+  ```
+
+    </details>
+
+2. You are given a graph (not necessarily connected) of $n$ nodes numbered from $1$ to $n$ and $n - 1$ edges. Each edge has a cost associated with it. You can break any edge, disconnecting the pair of nodes in one operation, but you must add the same edge between a different pair od nodes. The cost of one such operation is the cost of the edge. Find the minimum cost to make the graph a tree.
+
+   - $1 \leq n \leq 10^5$
+   - $1 \leq cost[i] \leq 10^9$
+   - The graph may contain self loops and multiple edges between the same pair of nodes.
+
+    <details>
+    <summary>Solution</summary>
+
+   Since the final connected graph must be a tree, we can make minor modifications to the algorithm for the Maximum Spanning Tree. We will iterate over the edges in the decreasing order of their cost, and only change the edges are present between some already connected components. We won't add these edges to any component just yet, as it would be optimal to hold of them till the end, and then connect the disconnected components with them. We can use the DSU data structure to keep track of the connected components. The time complexity of the solution is $O(n \log n)$.
+
+   ```cpp showLineNumbers
+   class DSU
+   {
+       int n;
+       vector<int> parent, size;
+
+   public:
+       DSU(int n)
+       {
+           this->n = n;
+           parent.resize(n);
+           size.resize(n, 1);
+           for (int i = 0; i < n; i++)
+               parent[i] = i;
+       }
+
+       int find(int u)
+       {
+           if (parent[u] == u)
+               return u;
+           return parent[u] = find(parent[u]);
+       }
+
+       void merge(int u, int v)
+       {
+           int pu = find(u), pv = find(v);
+           if (pu == pv)
+               return;
+           if (size[pu] < size[pv])
+               swap(pu, pv);
+           parent[pv] = pu;
+           size[pu] += size[pv];
+       }
+   };
+
+   int solve(int n, vector<vector<int>> &edges)
+   {
+       sort(edges.begin(), edges.end(), [](vector<int> &a, vector<int> &b)
+           { return a[2] > b[2]; });
+
+       DSU dsu(n + 1);
+       int ans = 0;
+       for (auto &e : edges)
+       {
+           int u = e[0], v = e[1], w = e[2];
+           if (dsu.find(u) != dsu.find(v))
+               dsu.merge(u, v);
+           else
+               ans += w;
+       }
+
+       return ans;
+   }
+   ```
+
+    </details>
+
+---
+
+# Plutus Research
+
+## Other Campus Questions
+
+1. Given two integers $l$ and $r$ ($l \leq r$) and $k$, find the minimum value $x$ between $l$ and $r$ such that sum of digits of all numbers between $l$ and $x$ is at least $k$. Its given that at least one such $x$ exists.
+
+   - $l \leq 10^{15}$
+   - $r \leq 10^{15}$
+
+2. Given an array $a$ of size $n$, find the number of subarrays whose product of the minimum value and the maximum value is divisuble by the length of subarray.
+
+   - $1 \leq n \leq 10^5$
+   - $1 \leq a[i] \leq 30$
+
+3. Given a tree of $n$ nodes rooted at $1$ and an array of integers $a$, you need to process $q$ queries of the form `v x`. For each query you need to tell the maximum length of the matching prefix (from the MSB to LSB) of $v$ and any of the $a$ values of the nodes that lie on the path from the root to the node $x$ (all ancestors of $x$ and $x$). Each number is represented in $30$ bits.
+
+   - $1 \leq n \leq 10^5$
+   - $1 \leq q \leq 10^5$
+   - $1 \leq a[i] \leq 10^9$
+   - $1 \leq v \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+   We can use a bit trie to store the binary representation of the numbers. We can then use the trie to answer the queries in $O(30)$ time while performing a DFS on the tree. The time complexity of the solution is $O(n + 30 * q)$.
+
+   ```cpp showLineNumbers
+   class Node
+   {
+   public:
+       vector<int> ch;
+       int cnt;
+
+       Node() : ch(vector<int>(2, -1)), cnt(0) {}
+   };
+
+   class Trie
+   {
+       vector<Node> nodes;
+
+   public:
+       Trie()
+       {
+           nodes.push_back(Node());
+       }
+
+       void add(int x)
+       {
+           int cur = 0;
+           for (int bit = 29; bit >= 0; bit--)
+           {
+               int u = (x >> bit) & 1;
+               if (nodes[cur].ch[u] == -1)
+               {
+                   nodes[cur].ch[u] = nodes.size();
+                   nodes.push_back(Node());
+               }
+               cur = nodes[cur].ch[u];
+               nodes[cur].cnt++;
+           }
+       }
+
+       void remove(int x)
+       {
+           int cur = 0;
+           for (int bit = 29; bit >= 0; bit--)
+           {
+               int u = (x >> bit) & 1;
+               cur = nodes[cur].ch[u];
+               nodes[cur].cnt--;
+           }
+       }
+
+       int get(int x)
+       {
+           int cur = 0;
+           int len = 0;
+           for (int bit = 29; bit >= 0; bit--)
+           {
+               int u = (x >> bit) & 1;
+               if (nodes[cur].ch[u] == -1)
+                   return len;
+               cur = nodes[cur].ch[u];
+               if (nodes[cur].cnt == 0)
+                   return len;
+               len++;
+           }
+           return len;
+       }
+   };
+
+   int main()
+   {
+       int n;
+       cin >> n;
+
+       vector<vector<int>> g(n);
+       for (int i = 0; i < n - 1; i++)
+       {
+           int u, v;
+           cin >> u >> v;
+           u--, v--;
+           g[u].push_back(v);
+           g[v].push_back(u);
+       }
+
+       vector<int> arr(n);
+       for (int i = 0; i < n; i++)
+           cin >> arr[i];
+
+       int q;
+       cin >> q;
+
+       vector<vector<pair<int, int>>> qByNode(n);
+       for (int i = 0; i < q; i++)
+       {
+           int x, v;
+           cin >> x >> v;
+           qByNode[x - 1].push_back({v, i});
+       }
+
+       vector<int> ans(q);
+       Trie t;
+
+       function<void(int, int)> dfs = [&](int u, int p) -> void
+       {
+           t.add(arr[u]);
+           for (auto [v, idx] : qByNode[u])
+               ans[idx] = t.get(v);
+
+           for (int v : g[u])
+           {
+               if (v == p)
+                   continue;
+               dfs(v, u);
+           }
+
+           t.remove(arr[u]);
+       };
+       dfs(0, -1);
+
+       for (auto x : ans)
+           cout << x << "\n";
+   }
+
+   ```
+
+    </details>
+
+4. Given $n$ balls of some colors, where the $i^{th} ball's color is a[i]$, you need to find the minimum number of arrangements of these balls module $10^9 + 7$ where you can perform an operation atmost once, in which you can choose all balls of one color and change their color to some other color.
+
+   - $1 \leq n \leq 10^5$
+   - $1 \leq a[i] \leq n$
+
+    <details>
+    <summary>Solution</summary>
+
+   You need to use the simple formula for the number of arrangements of $n$ balls of $k$ colors, which is $\frac{n!}{a[1]! \cdot a[2]! \ldots a[k]!}$. It is clear to minimise the value of this expression, we must combine the two largest colour groups into one. The time complexity of the solution is $O(n \log n)$ due to sorting and some addtional time is needed for the factorial calculation.
+
+   ```cpp showLineNumbers
+   long long mod = 1e9 + 7;
+
+   long long binPower(long long a, long long b)
+   {
+       long long res = 1;
+       while (b)
+       {
+           if (b & 1)
+               res = (res * a) % mod;
+           a = (a * a) % mod;
+           b >>= 1;
+       }
+       return res;
+   }
+
+   int main()
+   {
+       int n, k;
+       cin >> n >> k;
+
+       vector<long long> fac(n + 1);
+       fac[0] = 1;
+       for (int i = 1; i <= n; i++)
+           fac[i] = (fac[i - 1] * i) % mod;
+
+       vector<int> arr(k);
+       for (int i = 0; i < k; i++)
+           cin >> arr[i];
+       sort(arr.begin(), arr.end(), greater<int>());
+
+       if (k == 1)
+       {
+           cout << 1 << "\n";
+           return 0;
+       }
+
+       arr[1] += arr[0];
+       long long ans = fac[n];
+       for (int i = 1; i < k; i++)
+           ans = (ans * binPower(fac[arr[i]], mod - 2)) % mod;
+
+       cout << ans << "\n";
+   }
+
+   ```
+
+    </details>
+
+---
