@@ -31,6 +31,25 @@ Here are also some conscise notes that I started maintainging as I solved these 
 
 I have no plans of updating them, and they probably won't make any sense if you haven't studied the topic first. But if you have, they might be a good refresher and help you in remembering some important or lesser known points, and getting those 'tricky' questions right.
 
+## CPP Topics
+
+When preparing for interviews, these are some common topics that I found to be the favourite amoung interviewers, specially for C++ developer roles or low level system roles. [Learn CPP](https://www.learncpp.com/) is a great resource for these topics and learning C++ nitigrities in general, but it you are short on time (like I was), these are some topics that you should focus on:
+
+- [Void Pointers](https://www.learncpp.com/cpp-tutorial/void-pointers/)
+
+  - How to figure out if a `void *` pointer is pointing to an integer or a character array?
+  - How to figure out if a `void *` pointer is allocated on the stack or the heap?
+
+- [Smart Pointers & Move Semantics in CPP](https://www.learncpp.com/cpp-tutorial/introduction-to-smart-pointers-move-semantics/)
+
+  - How do these work under the hood and why do we need them?
+  - Implementing a simple class for smart pointers in general, and for the three standard smart pointers in particular.
+    - `std::unique_ptr`
+    - `std::shared_ptr`
+    - `std::weak_ptr`
+
+- Difference between references and pointers in C++. When to use which and how they affect the safety as well as the usability of the code?
+
 #### PS
 
 Computer networks in also usually included in CS concepts, but I decided to skip them in the interest of time. A very few companies ask questions from this topic (like `Cisco`) and for very specific roles (like Network Engineer). You might want to read about them if you are interested in such roles.

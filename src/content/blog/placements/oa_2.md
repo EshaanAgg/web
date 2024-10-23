@@ -236,7 +236,7 @@ This is the second part of the series on online assessments that I witnessed dur
    - Sort all the connected components in decreasing order of their size.
    - If the components are $c_1, c_2, \ldots, c_k$, then connect the first $m$ components (i.e. $c_1, c_2, \ldots, c_m$), then the next $m$ components (i.e. $c_{m + 1}, c_{m + 2}, \ldots, c_{2m}$), and so on.
 
-   Now each component with size $s$ contribute $\frac{s * (s + 1)}{2} - x$ to the answer, where $x$ is the number of edges present originally in that component. The time complexity of the solution is $O(n + m)$.
+   Now each component with size $s$ contribute $\frac{s \cdot (s + 1)}{2} - x$ to the answer, where $x$ is the number of edges present originally in that component. The time complexity of the solution is $O(n + m)$.
 
     </details>
 
@@ -348,10 +348,10 @@ This is the second part of the series on online assessments that I witnessed dur
                // in reverse order
                auto p = people[seat];
                ans[p[0]] = seat;
-               for (int i = p.size() - 1; i > 0; i--)
+               for (int i = p.size() - 1; i >= 0; i--)
                    st.push(p[i]);
            } else {
-               if (st.empty()) {
+               if (!st.empty()) {
                    ans[st.top()] = seat;
                    st.pop();
                }
@@ -375,8 +375,7 @@ This is the second part of the series on online assessments that I witnessed dur
 
    We will binary search on the number of chefs required. We can then simulate the process of serving the customers and check if the number of chefs required is less than or equal to the number of chefs we have. So simulate the process, we can use the greedy strategy of trying to serve the customer who is leaving the earliest first. Careful implementation is needed to ensure that you do not process the dishes of the customer before they arrive! I have used a priority queue to store the dishes to simulate the same. The time complexity of the solution is $O(n \log n \cdot \log A)$ where $A$ is the maximum number of chefs that can be needed.
 
-   ```cpp showLineNumbers
-
+   ```cpp showLineNumbers wrap
    using pq_type = priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>>;
 
    void processOrders(int curTime, int lastFreeTime, int chefCnt, pq_type &toProcess, vector<int> &served)
@@ -541,7 +540,343 @@ This is the second part of the series on online assessments that I witnessed dur
    }
    ```
 
+    </details>
+
+9. You are given three arrays $a$, $b$ and $c$ of length $n$ each. In one operation, you can choose any one element from any one of the arrays and move it to any other array. After you have performed all the operations, we would sort each of the arrays indidually, and then concatenate them. What is the minimum number of operations that you must perform so that the final resulting array formed is also sorted?
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+   - $1 \leq a[i], b[i], c[i] \leq 10^9$
+
     <details>
+    <summary>Solution</summary>
+
+   We can use an approach similar to merging sorted arrays in this question. Let us first sort all the three arrays, and now try to form the new array. If we are able to add the element from the first array, then that is analogous to no operation being required for the sorting to be performed. On the other hand, it the current minimum is either from the second or the third array, then atleast one operation would be needed to put the same to it's correct position. This can be simulated easily with the help of pointers or we can use priority queues for easier implementation. The time complexity of the solution is $O(n \log n)$.
+
+   ```cpp showLineNumbers
+   int main()
+   {
+       int n;
+       cin >> n;
+
+       vector<int> a(n), b(n), c(n);
+
+       priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+       for (int i = 0; i < n; i++)
+       {
+           cin >> a[i];
+           pq.push({a[i], 0});
+       }
+       for (int i = 0; i < n; i++)
+       {
+           cin >> b[i];
+           pq.push({b[i], 1});
+       }
+       for (int i = 0; i < n; i++)
+       {
+           cin >> c[i];
+           pq.push({c[i], 2});
+       }
+
+       int cntA = 0, cntB = 0, cntC = 0, ops = 0;
+       while (cntA + cntB + cntC != 3 * n)
+       {
+           auto [_, idx] = pq.top();
+           pq.pop();
+
+           if (idx == 0)
+               cntA++;
+           else if (idx == 1)
+           {
+               cntB++;
+               if (cntA != n)
+                   ops++;
+           }
+           else
+           {
+               cntC++;
+               if (cntA != n || cntB != n)
+                   ops++;
+           }
+       }
+
+       cout << ops << endl;
+   }
+   ```
+
+    </details>
+
+10. You are given an array $arr$ on length $n$. In one operation you can choose any two distinct indexes $i$ and $j$, remove both the elements from the array, and then add their sum back to the array at any position of your choice. What is the minimum number of operations required to make the array sorted in non-decreasing order?
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq arr[i] \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+    Let us fix the elements that we would not change in the array, that is the longest non-decreasing subsequence in the array. We can then see that the elements that are not part of the longest non-decreasing subsequence must be removed and added back to the array. When adding back, we can always pair two elements together, and add them in the appropiate position in the sorted array. The time complexity of the solution is $O(n \log n)$.
+
+    ```cpp showLineNumbers
+    int main() {
+        int n;
+        cin >> n;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+
+        vector<int> lis;
+        for (int i = 0; i < n; i++) {
+            int idx = lower_bound(lis.begin(), lis.end(), arr[i] + 1) - lis.begin();
+            if (idx == lis.size())
+                lis.push_back(arr[i]);
+            else
+                lis[idx] = arr[i];
+        }
+
+        cout << (n - lis.size() + 1)/2 << "\n";
+    }
+    ```
+
+    </details>
+
+11. There are $n$ bacteria samples which are arranged in a row in a lab, from $1$ to $n$. There are $m$ number of pairs of bacteria, where $a[i]$ bacteria is poisonous to the bacteria $b[i]$. Determine the number of intervals of samples that can coexist.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq m \leq 10^5$
+    - $1 \leq a[i], b[i] \leq n$
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int main() {
+        int n, m;
+        cin >> n >> m;
+
+        vector<int> a(m), b(m);
+        for (int i = 0; i < m; i++)
+            cin >> a[i];
+        for (int i = 0; i < m; i++)
+            cin >> b[i];
+
+        // Denotes the minimum index till which I can include
+        // in the subarray ending at me and still be safe
+        vector<int> d(n + 1, -1);
+
+        for (int i = 0; i < m; i++) {
+            int u = a[i], v = b[i];
+            if (u > v)
+                swap(u, v);
+            d[v] = max(d[v], u);
+        }
+
+        // All those in my range need to be safe too
+        for (int i = 1; i <= n; i++)
+            d[i] = max(d[i], d[i - 1]);
+
+        long long ans = 0;
+        for (int i = 1; i <= n; i++) {
+            if (d[i] == -1)
+                ans += i;
+            else
+                ans += i - d[i];
+        }
+
+        cout << ans << endl;
+    }
+    ```
+
+    </details>
+
+12. [Number of Ways](https://codeforces.com/blog/entry/106132)
+
+13. For some array $arr$, the score of the array is defined as $len(arr) * max(arr)$. Given an array $arr$, find the sum of the scores of all the non-empty subarrays of the array. Return the same modulo $10^9 + 7$.
+
+    <details>
+    <summary>Solution</summary>
+
+    For each index $i$, let us calculate the number of subarrays that have the maximum element as that index, and add the contribution of all those arrays to the answer. This can be done with the help of some maths and stacks. Remember to handle the equality of the elements in exactly one the computations of either the previous greater or the next greater and calculate the contribution of the lengths accordingly. The time complexity of the solution is $O(n)$.
+
+    ```cpp showLineNumbers
+    long long mod = 1e9 + 7;
+
+    long long getCnt(long long x, long long y)
+    {
+        if (x > y)
+            swap(x, y);
+
+        long long ans = x * (x + 1) / 2LL;
+        ans %= mod;
+        ans *= (x + y);
+        ans %= mod;
+
+        long long ans2 = (y - x - 1) * x;
+        ans2 %= mod;
+        ans2 *= x;
+        ans2 %= mod;
+
+        ans = (ans + ans2 + 2LL * mod) % mod;
+        return ans;
+    }
+
+    int main()
+    {
+        int n;
+        cin >> n;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+
+        stack<int> st;
+        vector<int> nxtGreater(n, n);
+        for (int i = 0; i < n; i++)
+        {
+            while (!st.empty() && arr[i] > arr[st.top()])
+            {
+                nxtGreater[st.top()] = i;
+                st.pop();
+            }
+            st.push(i);
+        }
+        while (!st.empty())
+            st.pop();
+
+        vector<int> prevGreater(n, -1);
+        for (int i = n - 1; i >= 0; i--)
+        {
+            while (!st.empty() && arr[i] >= arr[st.top()])
+            {
+                prevGreater[st.top()] = i;
+                st.pop();
+            }
+            st.push(i);
+        }
+
+        long long ans = 0;
+        for (int i = 0; i < n; i++)
+        {
+            arr[i] %= mod;
+            ans += getCnt(i - prevGreater[i], nxtGreater[i] - i) * arr[i];
+            ans %= mod;
+        }
+
+        cout << ans << endl;
+    }
+    ```
+
+    </details>
+
+## Online Assessment Questions
+
+1. [Make Fence Great Again](https://codeforces.com/problemset/problem/1221/D)
+
+   <details>
+   <summary>Solution</summary>
+
+   The key realization to solve the problem is that you will never need to increment one number (or fence) by more than $2$ times in the optimal solution. Using the same we can write a simple DP solution with the time complexity of $O(n \cdot 3 \cdot 3)$.
+
+   ```cpp showLineNumbers
+   #include <bits/stdc++.h>
+   using namespace std;
+
+   #define IOS                       \
+       ios_base::sync_with_stdio(0); \
+       cin.tie(0);                   \
+       cout.tie(0)
+
+   #define ll long long int
+   #define vvll vector<vector<long long int>>
+   #define vpll vector<pair<long long int, long long int>>
+   #define range(x, s, n) for (int x = s; x < n; ++x)
+
+   void solution();
+
+   const int MOD = 1e9 + 7;
+
+   int main()
+   {
+       IOS;
+       int TEST_CASES;
+       TEST_CASES = 1;
+       cin >> TEST_CASES;
+       while (TEST_CASES--)
+           solution();
+       return 0;
+   }
+
+   ll solve(int idx, int lastIncr, vpll &arr, vvll &dp)
+   {
+       if (idx == arr.size())
+           return 0;
+
+       if (dp[idx][lastIncr] != -1)
+           return dp[idx][lastIncr];
+
+       ll cost = 1e18;
+       int lastEle = arr[idx - 1].first + lastIncr;
+       for (ll incr = 0; incr <= 2; incr++)
+       {
+           if (lastEle == arr[idx].first + incr)
+               continue;
+           cost = min(cost, incr * arr[idx].second + solve(idx + 1, incr, arr, dp));
+       }
+       return dp[idx][lastIncr] = cost;
+   }
+
+   void solution()
+   {
+       int n;
+       cin >> n;
+
+       vpll arr(n);
+       range(i, 0, n) cin >> arr[i].first >> arr[i].second;
+
+       vvll dp(n, vll(3, -1));
+       ll ans = 1e18;
+       for (ll incr = 0; incr <= 2; incr++)
+           ans = min(ans, incr * arr[0].second + solve(1, incr, arr, dp));
+
+       cout << ans << endl;
+   }
+   ```
+
+   </details>
+
+2. You are given a tree with $n$ nodes, and each node has a value $arr[i]$. You are given $q$ queries, and for each query you need to count the number of nodes with a prime value in the subtree of the query $q[i]$. The tree is rooted at $1$.
+
+   Constraints:
+
+   - $1 \leq n, q \leq 10^5$
+   - $1 \leq arr[i] \leq 10^5$
+
+3. You are given an even integer $n$. You need to count the number of ways to colour a $1 \times n$ grid using $3$ colours such that no two adjacent cells have the same colour and the cells equidistant from the beginning and the end also do not have the same colour. Print the answer modulo $10^9 + 7$.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+   - $n$ is even
+
+4. You are even a grid of size $n \times m$. Each cell of the grid is either:
+
+   1. $0$ -> Meaning that it is free to move
+   2. $1$ -> Meaning that it is blocked
+   3. $2$ -> Meaning that it is a has a gold coin
+
+   You need to begin at the point $(0,0)$ and end at the point $(t_x, t_y)$ and need to collect all the gold coins on the way. You can only move within the grid, and can move in any of the $4$ directions. Find the minimum number of moves required to collect all the gold coins. You are allowed to visit multiple cells multiple times.
+
+   Constraints:
+
+   - $1 \leq n, m \leq 100$
+   - Count of gold coins $\leq 10$
+   - $0 \leq t_x < n$
+   - $0 \leq t_y < m$
 
 ---
 
@@ -1317,6 +1652,59 @@ The company repeated the coding questions across campuses, even if the gap betwe
 
     </details>
 
+## Online Assessment Questions
+
+1. You are given a string $s$ and a dictionary of words as $arr$ of length $n$. You need to find the word from the dictionary with the minimum edit distance with respect to the provided string $s$. If there are multiple such words, return the lexographically smallest word.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^4$
+   - $1 \leq |s| \leq 10$
+   - $1 \leq |arr[i]| \leq 10$
+
+2. You are given a string $s$ of length $n$ denoting a valid binary expression. The string can have the following characters:
+
+   - `x`: Denotes the primary variable
+   - `X`: Denotes the negation of the primary variable
+   - `1`: Denotes the logical `true` value
+   - `0`: Denotes the logical `false` value
+   - `&`: Denotes the logical `and` operation
+   - `|`: Denotes the logical `or` operation
+   - `^`: Denotes the logical `xor` operation
+   - `(`: Denotes the start of a subexpression
+   - `)`: Denotes the end of a subexpression
+
+   You need to determine the minimum number of substituitons required (replace any `x` or `X` with `0` or `1`) to make the expression evaluate to either `true` or `false`. There are multiple testcases, and you need to print the result for each testcase in a new line.
+
+   Constraints:
+
+   - $1 \leq t \leq 10$
+   - $1 \leq n \leq 10^5$
+   - The expression is always valid.
+
+   Sample Input:
+
+   ```
+   5
+   1&0
+   x
+   1|(x^x&(x|0))
+   1|0
+   (0|x|(X^1^x^X))
+   ```
+
+   Sample Output & Explanation:
+
+   ```
+   0 -> The expression is already false
+   1 -> The expression can be made true or false by replacing x with 1 or 0
+   0 -> The expression is already true, irrespective of the value of x
+   0 -> The expression is already false
+   1 -> We can set x = 1 to make the expression true
+   ```
+
+3. A UI screenshot involving three buttons and a picture was given. Depending upon which button is clicked, the image shown shown be changed. Some amount of Flexbox and CSS was required to position the buttons and the image in the correct manner as shown in the UI. Asthetics was also a part of the marking.
+
 # InMobi
 
 ## Other Campus Questions
@@ -1355,7 +1743,105 @@ The company repeated the coding questions across campuses, even if the gap betwe
 
 6. [Longest Valid Parentheses](https://leetcode.com/problems/longest-valid-parentheses/description/)
 
----
+7. [Remove Letter to Equlaize Frequency](https://leetcode.com/problems/remove-letter-to-equalize-frequency/description/)
+
+8. Imagine a vertical line cutting through the root node, thus dividing the left and right sub-trees of it. A mirror element of a node $x$ satisfies the following three properties:
+
+   - It is on the opposite side of the dividing line.
+   - It is at the same depth as $x$.
+   - It's horizontal distance from the vertical dividing line is the same as that of $x$.
+
+   Your task is to write a program logic that first creates a Binary Search Tree, then creates a mirrored tree out of it, and finally prints the preorder (Root, Left, Right) traversal of the mirrored tree. Your program will be provided with the number of nodes in the Binary Search Tree and the data of nodes separated by space in the next line.
+
+    <details>
+    <summary> Solution </summary>
+
+   This question can be seen as a conjuction of three standard DSA problems:
+
+   1. Creating a balanced BST from a sorted array.
+   2. Mirroring a binary tree.
+   3. Preorder traversal of a binary tree.
+
+   The implementation is relatively simple. The time complexity of the solution is $O(n)$.
+
+   ```cpp
+   class Node
+   {
+   public:
+       Node *left, *right;
+       int val;
+
+       Node() : left(nullptr), right(nullptr), val(-1) {}
+       Node(int x) : left(nullptr), right(nullptr), val(x) {}
+   };
+
+   Node *build(int l, int r, vector<int> &arr)
+   {
+       if (l > r)
+           return nullptr;
+       if (l == r)
+           return new Node(arr[l]);
+
+       int m = (l + r) / 2;
+       Node *n = new Node(arr[m]);
+       n->left = build(l, m - 1, arr);
+       n->right = build(m + 1, r, arr);
+       return n;
+   }
+
+   void flip(Node *root)
+   {
+       if (root == nullptr)
+           return;
+       swap(root->left, root->right);
+       flip(root->left);
+       flip(root->right);
+   }
+
+   void print(Node *root)
+   {
+       if (root == nullptr)
+           return;
+       cout << root->val << " ";
+       print(root->left);
+       print(root->right);
+   }
+
+   int main()
+   {
+       int n;
+       cin >> n;
+       vector<int> arr(n);
+       for (int i = 0; i < n; i++)
+           cin >> arr[i];
+
+       Node *root = build(0, n - 1, arr);
+       flip(root);
+       print(root);
+   }
+   ```
+
+    </details>
+
+9. [Aggressive Cows](https://www.spoj.com/problems/AGGRCOW/)
+
+10. [Word Ladder](https://leetcode.com/problems/word-ladder/)
+
+11. [Trapping Rain Water](https://leetcode.com/problems/trapping-rain-water/description/)
+
+12. Try all the variants of the [House Robber](https://leetcode.com/problems/house-robber/description/) problem.
+
+13. [Buy & Sell Stocks atmost K Times](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/description/)
+
+14. [Cycle Detection in Directed Graph](https://cp-algorithms.com/graph/finding-cycle.html)
+
+## Online Assessment Questions
+
+1. Given an array of size $N$, find the missing and duplicate integer in the array. The array is supposed to all the integers between $1$ and $N$ exactly once.
+
+2. Find the probability to reach the target node from the root node $1$ in an unweighted undirected tree in time $t$. In each second you can visit one of the unvisited nodes from the current node with equal probability, and if there are no unvisited nodes, you can stay at the same node. The tree is given in the form of an adjacency list.
+
+3. Given an integer $k$ and character $arr$ of size $n$ containing two characters: $G$ for guard and $I$ for intruder, you need to count the maximum number of intruders that can be caught. A guard can catch only one thief if it lies in range $[i-k, i+k]$ where $i$ is the position of the guard under consideration.
 
 # Dream 11
 
@@ -2328,10 +2814,125 @@ The test usually involves 2 coding questions and 1 question involving writing a 
    - $l \leq 10^{15}$
    - $r \leq 10^{15}$
 
+    <details>
+    <summary>Solution</summary>
+
+   We will try to binary search on the answer. If the current answer is $x$, we need to check if the count of digits in the range $[l, x]$ is atleast $k$ or not. The same can be calculated by finding a function to give the sum of the digits of the numbers in the range $[0, x]$, which will use digit DP to calculate the same. The time complexity of the solution is $\log(10^{15} \cdot 15 \cdot 2)$.
+
+   ```cpp showLineNumbers wrap
+   // Returns <count, sum>
+   pair<long long, long long> solve(int idx, bool eq, string &num, pair<long long, long long> dp[][2])
+   {
+       if (idx == num.size())
+           return {1, 0};
+       if (dp[idx][eq].first != -1)
+           return dp[idx][eq];
+
+       long long sum = 0, ways = 0;
+       int mx = eq ? num[idx] - '0' : 9;
+       for (long long i = 0; i <= mx; i++)
+       {
+           bool newEq = eq && i == mx;
+           auto p = solve(idx + 1, newEq, num, dp);
+           ways += p.first;
+           sum += p.second + p.first * i;
+       }
+
+       return dp[idx][eq] = {ways, sum};
+   }
+
+   long long getSum(long long x)
+   {
+       if (x <= 0)
+           return 0;
+
+       string num = to_string(x);
+       pair<long long, long long> dp[num.size() + 1][2];
+       memset(dp, -1, sizeof(dp));
+
+       auto p = solve(0, 1, num, dp);
+       return p.second;
+   }
+
+   int main()
+   {
+       long long l, r, k;
+       cin >> l >> r >> k;
+
+       long long cnt1 = getSum(l - 1);
+       long long low = l, high = r, ans = -1;
+       while (low <= high)
+       {
+           long long mid = (low + high) / 2;
+           long long cnt2 = getSum(mid) - cnt1;
+           if (cnt2 >= k)
+           {
+               ans = mid;
+               high = mid - 1;
+           }
+           else
+               low = mid + 1;
+       }
+
+       cout << ans << endl;
+   }
+   ```
+
+    </details>
+
 2. Given an array $a$ of size $n$, find the number of subarrays whose product of the minimum value and the maximum value is divisuble by the length of subarray.
 
    - $1 \leq n \leq 10^5$
    - $1 \leq a[i] \leq 30$
+
+    <details>
+    <summary>Solution</summary>
+
+   Since the maximum value of the array is $30$, the maximum possible product of the minimum and maximum value of the subarray is $30 \times 30 = 900$. We can iterate over all the possible subarrays of length at most $900$ and count the number of subarrays that satisfy the condition. We will use deque to maintain the minimum and maximum in the current subarray. The time complexity of the solution is $O(min(n, 900)^2)$.
+
+   ```cpp showLineNumbers
+   int main()
+   {
+       int n;
+       cin >> n;
+
+       vector<int> arr(n);
+       for (int i = 0; i < n; i++)
+           cin >> arr[i];
+
+       int cnt = 0;
+       for (int len = 1; len <= min(n, 900); len++)
+       {
+           deque<int> minDq, maxDq;
+           for (int i = 0; i < n; i++)
+           {
+               while (!minDq.empty() && minDq.front() <= i - len)
+                   minDq.pop_front();
+               while (!maxDq.empty() && maxDq.front() <= i - len)
+                   maxDq.pop_front();
+
+               while (!minDq.empty() && arr[minDq.back()] >= arr[i])
+                   minDq.pop_back();
+               while (!maxDq.empty() && arr[maxDq.back()] <= arr[i])
+                   maxDq.pop_back();
+
+               minDq.push_back(i);
+               maxDq.push_back(i);
+
+               if (i >= len - 1)
+               {
+                   int prod = arr[maxDq.front()] * arr[minDq.front()];
+                   if (prod % len == 0)
+                       cnt++;
+               }
+           }
+       }
+
+       cout << cnt << endl;
+   }
+   ```
+
+    </details>
 
 3. Given a tree of $n$ nodes rooted at $1$ and an array of integers $a$, you need to process $q$ queries of the form `v x`. For each query you need to tell the maximum length of the matching prefix (from the MSB to LSB) of $v$ and any of the $a$ values of the nodes that lie on the path from the root to the node $x$ (all ancestors of $x$ and $x$). Each number is represented in $30$ bits.
 
@@ -2526,5 +3127,686 @@ The test usually involves 2 coding questions and 1 question involving writing a 
    ```
 
     </details>
+
+5. Same question as Deutsche Bank: Question $1$ & $2$ from the `Online Assessment Question` section.
+
+6. Same question as Deutsche Bank: Question $2$, $9$ & $17$ from the `Other Campus Questions` section.
+
+7. Same question as HiLabs: Question $14$ from the `Other Campus Questions` section.
+
+8. You are given a number $n$, which represents time. Starting from the origin, you can move in any of the fourth cardinal directions, but once you make a move, the next move that you make should be perpendicular to the previous move. What is the distinct number of coordinates reachable with this time?
+
+   - $1 \leq n \leq 10^3$
+
+    <details>
+    <summary>Solution</summary>
+
+   Due to the small constraint on the value of $n$, we can simply simulate the movement of the person and keep track of the coordinates that are reachable. The time complexity of the solution is $O(n^2)$ if we use a BFS to simulate all the possible moves.
+
+   ```cpp showLineNumbers
+   int main()
+   {
+       int n;
+       cin >> n;
+
+       // Y, X, DIR -> 0 for HOR, 1 for VER
+       int vis[2 * n + 1][2 * n + 1][2];
+       memset(vis, 0, sizeof(vis));
+
+       queue<vector<int>> q;
+       q.push({n, n, 0});
+       q.push({n, n, 1});
+       vis[n][n][0] = 1;
+       vis[n][n][1] = 1;
+
+       int dx[] = {0, 1, 0, -1};
+       int dy[] = {1, 0, -1, 0};
+       int ddir[] = {1, 0, 1, 0};
+
+       int dis = 0;
+       while (!q.empty())
+       {
+           int sz = q.size();
+           dis++;
+           if (dis > n)
+               break;
+
+           while (sz--)
+           {
+               auto t = q.front();
+               q.pop();
+
+               int y = t[0], x = t[1], dir = t[2];
+               for (int k = 0; k < 4; k++)
+               {
+                   int yn = y + dy[k], xn = x + dx[k], ndir = ddir[k];
+                   if (ndir == dir)
+                       continue;
+                   if (!vis[yn][xn][ndir])
+                   {
+                       vis[yn][xn][ndir] = 1;
+                       q.push({yn, xn, ndir});
+                   }
+               }
+           }
+       }
+
+       int cnt = 0;
+       for (int i = 0; i <= 2 * n; i++)
+           for (int j = 0; j <= 2 * n; j++)
+               cnt += max(vis[i][j][0], vis[i][j][1]);
+       cout << cnt << endl;
+   }
+   ```
+
+   </details>
+
+9. You are given a graph of $n$ cities and $m$ edges between these cities. If two cities are connected, then they belong to the same kingdom. You are also given an array $arr$ of length $n$ where $arr[i]$ denotes the number of people living in the group $i$. You need to assign each group to exactly $1$ unique city so that the sum of number of friendships across all the kingdoms is the maximum possible. A pair of people are said to be friends if they belong to the same kingdom. Output the maximum possible number of friendships.
+
+- $1 \leq n \leq 10^5$
+- $1 \leq m \leq 10^5$
+- $1 \leq arr[i] \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+  We can use a simple greedy approach and calculate the number of cities in each kingdom (connected component). Then we can use sort the groups in the reverse order, and try to assign the largest number of people to the largest possible kingdom. The time complexity of the solution is $O(n + m + n \log n)$.
+
+  ```cpp showLineNumbers
+  int main()
+  {
+      int n, m;
+      cin >> n >> m;
+
+      vector<vector<int>> g(n);
+      for (int i = 0; i < m; i++)
+      {
+          int u, v;
+          cin >> u >> v;
+          u--, v--;
+          g[u].push_back(v);
+          g[v].push_back(u);
+      }
+
+      vector<int> arr(n);
+      for (int i = 0; i < n; i++)
+          cin >> arr[i];
+
+      vector<int> vis(n, 0);
+
+      int compSize = 0;
+      function<void(int, int)> dfs = [&](int u, int p) -> void
+      {
+          vis[u] = 1;
+          compSize++;
+
+          for (int v : g[u])
+          {
+              if (v == p || vis[v])
+                  continue;
+              dfs(v, u);
+          }
+      };
+
+      vector<int> comps;
+      for (int i = 0; i < n; i++)
+      {
+          if (vis[i])
+              continue;
+          compSize = 0;
+          dfs(i, -1);
+          comps.push_back(compSize);
+      }
+
+      sort(comps.begin(), comps.end(), greater<int>());
+      sort(arr.begin(), arr.end(), greater<int>());
+
+      long long ans = 0;
+      int j = 0;
+
+      for (auto sz : comps)
+      {
+          long long cnt = 0;
+          for (int i = 0; i < sz; i++)
+          {
+              cnt += arr[j];
+              j++;
+          }
+
+          ans += cnt * (cnt - 1) / 2LL;
+      }
+
+      cout << ans << endl;
+  }
+  ```
+
+    </details>
+
+11. You are given a binary string of length $n$. You need to count the number of substrings it has such that it has atleast $x$ bits set.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq x \leq n$
+
+    <details>
+    <summary>Solution</summary>
+
+    We can use a simple two pointer approach to count the number of substrings that have atleast $x$ bits set. The time complexity of the solution is $O(n)$.
+
+    ```cpp showLineNumbers
+    int main() {
+        int n, x;
+        cin >> n >> x;
+
+        string s;
+        cin >> s;
+
+        int cnt = s[0] == '1';
+        int j = 0;
+
+        long long ans = 0;
+        for (int i = 0; i < n; i++) {
+            while (cnt < x && j + 1 < n) {
+                j++;
+                cnt += s[j] == '1';
+            }
+
+            if (cnt < x)
+                break;
+            ans += n - j;
+            cnt -= s[i] == '1';
+        }
+
+        cout << ans << endl;
+    }
+    ```
+
+    </details>
+
+12. You are given two positive integers $X$ and $Y$ without leading zeroes. You can perform an operation on these integers any number of times, in which you can delete a digit of the given number such that resulting number does not have leading zeroes: Let $X'$ and $Y'$ be two numbers that were formed after performing operations on $X$ and $Y$ respectively. You have to find the number of all the unique pairs of $X'$ and $Y'$ whose XOR is zero.
+
+    Two pairs of numbers $(A, B)$ and $(C, D)$ are considered different if and only if $A \neq C$ and $B \neq D$.
+
+    Constraints:
+
+    - $1 \leq X, Y \leq 10^{12}$
+    - $X$ and $Y$ do not have leading zeroes.
+
+    <details>
+    <summary>Solution</summary>
+
+    Two numbers $X$ and $Y$ have XOR equal to $0$ only and only if they are equal to each other. Thus the answer is nothing but the number of common subsequences of the two numbers when represented as string. We must be careful to exclude the strings with leading zeros. The complexity of the solution is $(2^{12} \cdot 12)$ as we will be using a bitmask to generate the subsequences.
+
+    ```cpp showLineNumbers
+    void addNumbers(string &s, set<long long> &pre) {
+        for (int mask = 1; mask < (1 << s.size()); mask++) {
+            string t;
+            for (int i = 0; i < s.size(); i++) {
+                if (mask & (1 << i))
+                    t += s[i];
+            }
+
+            if (t[0] == '0')
+                continue;
+
+            long long v = stoll(t);
+            pre.insert(v);
+        }
+    }
+
+    int main() {
+        long long a, b;
+        cin >> a >> b;
+
+        string x = to_string(a), y = to_string(b);
+
+        set<long long> s1, s2;
+        addNumbers(x, s1);
+        addNumbers(y, s2);
+
+        long long ans = 0;
+        for (auto v : s1)
+            if (s2.count(v))
+                ans++;
+
+        cout << ans << endl;
+    }
+    ```
+
+    </details>
+
+13. You are given a tree of $N$ nodes and $N - 1$ edges rooted at node $1$ with exactly one candy placed at each node. Let's say the cost of the candy placed on the $i^{th}$ node is $A[i]$ and you have $K$ amount of money. Now, you will choose exactly one node (say, $u$) and will start buying the candies placed on the path from node $u$ to the root until you run out of money, that is, first, you will buy the candy placed at node $u$ ,then the candy placed at the ancestor of $u$, then it's ancestor so on till you run out of money or you reach root node. Also, you cannot skip over a node without buying the candy placed on it. Calculate the the maximum number of candies you can buy in a given amount of money by choosing exactly one starting node.
+
+    Constraints:
+
+    - $1 \leq N \leq 10^5$
+    - $1 \leq A[i] \leq 10^9$
+    - $1 \leq K \leq 10^{18}$
+
+    <details>
+    <summary>Solution</summary>
+
+    We will use binary lifting to solve this problem. For each node, we would calculate the ${2^j}^{th}$ ancestor of the node and the money that we would need to spend to reach the ancestor. Then we can simply iterate over all the nodes and calculate the maximum number of candies that we can buy. The time complexity of the solution is $O(N \log N)$.
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        int n;
+        cin >> n;
+
+        long long amt;
+        cin >> amt;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+
+        vector<vector<int>> g(n);
+        for (int i = 0; i < n - 1; i++)
+        {
+            int u, v;
+            cin >> u >> v;
+            g[u - 1].push_back(v - 1);
+            g[v - 1].push_back(u - 1);
+        }
+
+        int l = ceil(log2(n));
+        vector<vector<pair<int, long long>>> up(n, vector<pair<int, long long>>(l + 1));
+
+        function<void(int, int)> dfs = [&](int u, int p) -> void
+        {
+            if (p == -1)
+                up[u][0] = {-1, 1e18};
+            else
+                up[u][0] = {p, arr[p]};
+
+            for (int i = 1; i <= l; i++)
+            {
+                int v = up[u][i - 1].first;
+                long long c = up[u][i - 1].second;
+                if (v == -1)
+                    up[u][i] = {-1, 1e18};
+                else
+                    up[u][i] = {up[v][i - 1].first, c + up[v][i - 1].second};
+            }
+
+            for (int v : g[u])
+            {
+                if (v == p)
+                    continue;
+                dfs(v, u);
+            }
+        };
+        dfs(0, -1);
+
+        int ans = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (arr[i] > amt)
+                continue;
+
+            int u = i, cnt = 1;
+            long long left = amt - arr[i];
+
+            for (int j = l; j >= 0; j--)
+            {
+                auto [v, c] = up[u][j];
+                if (v != -1 && c <= left)
+                {
+                    left -= c;
+                    u = v;
+                    cnt += (1 << j);
+                }
+            }
+            ans = max(ans, cnt);
+        }
+
+        cout << ans << endl;
+    }
+    ```
+
+    </details>
+
+14. You are given a circular array with $n$ elements. In one operation, you can swap any two adjacent elements. What is the minumum number of operations you need to perform to make the first two elements of the array same? Return $-1$ is the same is never possible.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq a[i] \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+    We will iterate over all the elements, and count the moves needed to make them the first two elements. We will then take the minimum of all the moves. The time complexity of the solution is $O(n)$.
+
+    ```cpp showLineNumbers
+    int main() {
+        int n;
+        cin >> n;
+
+        map<int, vector<int>> idx;
+        for (int i = 0; i < n; i++) {
+            int x;
+            cin >> x;
+            idx[x].push_back(i);
+        }
+
+        int ans = 1e9;
+        for (auto &[_, v]: idx) {
+            int l = v.size();
+            if (l == 1)
+                continue;
+
+            ans = min(ans, v[0] + abs(v[1] - 1));
+            ans = min(ans, n - v.back() + abs(v[0] - 1));
+        }
+
+        if (ans == 1e9)
+            ans = -1;
+        cout << ans << endl;
+    }
+    ```
+
+    </details>
+
+15. You are given an undirected graph that contains $N + 1$ nodes and $M$ edges. These nodes are numbered from $0$ to $N$. Initially, you start at node $0$. Each node except node $0$ has a priority associated with it that is denoted by the array denoted as $P$. You have to follow these commands to visit each noche in the path:
+
+    1. You have to start at node $0$ and move to the next unvisited node which directly connected to node $0$ and having the highest priority.
+    2. If the priority is the same for multiple nodes, then you have to select the nodes that have the minimum distance between them.
+    3. After going to the next node, you have to again select a connected node that has the highest priority among the remaining unvisited nodes
+    4. If there are no adjacent unvisited nodes at a point, then you have to traverse back to the previous node from where you came to the present node for the first time
+    5. You cannot traverse the path once you reach the last unvisted node.
+
+    If the distance between the node $x$ to node $y$ is $d$, then the time elapsed to reach from one node to another is $d$ units. Determine the time required to reach at each node except node $0$ for the first time. The given graph is a connected graph.
+
+    Constraints:
+
+    - $1 \leq N \leq 10^5$
+    - $1 \leq M \leq 10^5$
+    - $1 \leq P[i] \leq 10^9$
+
+16. You are given the two arrays $a$ and $b$ of length $n$ and $m$ respectively. Consider the following points on the coordinate plane:
+
+    - $(a_1,0), (a_2,0) ..., (a_n, 0)$
+    - $(b_1, 1), (b_2, 1) ..., (b_m, 1)$
+
+    Find the area of the largest rectangle that can be constructed from the given points. If there is no rectangle possible then print $0$.
+
+    Constraints:
+
+    - $1 \leq n, m \leq 10^5$
+    - $1 \leq a[i], b[i] \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+    It is obvious that it is only possible to form a rectangle if there are atleast $2$ points on the same line. We can iterate over all the points and store all the points that are common in $a$ and $b$, and then take the minimum and maximum of the points to calculate the area of the rectangle. The time complexity of the solution is $O(n \log n + m \log m)$.
+
+    ```cpp showLineNumbers
+    int main() {
+        int n, m;
+        cin >> n >> m;
+
+        vector<int> a(n), b(m);
+        for (int i = 0; i < n; i++)
+            cin >> a[i];
+        for (int i = 0; i < m; i++)
+            cin >> b[i];
+
+        sort(a.begin(), a.end());
+        sort(b.begin(), b.end());
+
+        vector<int> common;
+        int i = 0, j = 0;
+        while (i < n && j < m) {
+            if (a[i] == b[j])
+                common.push_back(a[i]);
+            if (a[i] < b[j])
+                i++;
+            else
+                j++;
+        }
+
+        if (common.size() < 2)
+            cout << 0 << endl;
+        else
+            cout << common.back() - common[0] << endl;
+    }
+    ```
+
+    </details>
+
+17. You need to implement the Least Frequently Used (LFU) cache with the capacity $N$. You are also given $Q$ operations of the following type:
+
+    1.  $(1, key, -1)$: Get the value of the $key$ from the cache. If the value does not exist in the cache return $-1$.
+    2.  $(2, key, value)$: Update the value of the $key$ if present, or insert the $key$ if not already present.
+
+    When the cache reaches it's capacity, it should invalidate and remove the least frequently used key before inserting a new item. For this problem, when there is a tie (two or more keys with the same frequency), smallest key should be removed. For each operation of type $1$, print the required value.
+
+    <details>   
+    <summary>Solution</summary>
+
+    Since we need to remove the key with the smallest value when the cache is full, we can use a set to store the keys in sorted order. We can use a map to store the frequency of the keys and a set to store the keys with the same frequency. The time complexity of the solution is $O(Q \log N)$.
+
+    ```cpp
+    class LFU {
+        int cap;
+        map<int, int> kvMap;
+        map<int, int> freqMap;
+        set<pair<int, int>> freqSet;
+
+        void increaseFreq(int key) {
+            int freq = freqMap[key];
+            freqSet.erase({freq, key});
+
+            freqMap[key]++;
+            freqSet.insert({freqMap[key], key});
+        }
+
+    public:
+        LFU(int capacity) {
+            cap = capacity;
+        }
+
+        int get(int key) {
+            if (kvMap.find(key) == kvMap.end())
+                return -1;
+
+            increaseFreq(key);
+            return kvMap[key];
+        }
+
+        void set(int key, int val) {
+            if (kvMap.find(key) != keyMap.end()) {
+                kvMap[key] = val;
+                increaseFreq(key);
+                return;
+            }
+
+            if (kvMap.size() == cap) {
+                auto [toRem, _] = *freqSet.begin();
+                kvMap.erase(toRem);
+                freqMap.erase(toRem);
+                freqSet.erase(freqSet.begin());
+            }
+
+            kvMap[key] = val;
+            freqMap[key] = 1;
+            freqSet.insert({1, key});
+        }
+    };
+
+    int main() {
+        int cap;
+        cin >> cap;
+        LFU lfu(cap);
+
+        int q;
+        cin >> q;
+
+        while (q--) {
+            int ty, key, val;
+            cin >> ty >> key >> val;
+
+            if (ty == 1)
+                cout << lfu.get(key) << endl;
+            else
+                lfu.set(key, val);
+        }
+    }
+    ```
+
+    </details>
+
+18. During your English exam, you are given a question to find whether a sentence is valid according to the defined rules. You need to create a basic sentence checker that takes in strings as input and determines whether they form valid sentences. You can consider a sentence valid if it conforms to the following rules:
+
+    1. The sentence must start with a capital letter, followed by a lowercase letter, or a space.
+    2. All other characters must be lowercase letters, separators (`.:;`) or terminal marks (`.?!`).
+    3. There must be a single space between each word, where space is denoted by `$`.
+    4. The sentence must end with a terminal mark immediately following a word.
+
+    You are given an integer $N$ where $N$ denotes the length of the string sentence. You are given a string sentence that you need to validate. Print $1$ if the string sentence is valid else print $0$.
+
+19. Alice wanted to setup a chain of restaurants in a town. The town is represented as an $X$ axis on the number line. The town consists of $N$ houses, and the location of each house is known and given by array $A$. She has to deliver food at each house location. She will set up $K$ restaurants in the town and appoint as many delivery boys as she wants at each restaurant. All delivery boys leave the restaurants together for food delivery for all the locations. She will choose $K$ locations in town to set up restaurants, such that all food packets get delivered in the minimum possible time. Determine the minimum time in which all food packets get delivered to each house in the town.
+
+    - It takes one unit of time to travel one unit distance.
+    - There is no delay in delivering the food packet, once the delivery boy has reached the delivery location.
+    - There is no limit on food packets that can be delivered by a single delivery boy.
+
+    <details>
+    <summary>Solution</summary>
+
+    We will binary search on the minimum of the maximum distance that all the houses can have from any restaurants. The time complexity is $N \log(max(A))$.
+
+    ```cpp showLineNumbers
+    int main() {
+        int n, k;
+        cin >> n >> k;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+        sort(arr.begin(), arr.end());
+
+        auto check = [&](int mx) -> bool {
+            int cnt = 0, lastRes = -1e9;
+
+            for (int i = 0; i < n; i++) {
+                if (abs(lastRes - arr[i]) <= mx)
+                    continue;
+                cnt++;
+                lastRes = arr[i] + mx;
+            }
+
+            return cnt <= k;
+        };
+
+        int l = 0, r = arr.back() - arr[0];
+        int ans = -1;
+        while (l <= r) {
+            int m = (l + r)/2;
+            if (check(m)) {
+                ans = m;
+                r = m - 1;
+            } else l = m + 1;
+        }
+
+        cout << ans << "\n";
+    }
+    ```
+
+    </details>
+
+## Probability Questions
+
+1. Patel is having a party for $100$ foreign delegates at his farmhouse. Out of the $100$ guests, $90$ can speak French, $80$ can speak German and $75$ can speak Dutch. Mr. Patel, as a diplomatic policy, starts giving a thank you note speech for all his guests which has phrases from all the three languages. At least, how many people would understand the full speech given by Mr. Patel?
+
+2. On a lazy Sunday afterrioon, Chandler thinks of challenging Joey for his love of pizzas. He comes up with a game where Chandler throws a dice and the number that appears on the dice would be the number of pizza slices Joey will have to eat, except when $6$ appears. In that case, Joey has to eat $5$ pizza slices and Chandler gets to throw the dice again. This may continue Indefinitely. What is the expected number of pizza slices Joey will eat?
+
+3. There is an array of size $20$, with numbers from $1$-$20$. A random permutation of these numbers is stored in the array. What is the expected number of local minimas in the array. (A point is called local minima if it is the lowest among its neighbours, with first and last index having only one neighbour)
+
+4. Mama's Pizza Kitchen has a $50$ percent discount every Friday, Rohit has promised his friends for a treat on his new job's first salary but will get his salary credited on the last business day of the month. What is the probability that Rohit would be able to avail the offer the day he receives his salary and takes his friends out on a treat to Mamma's Pizza Kitchen?
+
+5. If $Correlation(PQ) = 0.5$ and $Correlation(QR) = 0.5$, what is the maximum possible value of $Correlation(PR)$?
+
+6. You host a game where a person throws two dice. Person will get money according to dice rolls ($d_1$,$d_2$ being the numbers on respective dice throws). The payout will be equal to $max(0, d_1 \cdot d_2 - 30)$. What is the expected value of the game?
+
+7. You are given a box with $100$ balls ($50$ yellow and $50$ red). You pick balls from the box one by one without replacements until all the balls are out. A yellow followed by a red or a red followed by a yellow is termed as "Flip". Calculate the expected number of "Flip" if the balls are being picked at random.
+
+8. What are the two next terms in the sequences:
+
+   1. $11, 21, 1211, 111221$
+   2. $10, 11, 12, 13, 14, 20, 22, 101$
+
+9. Sum $25$ is to be broken down into a set of positive integers $x_1, x_2, x_3 ..., x_k$ such that the product of $x_1$ to $x_k$ is maximised. What is the maximum product possible?
+
+10. You are a trader considering a stock whose next price movement will be up or down with equal probability. Fortunately you have access to a binary signal predictive of the price change (observable ahead of time). The signal is $75%$ accurate, conditional on the stock going up. There is a $0.75$ probability that the signal says up and $0.25$ probability that it says down. The reverse is true if stock goes down. You have access to many such signals, all with the same accuracy.
+
+    Assume they are conditionally independent given the price movement (eg. conditional of the stock going up, there's a $0.75^2$ probability that signals one and two both point up). Suppose you observe $10$ such signals and out of those $6$ of them are pointing up, while $4$ of them are pointing down. What is the probability that will go up?
+
+11. A bitwise XOR for all tile numbers in a list $l$ is calculated as: $1$ if the number of times $1$ appears in the bit is odd and $0$ if the number of times $1$ appears in the list is even. A function $THOR(M,N)$ is defined as the XOR of all natural numbers between $M$ & $N$, both $M$ and $N$ inclusive. What is the value of $THOR(51,100)$?
+
+12. There are $10$ socks Monica has with numbers $1$ to $10$ on them. Out of those $5$ socks are white and $5$ are blue. She has numbered $5$ white socks from $1$ to $5$ and blue socks from $6$ to $10$. Joey, Chandler, Ross, Rachel and Phoebe come one by one and pick one blue and one white sock randomly. Score of every person is determined by the sum of the pair of socks they wear. What is the probability that the product of scores of those all five friends is divisible by $11$.
+
+13. What is the smallest $n$ such that $n!$ has $100$ zeroes?
+
+14. There are $5$ doors. Behind one of them is a Mercedes Benz and behind the other the key to the Mercedez. The remaining three doors are empty. Hrithik knows what is behind all the doors. He asks you to choose two doors. After you choose doors, he opens an empty door which is not chosen by you. Now he gives you a chance to either stick to your earller chosen doors or to switch to the other closed doors. You win the car if you choose doors having both a car and a key. Let $p$ be the probability of winning the car in the best case. What is $100 \cdot p$?
+
+15. You are playing a game with your friend, in which you toss a fair coin. You win $1$ point from your friend if the head comes, and if talis comes your friend wins $1$ point from you (your score is $-1$). The game continues till either one of you reaches a total of $2$ points (and the other one has $-2$ points). At this point the winner gets $10$ dollars from the loser.
+
+    1. What is the expected value of this game?
+    2. Now, assume you have an option to double the payoff (from $10$ to $20$) of the winner at any point of the game. You can use this option only once. What is the expected value of the new game?
+
+16. A country has only $2$ denominations: $13$ and $17$. What is the highest integral amount that cannot be made using only these $2$ denominations?
+
+17. What is the total number of $5$ digit numbers such that the product of the digits of that number is divisible by $10$?
+
+    - Case $1$: Consider numbers whose product is 0 to be divisible by 10.
+    - Case $2$: Consider only non-zero digit numbers.
+
+18. There are $70$ people in a group, for any two members $X$ and $Y$ there is a language that $X$ speaks but $Y$ does not and there is a language that $Y$ speaks but $X$ does not. What is the minimum number of distinct languages spoken by this group?
+
+## Online Assessment Questions
+
+1. There are $a$ string potions and $b$ weak potions. You need to prepare a mixture of $c$ potions, such that it atleast has $3$ strong potions and $1$ weak potions. What is the total number of ways to prepare the mixture?
+
+   Constraints:
+
+   - $1 \leq a, b, c \leq 30$
+
+2. You are given a tree with $n$ vertices. Figure out the number of pairs of vertices such that the simple path between them has exactly $1$ prime node lying on it.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+
+3. You are given two arrays $a$ and $b$ of length $n$. You need to select a subset of indices from $1..n$ such that for any pair of indices $i, j$, atleast one of the following conditions would hold true:
+
+   - If $a_i < a_j$, then $b_i < b_j$
+   - If $a_i > a_j$, then $b_i > b_j$
+   - If $a_i = a_j$, then $b_i \neq b_j$
+
+   Find the lenght of maximum possible subset.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+   - $1 \leq a[i], b[i] \leq 10^9$
+
+4. There are $n$ people, numbered from $1$ to $n$. You are also given an vector of pairs $(i, j)$ if two people $i$ and $j$ have an enemity. You need to fivide these people into two teams of equal size such that two people who are enemies are not on the same team. It is also guraunteed that each person has enemity with atmost $2$ other people. Find the largest possible team size that can be made.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+   - $0 \leq |enemies| \leq 10^5$
+
+5. You are given an array $arr$ of integers also $q$ queries. For each query of the form $(x, m)$ you need to find the number of elements $y$ from the array $arr$ such that the value $2 \cdot (x | y) - x \oplus y$ is greater than or equal to $m$. Here $|$ is bitwise OR and $\oplus$ is bitwise XOR.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+   - $1 \leq q \leq 10^5$
+   - $1 \leq arr[i], x, m \leq 10^9$
 
 ---

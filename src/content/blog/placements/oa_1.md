@@ -1395,7 +1395,130 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-5.  You are given a tree with $n$ vertices, and each vertice has a colour as $0$ or $1$. For a node, we define the beauty of the vertex as the number of paths in the subtree of the node that have different colours of the ending points. Find the beauty of each node in the tree when the tree is rooted at vertex $1$.
+5.  You are given an array $a$ and who empty arrays $s$ and $t$. The array $a$ is a permutation of length $n$. In one operation, you can do one of the following:
+
+    - Remove the element from the starting of $a$ and add it to the end of $t$.
+    - Remove the element from the starting of $a$ and add it to the end of $s$.
+    - Remove the element from the starting of $s$ and add it to the end of $t$
+
+    Determine if it is possible to obtain the sorted permutation in the array $t$.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+
+    <details>
+    <summary>Solution</summary>
+
+    We will use a greedy approach, where we will try to find the currently needed element from both $s$ and $a$, and if not found, we would move the elements from $a$ to $s$ in hopes of finding the currently required element. The time complexity is $O(n)$.
+
+    ```cpp
+    int main()
+    {
+        int n;
+        cin >> n;
+
+        queue<int> a, b;
+        for (int i = 0; i < n; i++)
+        {
+            int x;
+            cin >> x;
+            a.push(x);
+        }
+
+        int need = 1;
+        while (need != n + 1)
+        {
+            if (!a.empty() && a.front() == need)
+            {
+                a.pop();
+                need++;
+            }
+            else if (!b.empty() && b.front() == need)
+            {
+                b.pop();
+                need++;
+            }
+            else
+            {
+                while (!a.empty() && a.front() != need)
+                {
+                    b.push(a.front());
+                    a.pop();
+                }
+                if (a.empty())
+                {
+                    cout << "NO\n";
+                    return 0;
+                }
+            }
+        }
+
+        cout << "YES\n";
+    }
+    ```
+
+    </details>
+
+6.  You are given a tree with $n$ nodes rooted at $1$. In one operation, you can break any edge of the tree. Even after breaking the edge, the original parent-child relation between the nodes will hold. Minimize the number of operations needed to be performed so as convert the tree into a valid $k$ -nary tree. After minimising the operations, also return the maximum size of the tree possible.
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    void dfs(int u, vector<vector<int>> &g, vector<int> &subtree, int k, int &ops, int &maxSize)
+    {
+        subtree[u] = 1;
+        int childCnt = 0;
+        vector<int> sz;
+
+        for (int v : g[u])
+        {
+            dfs(v, g, subtree, k, ops, maxSize);
+            childCnt++;
+            subtree[u] += subtree[v];
+            sz.push_back(subtree[v]);
+        }
+
+        int toRem = childCnt % k;
+        sort(sz.begin(), sz.end());
+        for (int i = 0; i < toRem; i++)
+        {
+            subtree[u] -= sz[i];
+            ops++;
+        }
+
+        maxSize = max(maxSize, subtree[u]);
+    }
+
+    int main()
+    {
+        int t;
+        cin >> t;
+        while (t--)
+        {
+            int n, k;
+            cin >> n >> k;
+
+            vector<vector<int>> g(n);
+            for (int i = 1; i < n; i++)
+            {
+                int x;
+                cin >> x;
+                g[x - 1].push_back(i);
+            }
+
+            int maxSize = 0, ops = 0;
+            vector<int> sub(n);
+            dfs(0, g, sub, k, ops, maxSize);
+            cout << ops << " " << maxSize << "\n";
+        }
+    }
+    ```
+
+    </details>
+
+7.  You are given a tree with $n$ vertices, and each vertice has a colour as $0$ or $1$. For a node, we define the beauty of the vertex as the number of paths in the subtree of the node that have different colours of the ending points. Find the beauty of each node in the tree when the tree is rooted at vertex $1$.
 
     <details>
     <summary>Solution</summary>
@@ -1440,7 +1563,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-6.  Given a sequence of $n$ integers $(a_1, a_2, \ldots, a_n)$, you need to perform the following operation and return the obtained result.
+8.  Given a sequence of $n$ integers $(a_1, a_2, \ldots, a_n)$, you need to perform the following operation and return the obtained result.
 
     - For a given integer $x$, calculate the value of the expression $min_{i = 1}^{j = n - x + 1} (fun(a_i, a_{i + 1}, \ldots, a_{i + x -1}))$, where $fun(a_i, a_{i + 1}, \ldots, a_{i + x -1})$ is the rightmost number with the highest number of distinct prime factors in the sequence $(a_i, a_{i + 1}, \ldots, a_{i + x -1})$.
 
@@ -1507,7 +1630,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-7.  A function $S(x)$ is defined as the sum of all the divisors for the number $x$. The function $F(x)$ is defined as the sum of $S(y)$ for all the divisors $y$ of $x$. Given two numbers $l$ and $r$, find the sum of $F(x)$ for all the numbers in the range $[l, r]$ modulo $998244353$.
+9.  A function $S(x)$ is defined as the sum of all the divisors for the number $x$. The function $F(x)$ is defined as the sum of $S(y)$ for all the divisors $y$ of $x$. Given two numbers $l$ and $r$, find the sum of $F(x)$ for all the numbers in the range $[l, r]$ modulo $998244353$.
 
     Constraints:
 
@@ -1550,7 +1673,7 @@ A lot of these questions have been mixed with questions that were asked in the i
     This approach can easily be extended with precomputation to calculate the sum of $F(x)$ for all the numbers in the range $[l, r]$ in $O(1)$ time for multiple queries.
     </details>
 
-8.  Given an array of size $N$ containing integers, find the minimum possible sum of that can be formed be adding the elements in the array. You can perform the following operation at most once:
+10. Given an array of size $N$ containing integers, find the minimum possible sum of that can be formed be adding the elements in the array. You can perform the following operation at most once:
 
     - Select an index. If the sum of all the elements in the array up to the selected index is a multiple of the element present at the index. divide the sum up to the selected index by the element present at the index.
     - After dividing, you do not have to add this element to the resultant sum.
@@ -1598,7 +1721,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-9.  Given an integer array $arr$ of integers of length $n$, find the largest possible value $x$ such that atleast $k$ elements of the array are divisible by the same.
+11. Given an integer array $arr$ of integers of length $n$, find the largest possible value $x$ such that atleast $k$ elements of the array are divisible by the same.
 
     Constraints:
 
@@ -1675,7 +1798,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-10. You are given two integer arrays $A$ and $B$ of length $n$ consisiting of non-negative integers. You have to select $K$ numbers from $B$, and then take the bitwise OR of all the elements of $A$ one at a time with each of the selected elements. The score of this operation is the sum of the $n \cdot K$ bitwise OR operations. Find the minimum value of $K$ such that a score of atleast $M$ can be achieved.
+12. You are given two integer arrays $A$ and $B$ of length $n$ consisiting of non-negative integers. You have to select $K$ numbers from $B$, and then take the bitwise OR of all the elements of $A$ one at a time with each of the selected elements. The score of this operation is the sum of the $n \cdot K$ bitwise OR operations. Find the minimum value of $K$ such that a score of atleast $M$ can be achieved.
 
     Constraints:
 
@@ -1683,7 +1806,7 @@ A lot of these questions have been mixed with questions that were asked in the i
     - $1 \leq M \leq 10^9$
     - $0 \leq A[i], B[i] \leq 10^9$
 
-11. [Increasing Frequency](https://codeforces.com/contest/1082/problem/E)
+13. [Increasing Frequency](https://codeforces.com/contest/1082/problem/E)
 
     <details>
     <summary> Solution </summary>
@@ -1745,7 +1868,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-12. You are given three arrays $l$, $r$ and $a$, which represents that the $i^{th}$ client was making $a[i]$ requests to the server per second for the duration $[l[i], r[i]]$. Find the minimum requests per second that this server should be able to handle to serve all the requests.
+14. You are given three arrays $l$, $r$ and $a$, which represents that the $i^{th}$ client was making $a[i]$ requests to the server per second for the duration $[l[i], r[i]]$. Find the minimum requests per second that this server should be able to handle to serve all the requests.
 
     <details>
     <summary>Solution</summary>
@@ -1782,7 +1905,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-13. You are given the initial positions of Alice and Bob as $(x_1, y_1)$ and $(x_2, y_2)$. You are also given $n$ apples at the positions $(x_i, y_i)$. Alice and Bob need to collect all of the apples in the order they are given. The distance between the two points is the Manhattan distance. Find the minimum distance that Alice and Bob need to travel to collect all the apples.
+15. You are given the initial positions of Alice and Bob as $(x_1, y_1)$ and $(x_2, y_2)$. You are also given $n$ apples at the positions $(x_i, y_i)$. Alice and Bob need to collect all of the apples in the order they are given. The distance between the two points is the Manhattan distance. Find the minimum distance that Alice and Bob need to travel to collect all the apples.
 
     Constraints:
 
@@ -1874,7 +1997,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-14. Count the number of $k$ periodic subsequences of a string $s$ of length $n$.
+16. Count the number of $k$ periodic subsequences of a string $s$ of length $n$.
 
     - A string is $k$ periodic if $x_{i} = x_{i + k}$ for all valid indexes $i$ in the string.
     - An empty string is also $k$ periodic.
@@ -1921,7 +2044,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-15. Given an undirected tree with $N$ nodes such that there exists a path between any two nodes. For the $i^{th}$ node, a positive integer value $A[i]$ is associated with it. You also have a special positive integer $K$ and you may perform the following operation zero or more times on the given tree: Choose an edge and update the value of the nodes connected with that edge with bitwise XOR of its current value and $K$. Formally, $A[i] = (A[i] \oplus K)$ for all $i$ connected to the chosen edge. Find the maximum value of $sum_{i=1}^{i=N} A[i]$ if you can perform the above operations any number of times.
+17. Given an undirected tree with $N$ nodes such that there exists a path between any two nodes. For the $i^{th}$ node, a positive integer value $A[i]$ is associated with it. You also have a special positive integer $K$ and you may perform the following operation zero or more times on the given tree: Choose an edge and update the value of the nodes connected with that edge with bitwise XOR of its current value and $K$. Formally, $A[i] = (A[i] \oplus K)$ for all $i$ connected to the chosen edge. Find the maximum value of $sum_{i=1}^{i=N} A[i]$ if you can perform the above operations any number of times.
 
     <details>
     <summary>Solution</summary>
@@ -1965,7 +2088,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-16. You are given an array $arr$ of $n$ elements. For each index $i$, find the length of the smallest subarray starting at the index $i$ and having a non-negative sum. If there is no such subarray for an index, set the answer as $0$ for that index.
+18. You are given an array $arr$ of $n$ elements. For each index $i$, find the length of the smallest subarray starting at the index $i$ and having a non-negative sum. If there is no such subarray for an index, set the answer as $0$ for that index.
 
     Constraints:
 
@@ -2013,7 +2136,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-17. [Count Increasing Quadruples](https://leetcode.com/problems/count-increasing-quadruplets/description/)
+19. [Count Increasing Quadruples](https://leetcode.com/problems/count-increasing-quadruplets/description/)
 
     <details>
     <summary>Solution</summary>
@@ -2063,7 +2186,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-18. You are given a directed tree of $n$ nodes in the form of an array $arr$ such that there is an edge from the node $arr[i]$ to the node $i + 1$ for $1 \leq i < n$. In one operation you can break any edge of this tree, and thus divide the same into two subtrees. Apply this operation repeatedly so that each of the final subtrees is a directed chain, and the total sum of the squares of length of each directed chain is maximized. Return the maximum possible sum of the squares of the lengths of the directed chains. It is gaurenteed that all the nodes are reachable from the root node $1$.
+20. You are given a directed tree of $n$ nodes in the form of an array $arr$ such that there is an edge from the node $arr[i]$ to the node $i + 1$ for $1 \leq i < n$. In one operation you can break any edge of this tree, and thus divide the same into two subtrees. Apply this operation repeatedly so that each of the final subtrees is a directed chain, and the total sum of the squares of length of each directed chain is maximized. Return the maximum possible sum of the squares of the lengths of the directed chains. It is gaurenteed that all the nodes are reachable from the root node $1$.
 
     Constraints:
 
@@ -2112,7 +2235,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-19. There is an empty container. You want to support 2 types of queries:
+21. There is an empty container. You want to support 2 types of queries:
 
     1.  `1 V X`: Insert an element in the container with value $V$ and weight $X$.
     2.  `2 V 0`: Let $n$ be the number of bits in the binary representation of $V$. Consider all the elements in the container till now. You need to count the number of elements which when divided by $2^i$ have a remainder of $V$, and also return the sum of the weights of these elements.
@@ -2168,7 +2291,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-20. You are given two binary strings $S$ and $Q$ of length $n$ consisting of only $0$ and $1$. Consider a non-empty substring $S_1$ of $S$ and a non-empty substring $Q_1$ of $Q$ of the same length. Let $X$ be the string obtained as the XOR of $S_1$ and $Q_1$.
+22. You are given two binary strings $S$ and $Q$ of length $n$ consisting of only $0$ and $1$. Consider a non-empty substring $S_1$ of $S$ and a non-empty substring $Q_1$ of $Q$ of the same length. Let $X$ be the string obtained as the XOR of $S_1$ and $Q_1$.
 
     The score of these two strings is defined as $floor(\frac{len(X)}{2^{X_{10}}})$ where $X_{10}$ is the decimal representation of $X$ and $len(X)$ is the length of the string $X$.
 
@@ -2220,6 +2343,236 @@ A lot of these questions have been mixed with questions that were asked in the i
     ```
 
     </summary>
+
+23. You are given an array of length $n$, where the $i^{th}$ element represents a chocolate of length $array[i]$. When you merge two chocolate of lengths $x$ and $y$, cost of merging is $x+y$, and the resultant chocolate length becomes $x+y$ and is replaced in the array. You need to apply these operations until there is only one chocolate left in the array. Find the minimum cost of merging. The expected time complexity of the algorithm should be $O(n \log n)$.
+
+24. You are given two arrays $A$ and $B$ of same length $n$. You need to find a subset of the indexes $[0,1..., n-1]$, such that for any two entries in the subset, say $x$ and $y$ the following conditions holds:
+
+    - If $A[x] != A[y]$ then $B[x] != B[y]$
+    - If $A[x] = A[y]$ then $B[x] = B[y]$
+
+    Return the maximum length of the subset possible.
+
+25. You are given a tree of $n$ nodes. You are given $q$ queries where each query has three arguments: node $u$, node $v$ and a number $k$. You need to consider the path from $u$ to $v$, and take the XOR of all the nodes in the path and check if it is equal to the given $k$. You can exclude atmost one node from the path so that the XOR becomes equal to $k$. Return `true` if the same is possible else `false` for each query.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq q \leq 10^5$
+    - $1 \leq k \leq 10^9$
+    - $1 \leq u, v \leq n$
+
+    <details>
+    <summary>Solution</summary>
+
+    It is clear that if the XOR of the nodes from $u$ to $v$ is equal to $k$, then we can simply return `true`. If the same is not true, then we need to check if there is a node $x \oplus k$ in the path from $u$ to $v$ where $\oplus$ is the XOR operation (as we can exclude this node from the path to get the desried result). To support both of these queries effeciently, we will make use of Mo's algorithm. The time complexity of the solution is $O(n \log n + q \sqrt{n})$.
+
+    An alternative solution for the problem involves the use of Heavy Light Decomposition, but I personally find Mo's algorithm to be more intuitive and easier to implement in online assessments.
+
+    ```cpp showLineNumbers
+    #include <bits/stdc++.h>
+    using namespace std;
+
+    #define IOS                       \
+        ios_base::sync_with_stdio(0); \
+        cin.tie(0);                   \
+        cout.tie(0)
+    #define INF 1e9
+    #define EPS 1e-9
+
+    #define pb push_back
+    #define vi vector<int>
+    #define vvi vector<vector<int>>
+
+    #define range(x, s, n) for (int x = s; x < n; ++x)
+    #define all(a) a.begin(), a.end()
+
+    const int BLOCK_SIZE = 300;
+    const int MAXN = 2e5 + 1;
+    int nodeFreq[MAXN];
+
+    class Query
+    {
+    public:
+        int l, r, v, c, idx;
+        Query(int l, int r, int v, int idx, int c) : l(l), r(r), v(v), c(c), idx(idx) {}
+
+        bool operator<(Query &other) const
+        {
+            int blk1 = l / BLOCK_SIZE, blk2 = other.l / BLOCK_SIZE;
+            if (blk1 != blk2)
+                return blk1 < blk2;
+            return (blk1 & 1) ? (r > other.r) : (r < other.r);
+        }
+    };
+
+    class Mo
+    {
+        int curXor;
+        int n;
+
+    public:
+        Mo(int n) : n(n)
+        {
+            curXor = 0;
+            range(i, 0, n + 1)
+                nodeFreq[i] = 0;
+        }
+
+        void add(int idx)
+        {
+            curXor ^= (idx + 1);
+            nodeFreq[idx]++;
+        }
+
+        void remove(int idx)
+        {
+            curXor ^= (idx + 1);
+            nodeFreq[idx]--;
+        }
+
+        bool check(int val)
+        {
+            // Either the XOR of the current path is equal to val
+            if (curXor == val)
+                return true;
+
+            // Or the target is present in the current path
+            int tar = curXor ^ val;
+            return tar <= n && nodeFreq[tar - 1] == 1;
+        }
+
+        bool checkAddNode(int idx, int tar)
+        {
+            int newCurXor = curXor ^ (idx + 1);
+            if (newCurXor == tar)
+                return true;
+
+            tar = newCurXor ^ tar;
+            return tar <= n && nodeFreq[tar - 1] == 1;
+        }
+    };
+
+    int main()
+    {
+        int n, q;
+        cin >> n >> q;
+
+        vvi g(n);
+        range(i, 0, n - 1)
+        {
+            int u, v;
+            cin >> u >> v;
+            u--, v--;
+            g[u].pb(v);
+            g[v].pb(u);
+        }
+
+        int timer = 0;
+        vi tin(n), tout(n);
+        int l = ceil(log2(n));
+        vvi up(n, vi(l + 1));
+        vector<int> tour;
+
+        function<void(int, int)> dfs = [&](int u, int p) -> void
+        {
+            tin[u] = timer++;
+            tour.push_back(u);
+
+            up[u][0] = p;
+            for (int i = 1; i <= l; i++)
+                up[u][i] = up[up[u][i - 1]][i - 1];
+
+            for (int v : g[u])
+            {
+                if (v == p)
+                    continue;
+                dfs(v, u);
+            }
+
+            tout[u] = timer++;
+            tour.push_back(u);
+        };
+        dfs(0, 0);
+
+        auto isAncestor = [&](int u, int v) -> bool
+        {
+            return tin[u] <= tin[v] && tout[u] >= tout[v];
+        };
+
+        auto getLCA = [&](int u, int v) -> int
+        {
+            if (isAncestor(u, v))
+                return u;
+            if (isAncestor(v, u))
+                return v;
+
+            for (int i = l; i >= 0; i--)
+                if (!isAncestor(up[u][i], v))
+                    u = up[u][i];
+
+            return up[u][0];
+        };
+
+        vector<Query> qu;
+        for (int i = 0; i < q; i++)
+        {
+            int u, v, val;
+            scanf("%d %d %d", &u, &v, &val);
+            u--, v--;
+
+            if (tin[u] > tin[v])
+                swap(u, v);
+            int lca = getLCA(u, v);
+            if (lca == u)
+                qu.push_back(Query(tin[u], tin[v], val, i, -1));
+            else
+                qu.push_back(Query(tout[u], tin[v], val, i, lca));
+        }
+
+        sort(all(qu));
+        vector<int> ans(q);
+        Mo mo(n);
+
+        int curL = 0,
+            curR = -1;
+        for (auto &q : qu)
+        {
+            while (curL > q.l)
+            {
+                curL--;
+                mo.add(tour[curL]);
+            }
+            while (curR < q.r)
+            {
+                curR++;
+                mo.add(tour[curR]);
+            }
+            while (curL < q.l)
+            {
+                mo.remove(tour[curL]);
+                curL++;
+            }
+            while (curR > q.r)
+            {
+                mo.remove(tour[curR]);
+                curR--;
+            }
+
+            ans[q.idx] = mo.check(q.v);
+            if (q.c != -1)
+            {
+                int leftNode = tour[tin[q.c]];
+                ans[q.idx] |= mo.checkAddNode(leftNode, q.v);
+            }
+        }
+
+        for (int x : ans)
+            cout << (x ? "true" : "false") << endl;
+    }
+    ```
+
+    </details>
 
 ## Online Assessment Questions
 
