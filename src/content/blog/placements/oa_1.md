@@ -33,7 +33,7 @@ PS. I have tried to add the solutions of the problems from the time that I had s
 ## Coding Questions
 
 - Print a 2D matrix
-- Print the second greatest element of array
+- Print the second greatest element of an array
 
 ---
 

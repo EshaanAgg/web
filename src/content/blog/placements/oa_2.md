@@ -88,7 +88,7 @@ This is the second part of the series on online assessments that I witnessed dur
 
      </details>
 
-2.  You are given an string $s$. You are also given two strings $t$ and $u$ which are both initially empty. You can perform either of the two operations in a tunr:
+2.  You are given an string $s$. You are also given two strings $t$ and $u$ which are both initially empty. You can perform either of the two operations in a turn:
 
     - Append the first character of $s$ to the end of $t$.
     - Append the last character of $t$ to the end of $u$.
@@ -2802,6 +2802,194 @@ The test usually involves 2 coding questions and 1 question involving writing a 
    ```
 
     </details>
+
+## Online Assessment Questions
+
+1. You are given an array $arr$ of length $n$. You need to count the number of quadruples $(i, j, k, l)$ such that $i \leq j \leq k \leq l$ and $arr[i] \cdot arr[k] = arr[j] \cdot arr[l]$.
+
+   Constraints:
+
+   - $1 \leq n \leq 1000$
+   - $1 \leq arr[i] \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+   ```cpp showLineNumbers
+   int main()
+   {
+       int t;
+       cin >> t;
+
+       auto get = [](int a, int b) -> pair<int, int>
+       {
+           int g = __gcd(a, b);
+           return {a / g, b / g};
+       };
+
+       while (t--)
+       {
+           int n;
+           cin >> n;
+
+           vector<int> arr(n);
+           for (int i = 0; i < n; i++)
+               cin >> arr[i];
+
+           // p / q = s / r
+           map<pair<int, int>, int> cnt;
+           cnt[get(arr[0], arr[1])]++;
+           int ans = 0;
+
+           for (int i = 2; i < n; i++)
+           {
+               for (int j = i + 1; j < n; j++)
+                   ans += cnt[get(arr[j], arr[i])];
+
+               for (int j = 0; j < i; j++)
+                   cnt[get(arr[j], arr[i])]++;
+           }
+
+           cout << ans << "\n";
+       }
+   }
+   ```
+
+    </details>
+
+2. You are given an array of size $n$ and an integer $k$. You want to divide the array $arr$ into $k$ non-empty contiguous subarrays such that each subarray is a good subarray. A good subarray has the absolute difference between any two elements in that array to be greater than or equal to $X$. A singleton array is by default a good subarray.
+
+   What is the maximum possible value of $X$ such that the division is possible?
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+   - $1 \leq k \leq n$
+   - $-10^6 \leq arr[i] \leq 10^6$
+
+    <details>
+    <summary>Solution</summary>
+
+   ```cpp
+   int getCnt(vector<int> &arr, int n, int ma)
+   {
+       int cnt = 0;
+       for (int i = 0; i < n; i++)
+       {
+           set<int> s;
+           s.insert(arr[i]);
+
+           while (i + 1 < n)
+           {
+               auto itr = s.lower_bound(arr[i + 1]);
+               if (itr != s.end() && *itr - arr[i + 1] < ma)
+                   break;
+               if (itr != s.begin())
+               {
+                   itr--;
+                   if (arr[i + 1] - *itr < ma)
+                       break;
+               }
+               i++;
+               s.insert(arr[i]);
+           }
+
+           cnt++;
+       }
+
+       return cnt;
+   }
+
+   void solve()
+   {
+       int n;
+       cin >> n;
+
+       vector<int> arr(n);
+       for (int i = 0; i < n; i++)
+           cin >> arr[i];
+
+       int k;
+       cin >> k;
+
+       int l = 0, r = *max_element(arr.begin(), arr.end()) - *min_element(arr.begin(), arr.end());
+       int ans = 0;
+       while (l <= r)
+       {
+           int mid = (l + r) / 2;
+           auto cnt = getCnt(arr, n, mid);
+           if (cnt == k)
+           {
+               ans = mid;
+               l = mid + 1;
+           }
+           else if (cnt < k)
+               l = mid + 1;
+           else
+               r = mid - 1;
+       }
+
+       cout << ans << endl;
+   }
+
+   int main()
+   {
+       int t;
+       cin >> t;
+
+       while (t--)
+           solve();
+   }
+   ```
+
+    </details>
+
+3. [Lexographically Smallest Beautiful String](https://leetcode.com/problems/lexicographically-smallest-beautiful-string/description/)
+
+   <details>
+   <summary>Solution</summary>
+
+   ```cpp showLineNumbers
+   class Solution {
+   public:
+       string smallestBeautifulString(string s, int k) {
+           int n = s.size();
+
+           auto check = [&](int idx) -> bool {
+               return (
+                   idx == 0
+                   || (idx == 1 && s[idx] != s[idx - 1])
+                   || (idx >= 2 && s[idx] != s[idx - 1] && s[idx] != s[idx - 2])
+               );
+           };
+
+           int idx = s.size() - 1;
+           while (idx >= 0) {
+               s[idx]++;
+               if (s[idx] - 'a' == k)
+                   idx--;
+               else if (check(idx))
+                   break;
+           }
+
+           if (idx < 0)
+               return "";
+
+           string rep = "abc";
+           for (int j = idx + 1; j < n; j++) {
+               for (int c: rep) {
+                   s[j] = c;
+                   if (check(j))
+                       break;
+               }
+           }
+
+           return s;
+       }
+   };
+   ```
+
+   </details>
 
 ---
 
