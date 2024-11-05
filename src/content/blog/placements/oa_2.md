@@ -1534,7 +1534,90 @@ The company repeated the coding questions across campuses, even if the gap betwe
 
     </details>
 
-15. This question was asked in the Software Developer role, and a workspace was provided to work on the same. You are required to design a simple HTML page that accepts from the user the number of rows and columns, and then makes a table of the specified dimensions. There is bonus marking for CSS styling.
+15. You are given a tree with $n$ nodes and each node has the value $0$ initially. The tree is rooted at $1$. You need to perform $q$ queries on the same of the following types:
+
+    - `1 X Y`: Increase the value of all the nodes in the subtree of node $X$ by $Y$.
+    - `2 X Y`: Increase the value of all nodes by $Y$ except the nodes in the subtree of node $X$.
+
+    Print the final values of all the nodes in the tree.
+
+    Constraints:
+
+    - $1 \leq n, q \leq 10^5$
+    - $1 \leq X \leq n$
+    - $-10^9 \leq Y \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        int n;
+        cin >> n;
+
+        vector<vector<int>> g(n);
+        for (int i = 0; i < n - 1; i++)
+        {
+            int u, v;
+            cin >> u >> v;
+            u--, v--;
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+
+        int timer = 0;
+        vector<int> tin(n), tout(n);
+
+        function<void(int, int)> dfs = [&](int u, int p) -> void
+        {
+            tin[u] = timer++;
+            for (int v : g[u])
+            {
+                if (v == p)
+                    continue;
+                dfs(v, u);
+            }
+            tout[u] = timer++;
+        };
+        dfs(0, -1);
+
+        vector<long long> dif(2 * n + 1);
+
+        int q;
+        cin >> q;
+        while (q--)
+        {
+            int ty, x, y;
+            cin >> ty >> x >> y;
+            x--;
+
+            if (ty == 1)
+            {
+                dif[tin[x]] += y;
+                dif[tout[x] + 1] -= y;
+            }
+            else
+            {
+                dif[tin[0]] += y;
+                dif[tout[0] + 1] -= y;
+
+                dif[tin[x]] -= y;
+                dif[tout[x] + 1] += y;
+            }
+        }
+
+        for (int i = 1; i <= 2 * n; i++)
+            dif[i] += dif[i - 1];
+
+        for (int i = 0; i < n; i++)
+            cout << dif[tin[i]] << " ";
+    }
+    ```
+
+    </details>
+
+16. This question was asked in the Software Developer role, and a workspace was provided to work on the same. You are required to design a simple HTML page that accepts from the user the number of rows and columns, and then makes a table of the specified dimensions. There is bonus marking for CSS styling.
 
     <details>
     <summary>HTML Code</summary>
@@ -1705,6 +1788,8 @@ The company repeated the coding questions across campuses, even if the gap betwe
 
 3. A UI screenshot involving three buttons and a picture was given. Depending upon which button is clicked, the image shown shown be changed. Some amount of Flexbox and CSS was required to position the buttons and the image in the correct manner as shown in the UI. Asthetics was also a part of the marking.
 
+---
+
 # InMobi
 
 ## Other Campus Questions
@@ -1842,6 +1927,8 @@ The company repeated the coding questions across campuses, even if the gap betwe
 2. Find the probability to reach the target node from the root node $1$ in an unweighted undirected tree in time $t$. In each second you can visit one of the unvisited nodes from the current node with equal probability, and if there are no unvisited nodes, you can stay at the same node. The tree is given in the form of an adjacency list.
 
 3. Given an integer $k$ and character $arr$ of size $n$ containing two characters: $G$ for guard and $I$ for intruder, you need to count the maximum number of intruders that can be caught. A guard can catch only one thief if it lies in range $[i-k, i+k]$ where $i$ is the position of the guard under consideration.
+
+---
 
 # Dream 11
 
@@ -2663,6 +2750,266 @@ The test usually involves 2 coding questions and 1 question involving writing a 
    ```
 
     </details>
+
+3. There is string of length $n$ consiting only of characters $a$. Whenever there are two identical adjacent letters, they can be merged together to form the next alphabet (for example, $aa$ can be converted to $b$). The letter pair $zz$ can be merged. What is the lexographically maximum string you can obtain by applying the operations optimally?
+
+   Constraints:
+
+   - $1 \leq n \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+   ```cpp showLineNumbers
+   int main()
+   {
+       int n;
+       cin >> n;
+
+       string s = "";
+       while (n)
+       {
+           int maxP = log2(n);
+           char ch = 'a' + min(maxP, 25);
+           n -= (1 << min(maxP, 25));
+           s += ch;
+       }
+       cout << s << "\n";
+   }
+   ```
+
+    </details>
+
+4. Strings with long blocks of repeating characters take much less space if kept in a compressed representation. To obtain the compressed representation, we replace each segment of equal characters in the string with the number of characters in the segment followed by the character (for example, we replace segment `CCCC` with `4C`). To avoid increasing the size, we leave the one-letter segments unchanged (the compressed representation of `BC` is the same string `BC`).
+
+   For example, the compressed representation of the string `ABBBCCDDCCC` is `A382C2D3C`, and the compressed representation of the string `AAAAAAAAAAABXXAAAAAAAAAA` is `11AB2X10A`. In order increase the compression further, we decided to modify our compression algorithm. Now, before compression, we remove exactly $K$ consecutive letters from the input string. We would like to know the shortest compressed form that we can generate this way.
+
+   Constraints:
+
+   - $1 \leq |s| \leq 10^5$
+   - $1 \leq K \leq n$
+
+    <details>
+    <summary>Solution</summary>
+
+   ```cpp showLineNumbers
+   int getLen(int n)
+   {
+       int cnt = 0;
+       while (n)
+       {
+           cnt++;
+           n /= 10;
+       }
+       return cnt;
+   }
+
+   int getCont(int n)
+   {
+       if (n == 1)
+           return 1;
+       return 1 + getLen(n);
+   }
+
+   int main()
+   {
+       string s;
+       cin >> s;
+       s = "$" + s + "#";
+       int n = s.size();
+
+       int k;
+       cin >> k;
+
+       vector<int> compId(n), suff(n), segs;
+       for (int i = 0, id = 0; i < n; i++)
+       {
+           int st = i;
+           while (i + 1 < n && s[i + 1] == s[i])
+               i++;
+           int len = i - st + 1;
+           segs.push_back(len);
+
+           for (int j = st; j <= i; j++)
+           {
+               suff[j] = len;
+               len--;
+               compId[j] = id;
+           }
+           id++;
+       }
+
+       int m = segs.size();
+       vector<int> segSuff(m + 1);
+       for (int i = m - 1; i >= 0; i--)
+           segSuff[i] = segSuff[i + 1] + getCont(segs[i]);
+
+       int ans = n;
+
+       int prevLen = 0, fre = 1;
+       char curChar = s[0];
+
+       for (int i = 0; i < n; i++)
+       {
+           int endIdx = i + k + 1;
+           if (endIdx >= n)
+               break;
+
+           int segId = compId[endIdx];
+           int addLen = segSuff[segId + 1];
+           int curAns;
+
+           if (curChar == s[endIdx])
+               curAns = prevLen + addLen + getCont(fre + suff[endIdx]);
+           else
+               curAns = prevLen + addLen + getCont(fre) + getCont(suff[endIdx]);
+           ans = min(ans, curAns);
+
+           if (s[i + 1] == s[i])
+               fre++;
+           else
+           {
+               prevLen += getCont(fre);
+               fre = 1;
+               curChar = s[i + 1];
+           }
+       }
+
+       cout << ans - 2 << "\n";
+   }
+   ```
+
+    </details>
+
+5. In this task, you are given two strings of digits that represent (possibly very large) Integers. Your goal is to make those numbers as close to one another as possible. In other words, you want to minimize the absolute value of their difference. You can swap some of the corresponding digits (e.g. the first digit of the first the first digit of the second number, the second digit of the first number with the second digit of the second number, etc.). Swapping the digita is an extremely tiring task, so you want to make as few swaps as possible. Write a function that, given two strings $S$ and $T$, both of length $N$, returns the minimum number of swaps needed to minimize the difference between the two numbers represented by the input strings.
+
+   Constraints:
+
+   - $1 \leq N \leq 10^5$
+
+    <details>
+    <summary>Solution</summary>
+
+   ```cpp showLineNumbers
+   int main()
+   {
+       string s, t;
+       cin >> s >> t;
+
+       if (s == t)
+       {
+           cout << 0;
+           return 0;
+       }
+
+       int n = s.size();
+
+       int fnd = 0;
+       int gr1 = 0, gr2 = 0;
+       for (int i = 0; i < n; i++)
+       {
+           if (s[i] == t[i])
+               continue;
+
+           if (!fnd)
+           {
+               if (s[i] > t[i])
+                   fnd = 1;
+               else
+                   fnd = 2;
+               continue;
+           }
+
+           if (s[i] > t[i])
+               gr1++;
+           else
+               gr2++;
+       }
+
+       cout << min(gr1 + (fnd != 1), gr2 + (fnd == 1)) << "\n";
+   }
+   ```
+
+   </details>
+
+6. There is an array $A$ of $N$ integers. What is the largest sum of two numbers which do not have any common digits? If it is impossible to choose two such numbers, the function should return $-1$.
+
+   Constraints:
+
+   - $1 \leq N \leq 2 \cdot 10^5$
+   - $1 \leq A[i] \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+   ```cpp showLineNumbers
+   int main()
+   {
+       int n;
+       cin >> n;
+
+       vector<int> arr(n);
+       for (int i = 0; i < n; i++)
+           cin >> arr[i];
+
+       vector<long long> mx(1 << 10, -1e18);
+       for (int i = 0; i < n; i++)
+       {
+           int m = 0;
+           if (arr[i] == 0)
+               m = 1;
+
+           int v = arr[i];
+           while (v)
+           {
+               int d = v % 10;
+               m |= (1 << d);
+               v /= 10;
+           }
+
+           mx[m] = max(mx[m], (long long)arr[i]);
+       }
+
+       long long ans = -1e18;
+       for (int m1 = 0; m1 < (1 << 10); m1++)
+       {
+           if (mx[m1] == -1e18)
+               continue;
+
+           for (int m2 = m1 + 1; m2 < (1 << 10); m2++)
+           {
+               if (mx[m2] == -1e18)
+                   continue;
+               if ((m1 & m2) == 0)
+                   ans = max(ans, (long long)mx[m1] + mx[m2]);
+           }
+       }
+
+       cout << max(ans, -1LL) << "\n";
+   }
+   ```
+
+    </details>
+
+7. [Minimum Cost to Equalize Array](https://leetcode.com/problems/minimum-cost-to-equalize-array/description/)
+
+## Online Assessment Questions
+
+1. You are given $n$ strings of length $k$ each. You need to form a string of length $k$ such that all the strings differ from the same by atmost $1$ character. If it is not possible to form such a string, return an empty string.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^6$
+   - $1 \leq k \leq 10^6$
+   - $1 \leq n \cdot k \leq 10^6$
+   - The strings consist of lowercase English alphabets only.
+
+2. You are given a grid of size $2 \times n$. You need to start from $(0,0)$ and need to reach the cell $(1, n - 1)$. You can only move rightwards and downwards. The cost of this path is the maximum value of the grid that comes in the path. Find the minimum cost of the path.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+   - $1 \leq grid[i][j] \leq 10^9$
 
 ---
 
@@ -3772,7 +4119,7 @@ The test usually involves 2 coding questions and 1 question involving writing a 
 
     When the cache reaches it's capacity, it should invalidate and remove the least frequently used key before inserting a new item. For this problem, when there is a tie (two or more keys with the same frequency), smallest key should be removed. For each operation of type $1$, print the required value.
 
-    <details>   
+    <details>
     <summary>Solution</summary>
 
     Since we need to remove the key with the smallest value when the cache is full, we can use a set to store the keys in sorted order. We can use a map to store the frequency of the keys and a set to store the keys with the same frequency. The time complexity of the solution is $O(Q \log N)$.
@@ -3963,11 +4310,129 @@ The test usually involves 2 coding questions and 1 question involving writing a 
 
    - $1 \leq a, b, c \leq 30$
 
-2. You are given a tree with $n$ vertices. Figure out the number of pairs of vertices such that the simple path between them has exactly $1$ prime node lying on it.
+2. You are given a tree with $n$ vertices. Figure out the number of unordered pairs of distinct vertices such that the simple path between them has exactly $1$ prime node lying on it.
 
    Constraints:
 
    - $1 \leq n \leq 10^5$
+
+    <details>
+    <summary>Solution</summary>
+
+   ```cpp
+   #include <bits/stdc++.h>
+   using namespace std;
+
+   #define IOS                       \
+       ios_base::sync_with_stdio(0); \
+       cin.tie(0);                   \
+       cout.tie(0)
+
+   #define ll long long int
+   #define vll vector<long long int>
+   #define range(x, s, n) for (int x = s; x < n; ++x)
+
+   void solution();
+   int main()
+   {
+       IOS;
+       int TEST_CASES;
+       TEST_CASES = 1;
+       while (TEST_CASES--)
+           solution();
+       return 0;
+   }
+
+   class DSU
+   {
+   public:
+       vector<long long> p, sz, cnt;
+       int n;
+
+       DSU(int n)
+       {
+           this->n = n;
+           p.assign(n, 0);
+           range(i, 0, n) p[i] = i;
+           sz.assign(n, 1);
+           cnt.assign(n, 0);
+       }
+
+       int find(int v)
+       {
+           if (p[v] == v)
+               return v;
+           return p[v] = find(p[v]);
+       }
+
+       void join(int u, int v)
+       {
+           u = find(u), v = find(v);
+           if (u == v)
+               return;
+           if (sz[u] < sz[v])
+               swap(u, v);
+           sz[u] += sz[v];
+           cnt[u] += cnt[v];
+           p[v] = u;
+       }
+
+       void incr(int v)
+       {
+           cnt[find(v)]++;
+       }
+   };
+
+   void solution()
+   {
+       int n;
+       cin >> n;
+
+       vector<bool> isPrime(n + 1, 1);
+       isPrime[0] = 0;
+       isPrime[1] = 0;
+       for (int i = 2; i * i <= n; i++)
+           if (isPrime[i])
+               for (int j = i * i; j <= n; j += i)
+                   isPrime[j] = 0;
+
+       DSU dsu(n + 1);
+       vector<vector<int>> g(n + 1);
+       range(i, 0, n - 1)
+       {
+           int u, v;
+           cin >> u >> v;
+           if (!isPrime[u] && !isPrime[v])
+               dsu.join(u, v);
+           g[u].push_back(v);
+           g[v].push_back(u);
+       }
+
+       long long ans = 0;
+       range(i, 1, n + 1) if (isPrime[i])
+       {
+           ll tot = 0;
+           vll v;
+           for (int j : g[i])
+               if (!isPrime[j])
+               {
+                   v.push_back(dsu.sz[dsu.find(j)]);
+                   tot += v.back();
+               }
+
+           ans += tot;
+
+           ll c = 0;
+           for (ll x : v)
+               c += x * (tot - x);
+           ans += c / 2;
+       }
+
+       cout << ans << "\n";
+   }
+   ```
+
+    </details>
 
 3. You are given two arrays $a$ and $b$ of length $n$. You need to select a subset of indices from $1..n$ such that for any pair of indices $i, j$, atleast one of the following conditions would hold true:
 

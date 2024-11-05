@@ -16,6 +16,10 @@ This is the third part of the series on online assessments that I witnessed duri
 - [Amazon](#amazon)
 - [Seimens](#seimens)
 - [Walmart](#walmart)
+- [Winzo](#winzo)
+- [Typeface](#typeface)
+- [Media.net](#medianet)
+- [Samsung Research Institute Bangalore (SRIB)](#samsung-research-institute-bangalore-srib)
 
 ---
 
@@ -773,7 +777,7 @@ This is the third part of the series on online assessments that I witnessed duri
 
 ## Online Assessment Questions
 
-1. Checking a graph if the same was bipartite.
+1. Checking if the given graph was bipartite.
 
 2. You are given an array $arr$ of length $n$. What is the shortest subarray that you must remove from the same so that the sum of the leftover array is divisible by $p$?
 
@@ -789,7 +793,7 @@ This is the third part of the series on online assessments that I witnessed duri
 
    - $1 \leq n \leq 10^5$
 
-4. There is a grid of bricks of size $N \times M$. You make $q$ attacks on the same. Each attack is represented as $(x, y, t)$ where you destroy the brick in the row $x$ and column $y$ at the time $t$. Find the minimum time after which there is atleast a square of size $k \times k$ of bricks that are destroyed.
+4. There is a grid of bricks of size $N \times M$. You make $q$ attacks on the same. Each attack is represented as $(x, y, t)$ where you destroy the brick in the row $x$ and column $y$ at the time $t$. Find the minimum time after which there is atleast a square hole of size $k \times k$ in the wall.
 
    Constraints:
 
@@ -898,7 +902,7 @@ This is the third part of the series on online assessments that I witnessed duri
 
     </details>
 
-3. Count the number of subsequences of string $t$ in the given string $s$. Return the answer modulo $1e9 + 7$.
+3. Count the number of subsequences of string $t$ in the given string $s$. Return the answer modulo $10^9 + 7$.
 
    Constraints:
 
@@ -945,7 +949,7 @@ This is the third part of the series on online assessments that I witnessed duri
    <details>
    <summary>Solution</summary>
 
-   We would iterate from right to left, and maintain a mask to find the occurence of $11$ in the digit. As soon we find the same, we increment the prefix by $1$ and replace the suffix of the number with $0000 \codts$ bits.
+   We would iterate from right to left, and maintain a mask to find the occurence of $11$ in the digit. As soon we find the same, we increment the prefix by $1$ and replace the suffix of the number with $0000 \cdots$ bits.
 
    ```cpp
    int main()
@@ -1292,6 +1296,36 @@ This is the third part of the series on online assessments that I witnessed duri
 
     </details>
 
+## MCQ Related Facts
+
+1. 2-3 Trees are a type of balanced search tree data structure that is used to store sorted data and allows for search, sequential access, insertions, and deletions in logarithmic time. A 2-3 tree is a B-tree of order 3.
+
+   - They are always balanced and support search, insert, and delete operations in $O(\log n)$ time, which can take upto $O(n)$ time in a binary search tree.
+   - Every non-leaf node in a 2-3 tree has either two children and one data element or three children and two data elements. All the leaves of the tree are at the same level.
+   - They require more space than binary search trees as the internal nodes do not store the keys and associated data, and are for internal organization only.
+
+2. `ARP` or `Address Resolution Protocol` is a protocol used for mapping an IP address to a MAC address that is recognized in the local network. The protocol is used when information is needed to send a packet to a device on the same network. It is a layer $2$ protocol.
+
+3. `/etc/passwd` is a text file that contains information about the users on a Unix-like operating system. It is used to store the essential information required during login. The file contains the user's username, user ID, group ID, home directory, and shell.
+
+4. `/etc/hosts` is a text file that maps hostnames to IP addresses. It is used to resolve hostnames to IP addresses when DNS is not available. The file is used by the operating system to map hostnames to IP addresses before querying a DNS server.
+
+5. `CAP` or `Consistency, Availability, and Partition Tolerance` is a theorem that states that it is impossible for a distributed system to simultaneously provide all three guarantees. The theorem is used to describe the trade-offs that must be made when designing distributed systems.
+
+6. The latest long term release of Oracle Database is `Oracle Database 23ai`.
+
+7. The interrupt defined for system calls in Unix is `128 (0x80)`. The Linux kernel registers an interrupt handler named `ia32_syscall` for this interrupt.
+
+## Online Assessment Questions
+
+The MCQs were exactly repeated from other campus and previous year questions. Everyone had one different coding question, but the same was of easy to medium difficulty level on LeetCode.
+
+1. You are given a weighted undirected graph of $n$ nodes. You need to start from node $1$, end at node $n$, and visit the nodes $x$ and $y$ in between your journey (in the same order). You are allowed to visit the same nodes multiple times. What is the minimum distance of the total journey?
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+
 ---
 
 # Confluent
@@ -1550,6 +1584,77 @@ This is the third part of the series on online assessments that I witnessed duri
     </details>
 
 4. [Building a Fence](https://codeforces.com/problemset/problem/1469/C)
+
+5. You are given an array representing multiple intervals $(l, r)$. You need to count the number of intersections between all the pairs of the intersections.
+
+   <details>
+   <summary>Solution</summary>
+
+   ```cpp showLineNumbers
+   int main() {
+       int n;
+       cin >> n;
+
+       vector<pair<int, int>> arr(n);
+       for (int i = 0; i < n; i++)
+           cin >> arr[i].first >> arr[i].second;
+       sort(arr.begin(), arr.end());
+
+       priority_queue<int, vector<int>, greater<int>> pq;
+       int ans = 0;
+
+       for (int i = 0; i < n; i++) {
+           while (!pq.empty() && pq.top() < arr[i].first)
+               pq.pop();
+           ans += pq.size();
+           pq.push(arr[i].second);
+       }
+
+       cout << ans << endl;
+   }
+   ```
+
+   </details>
+
+6. You are given an array representing multiple intervals $(l, r)$. For each interval, determine the number of intervals that the same intersects with. Two intervals are said to intersect if they have atleast one common element.
+
+   <details>
+   <summary>Solution</summary>
+
+   ```cpp showLineNumbers
+   vector<int> countIntersections(vector<pair<int, int>> &pts)
+   {
+       int n = pts.size();
+
+       vector<vector<int>> arr;
+       for (int i = 0; i < n; i++)
+           arr.push_back({pts[i].first, pts[i].second, i});
+       sort(arr.begin(), arr.end());
+
+       priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+       vector<int> ans(n);
+
+       for (int i = 0; i < n; i++)
+       {
+           while (!pq.empty() && pq.top().first < arr[i][0])
+           {
+               auto [_, idx] = pq.top();
+               pq.pop();
+               // Remove extraneous assumed intersections
+               ans[idx] -= n - i;
+           }
+
+           int idx = arr[i][2];
+           ans[idx] += pq.size(); // Intersections before me
+           ans[idx] += n - i - 1; // Intersections after me (assumed to be all)
+           pq.push({arr[i][1], idx});
+       }
+
+       return ans;
+   }
+   ```
+
+   </details>
 
 ---
 
@@ -2268,12 +2373,12 @@ There were $4$ sections in the test and each section had it's own time limit of 
 
 ## Online Assessment Questions
 
-1. You are given two strings $s_1$ and $s_2$ representing the two deck of cards of length $52$ each. Two players are playing the game. The game is started by player $1$. The player in his turn can choose either of the string, and take one card either from the beginning or the end of the string, and add the score associated with the same to his score. If both of the play optimally, what will the difference in the score of player $1$ and player $2$ finally.
+1. You are given two strings $s_1$ and $s_2$ representing the two deck of cards of length $52$ each. Two players are playing the game. The game is started by player $1$. The player in his turn can choose either of the string, and take one card either from the beginning or the end of the string, and add the score associated with the same to his score. The objective of the game is to maximise the score. If both of the players play optimally, what will the difference in the score of player $1$ and player $2$ finally?
 
    - The score associated with Ace is $1$, King is $13$, Queen is $12$, Jack is $11$, and the rest of the cards have the same score as their face value.
-   - Ace card is represented by `A`, $10$ as `T`, King card is represented by `K`, Queen card is represented by `Q`, and Jack card is represented by `J`.
+   - Ace card is represented by `A`, $10$ as `T`, King as `K`, Queen as `Q`, and Jack as `J`.
 
-2. You are given an array of length $n$. For each pair of indexes $(i, j)$, you need to add $arr[j] - arr[i]$ to the score if $j - i$ is positive and a prime number. Calculate the score for the given array.
+2. You are given an array of length $n$. For each pair of indexes $(i, j)$, you need to add $arr[j] - arr[i]$ to the score if $j - i$ is positive prime number. Calculate the score for the given array.
 
    Constraints:
 
@@ -2286,5 +2391,1192 @@ There were $4$ sections in the test and each section had it's own time limit of 
 
    - $1 \leq n \leq 10^5$
    - $1 \leq arr[i][j] \leq 10^9$
+
+---
+
+# Typeface
+
+## Other Campus Questions
+
+1.  You are given an array $arr$ of length $n$ representing the heights of the towers in a line. A tower $x$ is visible from the tower $y$ if all the towers between $x$ and $y$ have height strictly less that the height of tower $x$. For each tower determine the number of towers visible from it both towards the left and the right.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq arr[i] \leq 10^9$
+
+    <details>
+    <summary> Solution </summary>
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        int n;
+        cin >> n;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+
+        vector<int> left(n);
+        // Maintain a monotonic decreasing stack
+        stack<int> st;
+        for (int i = 0; i < n; i++)
+        {
+            left[i] = st.size();
+            while (!st.empty() && arr[st.top()] <= arr[i])
+                st.pop();
+            st.push(i);
+        }
+
+        vector<int> right(n);
+        while (!st.empty())
+            st.pop();
+        for (int i = n - 1; i >= 0; i--)
+        {
+            right[i] = st.size();
+            while (!st.empty() && arr[st.top()] <= arr[i])
+                st.pop();
+            st.push(i);
+        }
+
+        for (int i = 0; i < n; i++)
+            cout << left[i] + right[i] << " ";
+    }
+    ```
+
+    </details>
+
+2.  Given an array of integers $arr$ of length $n$, determine the number of triplets $(i, j, k)$ such that $i < j < k$ and the product $arr[i] \cdot arr[j] \cdot arr[k]$ is even. Return the count modulo $10^9 + 7$.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq arr[i] \leq 10^9$
+
+    <details>
+    <summary> Solution </summary>
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        int n;
+        cin >> n;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+
+        long long ans = 0, MOD = 1e9 + 7;
+
+        long long cntOdd = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (arr[i] % 2 == 0)
+            {
+                // i is even
+                long long rem = n - i - 1;
+                ans += rem * (rem - 1) / 2;
+                ans %= MOD;
+
+                // i is odd, j is even
+                ans += cntOdd * rem;
+                ans %= MOD;
+
+                // i, j are odd, k is even
+                ans += cntOdd * (cntOdd - 1) / 2;
+                ans %= MOD;
+            }
+            else
+                cntOdd++;
+        }
+
+        cout << ans << "\n";
+    }
+    ```
+
+    </details>
+
+3.  Given three strings, $text$, $prefixString$, and $suffixString$, find:
+
+    - $prefixScore$: The longest substring of text matching the end of $prefixString$
+    - $suffixScore$: The longest substring of text matching the beginning of $suffixString$
+
+    Sum the lengths of the two strings to get the $textScore$. The substring of text that begins with the matching prefix and ends with matching suffix, and has the highest $textScore$, is the correct value to return. If there are other substrings with equal $textScore$, return the lexicographically lowest substring.
+
+    Constraints:
+
+    - $1 \leq |text|, |prefixString|, |suffixString| \leq 50$
+
+4.  There are $n$ points on a grid with coordinates as $(x_i, y_i)$. Whenever a point is marked, all the points within a distance of $d$ units in the same column and row of the marked points are also automatically marked. Note that the marking of the points is transitive and chainable. What is the minimum number of points you need to mark to finally mark all the points?
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq d \leq 10^9$
+    - $1 \leq x_i, y_i \leq 10^9$
+
+    <details>
+    <summary> Solution </summary>
+
+    ```cpp showLineNumbers
+    class DSU
+    {
+        vector<int> par, sz;
+        int comps;
+
+    public:
+        DSU(int n)
+        {
+            par.resize(n);
+            sz.resize(n, 1);
+            for (int i = 0; i < n; i++)
+                par[i] = i;
+            comps = n;
+        }
+
+        int find(int x)
+        {
+            if (par[x] == x)
+                return x;
+            return par[x] = find(par[x]);
+        }
+
+        void unite(int a, int b)
+        {
+            a = find(a);
+            b = find(b);
+            if (a == b)
+                return;
+            if (sz[a] < sz[b])
+                swap(a, b);
+            par[b] = a;
+            sz[a] += sz[b];
+            comps--;
+        }
+
+        int components()
+        {
+            return comps;
+        }
+    };
+
+    int main()
+    {
+        int n, d;
+        cin >> n >> d;
+
+        vector<pair<int, int>> pts(n);
+        map<int, vector<pair<int, int>>> mpX, mpY;
+
+        for (int i = 0; i < n; i++)
+        {
+            cin >> pts[i].first >> pts[i].second;
+            mpX[pts[i].first].push_back({pts[i].second, i});
+            mpY[pts[i].second].push_back({pts[i].first, i});
+        }
+
+        DSU dsu(n);
+
+        for (auto &[_, pts] : mpX)
+        {
+            sort(pts.begin(), pts.end());
+            for (int i = 0; i + 1 < pts.size(); i++)
+            {
+                if (pts[i + 1].first - pts[i].first <= d)
+                    dsu.unite(pts[i].second, pts[i + 1].second);
+            }
+        }
+
+        for (auto &[_, pts] : mpY)
+        {
+            sort(pts.begin(), pts.end());
+            for (int i = 0; i + 1 < pts.size(); i++)
+            {
+                if (pts[i + 1].first - pts[i].first <= d)
+                    dsu.unite(pts[i].second, pts[i + 1].second);
+            }
+        }
+
+        cout << dsu.components() << "\n";
+    }
+    ```
+
+    </details>
+
+# Online Assessment Questions
+
+1. You are given a directed graph of $n$ nodes. You are also given $m$ nodes in array $arr$. Return the count of the descendants of any of the given $m$ nodes.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+   - $1 \leq m \leq 10^5$
+
+2. You are given an array of umbrella sizes as $arr$ of length $n$. You need to get the umbrellas to so that the total size of them is exactly $k$. What is the minimum number of umbrellas that you need to buy? You can buy the same sized umbrella multiple times.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^3$
+   - $1 \leq arr[i] \leq 10^3$
+   - $1 \leq k \leq 10^3$
+
+3. You are given a undirected weighted tree of $n$ nodes. Each node is associated with a value $arr[u]$. You need to determine the number of valid pairs $(u, v)$ in the graph. A pair $(u, v)$ is called valid only if $u$ is an ancestor of $v$ (not equal to $v$) and the distance between $u$ and $v$ is less than or equal to $arr[v]$.
+
+   Constraints:
+
+   - $1 \leq n \leq 10^5$
+   - $1 \leq arr[i] \leq 10^9$
+   - $1 \leq w \leq 10^9$
+   - $1 \leq u, v \leq n$
+
+---
+
+# Media.net
+
+## Other Campus Questions
+
+1.  You are given a tree of $n$ nodes. You need to find the maximum XOR of the subtree sums of two non-overlapping subtrees in the given tree. The tree is assumed to be rooted at node $1$.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^5$
+    - $1 \leq arr[i] \leq 10^4$
+
+     <details>
+     <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    class Node
+    {
+    public:
+        Node *ch[2];
+        Node() { ch[0] = ch[1] = nullptr; }
+    };
+
+    class Trie
+    {
+    public:
+        Node *root;
+
+        Trie() { root = new Node(); }
+
+        void add(int x)
+        {
+            Node *cur = root;
+            for (int i = 30; i >= 0; i--)
+            {
+                int bit = (x >> i) & 1;
+                if (!cur->ch[bit])
+                    cur->ch[bit] = new Node();
+                cur = cur->ch[bit];
+            }
+        }
+
+        int getMaxXor(int v)
+        {
+            Node *cur = root;
+            int ans = 0;
+            for (int i = 30; i >= 0; i--)
+            {
+                int bit = (v >> i) & 1;
+                if (cur->ch[!bit])
+                {
+                    ans += (1 << i);
+                    cur = cur->ch[!bit];
+                }
+                else
+                    cur = cur->ch[bit];
+            }
+
+            return ans;
+        }
+    };
+
+    int main() {
+        int n;
+        cin >> n;
+
+        vector<vector<int>> g(n);
+        for (int i = 0; i < n - 1; i++) {
+            int u, v;
+            cin >> u >> v;
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+
+        int ans = 0;
+        Trie t;
+        vector<int> sub(n);
+
+        function<void(int, int)> dfs = [&](int u, int p) -> void {
+            // Calculate the subtree sum
+            sub[u] = arr[u];
+            for (int v : g[u]) {
+                if (v == p)
+                    continue;
+                sub[u] += sub[v];
+            }
+
+            // Calculate the answer and explore for the children
+            ans = max(ans, t.getMaxXor(sub[u]));
+            for (int v: g[u]) {
+                if (v == p)
+                    continue;
+                dfs(v, u);
+            }
+
+            t.add(sub[u]);
+        };
+
+        dfs(0, -1);
+        cout << ans << "\n";
+    }
+    ```
+
+     </details>
+
+2.  [Merge K Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/description/)
+
+3.  [BST Iterator](https://leetcode.com/problems/binary-search-tree-iterator/description/)
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    class BSTIterator
+    {
+        TreeNode *node;
+        stack<TreeNode *> st;
+
+    public:
+        BSTIterator(TreeNode *root)
+        {
+            node = root;
+            while (node)
+            {
+                st.push(node);
+                node = node->left;
+            }
+        }
+
+        int next()
+        {
+            node = st.top();
+            st.pop();
+
+            int val = node->val;
+            node = node->right;
+            while (node)
+            {
+                st.push(node);
+                node = node->left;
+            }
+
+            return val;
+        }
+
+        bool hasNext()
+        {
+            return node != nullptr || !st.empty();
+        }
+    };
+    ```
+
+    </details>
+
+4.  [Difference between Maximum and Minimum Price Sum](https://leetcode.com/problems/difference-between-maximum-and-minimum-price-sum/description/)
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    class Solution {
+        void dfs(int u, int p, vector<vector<int>> &g, vector<long long> &mx, vector<long long> &smx, vector<int> &arr) {
+            mx[u] = arr[u], smx[u] = arr[u];
+
+            for (int v: g[u]) {
+                if (v == p)
+                    continue;
+                dfs(v, u, g, mx, smx, arr);
+                long long l = arr[u] + mx[v];
+                if (l >= mx[u]) {
+                    smx[u] = mx[u];
+                    mx[u] = l;
+                } else if (l > smx[u])
+                    smx[u] = l;
+            }
+        }
+
+        void dfs2(
+            int u,
+            int p,
+            vector<vector<int>> &g,
+            vector<long long> &mx,
+            vector<long long> &smx,
+            vector<long long> &ans,
+            vector<int> &arr
+        ) {
+            for (int v: g[u]) {
+                if (v == p)
+                    continue;
+
+                // Calculate the path with parent node
+                long long newPath = (mx[v] + arr[u] == mx[u] ? smx[u] : mx[u]) + arr[v];
+                long long org1 = mx[v], org2 = smx[v];
+
+                ans[v] = max(mx[v], newPath) - arr[v];
+                // Update the values for the subtree of v
+                if (newPath >= mx[v]) {
+                    smx[v] = mx[v];
+                    mx[v] = newPath;
+                } else if (newPath > smx[v])
+                    smx[v] = newPath;
+
+                dfs2(v, u, g, mx, smx, ans, arr);
+                mx[v] = org1, smx[v] = org2;
+            }
+        }
+
+    public:
+        long long maxOutput(int n, vector<vector<int>>& edges, vector<int>& arr) {
+            vector<vector<int>> g(n);
+            for (auto e: edges) {
+                g[e[0]].push_back(e[1]);
+                g[e[1]].push_back(e[0]);
+            }
+
+            vector<long long> mx(n), smx(n);
+            dfs(0, -1, g, mx, smx, arr);
+            vector<long long> ans(n);
+            ans[0] = mx[0] - arr[0];
+            dfs2(0, -1, g, mx, smx, ans, arr);
+
+            return *max_element(ans.begin(), ans.end());
+        }
+    };
+    ```
+
+    </details>
+
+5.  You live in Orange town. There are a lot of markets around that are connected with roads. These markets sell oranges at some prices. The town is not very well developed and they still use carts to transport goods from one place to the other. The roads connect two markets together and have one attribute associated with them. The attribute is the price to go from one market to the other in an empty cart. The town also has a tax factor, the tax factor is the number by which the price associated with a road needs to be multiplied, so it can go from one market to the other IF you are carrying oranges in your cart. So if a road's original price was $5$ coins and tax factor of the town was $6$ then in an empty cart it would take $5$ coins to travel the road but if the cart contained oranges, it would cost $5 x 6 = 30$ coins.
+
+    You wonder what would be the cheapest way to buy oranges if you were initially at each market. You can either buy at the market you're at or travel to some other market, buy oranges there, and travel back to the original market.
+
+    You are given an integer $A$ denoting the number of total markets in orange town, an integer array $B$ denoting the price of purchasing oranges at each market, a $2D$ array $C$ containing the information about the roads where each row contains three values. The first two values denote the market numbers that are bi-directionally connected via the road and the third value is the price. You are also given an integer $D$, which is the tax factor for the orange town.
+
+    Find and return the required array where each element is the minimum cost to buy oranges at each market such that the starting and ending point is that market.
+
+    Constraints:
+
+    - $1 \leq A \leq 10^5$
+    - $|B| = A$
+    - $1 \leq B[i] \leq 10^7$
+    - $1 \leq |C| \leq 2 \cdot 10^5$
+    - $1 \leq C[i][0], C[i][1] \leq A$
+    - $1 \leq C[i][2] \leq 10^3$
+    - $1 \leq D \leq 5$
+
+     <details>
+     <summary>Solution</summary>
+
+    The key to solving this problem is to realize that we are following a path from $u$ to $v$ to buy oranges, then you will follow the path in the reverse order from $v$ to $u$ (and both of the paths will have the shortest cost). This enables us to use the cost of an edge as $w \cdot (tax + 1)$ where $w$ is the original cost of the edge and $tax$ is the tax factor of the town. Now we can use a multi-source Dijkstra algorithm to find the shortest path from all the markets to all the other markets.
+
+    ```cpp showLineNumbers
+    int main() {
+        int n;
+        cin >> n;
+
+        vector<long long> cost(n);
+        for (int i = 0; i < n; i++)
+            cin >> cost[i];
+
+        vector<vector<pair<int, long long>>> g(n);
+        int m;
+        cin >> m;
+        for (int i = 0; i < m; i++) {
+            int u, v, w;
+            cin >> u >> v >> w;
+            u--, v--;
+            g[u].push_back({v, w});
+            g[v].push_back({u, w});
+        }
+
+        long long tax;
+        cin >> tax;
+
+        vector<long long> dis(n, LLONG_MAX);
+        priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<pair<long long, int>>> pq;
+
+        for (int i = 0; i < n; i++) {
+            dis[i] = cost[i];
+            pq.push({dis[i], i});
+        }
+
+        while (!pq.empty()) {
+            auto [d, u] = pq.top();
+            pq.pop();
+
+            if (dis[u] != d)
+                continue;
+
+            for (auto [v, w]: g[u]) {
+                long long newCost = d + w * (tax + 1);
+                if (newCost < dis[v]) {
+                    dis[v] = newCost;
+                    pq.push({dis[v], v});
+                }
+            }
+        }
+
+        for (int i = 0; i < n; i++)
+            cout << dis[i] << " ";
+    }
+    ```
+
+     </details>
+
+6.  You are given an array $A$. You need to create an array $B$, which is a subsequence of $A$ and satisfies both the following conditions:
+
+    - $B[i] < B[i + 1]$ where $1 \leq i \leq |B|$
+    - $cnt(B[1] \oplus B[2] .... \oplus B[i]) \leq cnt(B[i + 1])$ where $1 \leq i < |B|$, $cnt(t)$ is the number of set bits present in the binary representation of $t$ and $\oplus$ is the bitwise XOR operator.
+
+    Let $X$ be the bitwise XOR of all the elements in valid array $B$. You need to find the number of different values of $X$ that can be formed.
+
+    Constraints:
+
+    - $1 \leq |A| \leq 10^5$
+    - $1 \leq A[i] \leq 100$
+
+     <details>
+     <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int main() {
+        int n;
+        cin >> n;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+
+        vector<int> cnt(128, 0);
+        for (int i = 0; i < n; i++)
+            cnt[i] = __builtin_popcount(arr[i]);
+
+        // Smallest last value for subsequence till idx and having XOR as j
+        vector<vector<int>> dp(n, vector<int> (128, 1e9));
+        dp[0][arr[0]] = arr[0];
+
+        for (int idx = 0; idx < n - 1; idx++)
+            for (int j = 0; j < 128; j++) {
+                dp[idx + 1][j] = min(dp[idx + 1][j], dp[idx][j]);
+                if (arr[idx + 1] > dp[idx][j] && cnt[arr[idx + 1]] >= cnt[j]) {
+                    int newXor = j ^ arr[idx + 1];
+                    dp[idx + 1][newXor] = min(dp[idx + 1][newXor], arr[idx + 1]);
+                }
+            }
+
+        int ans = 0;
+        for (int i = 0; i < 128; i++)
+            if (dp[n - 1][i] != 1e9)
+                ans++;
+        cout << ans << "\n";
+    }
+    ```
+
+     </details>
+
+7.  Carl is bored of playing with ordinary prime numbers. Thus, he comes up with some special numbers called Omega Primes. A number $X$ is called an omega Prime, if there exists no perfect square $Y$ such that $Y > 1$ and such that $Y$ divides $X$. For example, $6$ is an Omega Prime because there is no perfect square except $1$ that divides $6$. On the other hand, $12$ is not an Omega Prime as $4$ (which is a perfect square) is a divisor of $12$.
+
+    Carl decides to play a bit more with Omega Primes. He has an array $A$ of integers. Carl wants to find the number of different subsets such that the product of elements for each subset, results in an Omega Prime. Help Carl find this number. Since this number can be large, output the answer modulo $10^9 + 7$.
+
+    Constraints:
+
+    - $1 \leq |A| \leq 10^5$
+    - $1 \leq A[i] \leq 30$
+
+    This is a restatement of the question [Count Number of Good Subsets](https://leetcode.com/problems/the-number-of-good-subsets/description/) on LeetCode.
+
+8.  Bitmasks are cool. A bitmask is a string of binary bits ($0$ and $1$). For example: `01010` is a bitmask. Kuldeep is a naughty but brilliant computer scientist. In his free time, he writes some random programs to play with bitmasks. He has a PhD student under him and to test him (and entertain himself), he has given him the following task:
+
+    Given a number $N$, write a bitmask of length $N$ containing all $0$. Now, you are given $Q$ operations. Each operation contains two numbers $(l, r)$ as input.
+    An operation can be one of the following:
+
+    - Update operation: Take the XOR of all the bits in the bitmask from index $l$ to $r$ (both inclusive) with $1$.
+    - Query operation: Count the number of set bits in the bitmask between index $l$ to $r$ (both inclusive).
+
+    You need to find the sum of all the queries.
+
+    Constraints:
+
+    - $1 \leq N \leq 10^5$
+    - $1 \leq Q \leq 10^5$
+    - $1 \leq l, r \leq N$
+
+9.  [Flatten a Binary Tree to a Linked List](https://leetcode.com/problems/flatten-binary-tree-to-linked-list/description/)
+
+10. [Scramble String](https://leetcode.com/problems/scramble-string/)
+
+11. You are given a graph $G$ of $N$ nodes and $M$ edges and each edge has some time associated with it. There is a policeman standing on each node except Node $N$. All of them get a report that there is thief on Node $N$ and the policemen start moving towards it, but all of them have been hungry for days, so they are looking to visit a few restaurants as well, before reaching the node $N$. There are $K$ restaurants present on some nodes, and each restaurant has some satisfaction. Now, a policeman will only go to a restaurant if and only if the satisfaction he receives by reaching the restaurant is greater than or equal to the time he has invested in reaching there and then going to the Node $N$. Find and return the number of policemen who will have a meal at a restaurant.
+
+    Constraints:
+
+    - $1 \leq N, M, K \leq 10^5$
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        int n, m;
+        cin >> n >> m;
+
+        vector<vector<pair<int, int>>> g(n);
+        for (int i = 0; i < m; i++)
+        {
+            int u, v, w;
+            cin >> u >> v >> w;
+            g[u - 1].push_back({v - 1, w});
+            g[v - 1].push_back({u - 1, w});
+        }
+
+        int k;
+        cin >> k;
+        vector<pair<int, int>> res(k);
+        for (int i = 0; i < k; i++)
+        {
+            cin >> res[i].first >> res[i].second;
+            res[i].first--;
+        }
+
+        // Distance of all the nodes from the node n - 1
+        vector<long long> dis(n, 1e18);
+        priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<pair<long long, int>>> pq;
+        dis[0] = 0;
+        pq.push({0, 0});
+        while (!pq.empty())
+        {
+            auto [d, u] = pq.top();
+            pq.pop();
+
+            if (d != dis[u])
+                continue;
+
+            for (auto [v, w] : g[u])
+                if (dis[v] > dis[u] + w)
+                {
+                    dis[v] = dis[u] + w;
+                    pq.push({dis[v], v});
+                }
+        }
+
+        // The maximum value of satisfaction - distance travelled for all the nodes
+        priority_queue<pair<long long, int>> pq2;
+        vector<long long> dis2(n, -1e18);
+        for (auto [v, s] : res)
+        {
+            dis2[v] = s - dis[v];
+            pq2.push({dis2[v], v});
+        }
+
+        while (!pq2.empty())
+        {
+            auto [d, u] = pq2.top();
+            pq2.pop();
+
+            if (d != dis2[u])
+                continue;
+
+            for (auto [v, w] : g[u])
+                if (dis2[v] < dis2[u] - w)
+                {
+                    dis2[v] = dis2[u] - w;
+                    pq2.push({dis2[v], v});
+                }
+        }
+
+        int cnt = 0;
+        for (int i = 0; i < n - 1; i++)
+            if (dis2[i] >= 0)
+                cnt++;
+
+        cout << cnt << "\n";
+    }
+    ```
+
+    </details>
+
+---
+
+# Samsung Research Institute Bangalore (SRIB)
+
+SRIB is known to frequently repeat it's questions, and the most of them are from the [this very helpful repository](https://github.com/rishipathak6/SRIB-Questions-and-Solutions).
+
+## Other Campus Questions
+
+1.  You are given $N$ segments. Each segment has threw characteristic properties:
+
+    - $l$: The starting point of the segment
+    - $r$: The ending point of the segment
+    - $c$: The cost of the segment
+
+    Two segments can form a valid pair, if and only if those two segments do not overlap. Segments are called overlapping if there is at least one point lying in both the segments. The cost of the pairing of two valid segments is defined as the product of their individual costs. Out of all possible valid pairs, find the valid pair of segments, for which their cost of pairing is minimal. Print that min cost of pairing.
+
+    Constraints:
+
+    - $1 \leq N \leq 10^5$
+    - $1 \leq l, r, c \leq 10^9$
+
+     <details>
+     <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        int n;
+        cin >> n;
+
+        vector<vector<long long>> arr(n, vector<long long>(3));
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < 3; j++)
+                cin >> arr[i][j];
+
+        sort(arr.begin(), arr.end());
+        vector<long long> sufMin(n);
+        sufMin[n - 1] = arr[n - 1][2];
+        for (int i = n - 2; i >= 0; i--)
+            sufMin[i] = min(sufMin[i + 1], arr[i][2]);
+
+        auto forwardSearch = [&](int idx) -> int
+        {
+            int l = idx + 1, r = n - 1;
+            int ans = -1;
+            while (l <= r)
+            {
+                int m = (l + r) / 2;
+                if (arr[m][0] <= arr[idx][1])
+                    l = m + 1;
+                else
+                {
+                    ans = m;
+                    r = m - 1;
+                }
+            }
+
+            return ans;
+        };
+
+        long long ans = 1e18 + 10;
+        for (int i = 0; i < n; i++)
+        {
+            int nxt = forwardSearch(i);
+            if (nxt != -1)
+                ans = min(ans, arr[i][2] * sufMin[nxt]);
+        }
+
+        if (ans > 1e18)
+            ans = -1;
+        cout << ans << "\n";
+        return 0;
+    }
+    ```
+
+     </details>
+
+2.  There is a knot in the middle of a necklace with $N$ beads at the left and the right. The red and blue beads are randomly strung into it. You want to make the number of red and blue beads equal by removing some of them. As there is a knot in the middle, you cannot remove the beads passing the knot. You can remove them only from each end of the necklace. You are required to print the minimum number of beads you should remove to make the number of the remaining red and blue beads the same. Although removing all the beads from the necklace will always mate the number of both colors equal as zero, there is a way to remove a smaller number of beads. The information of the necklace is given as string $A$ whose length is $2 \cdot N$. The colors of the beads are given in order from the left and to the right end. The red bead is expressed as `R`, whereas the blue bead is expressed as `B`.
+
+    Constraints:
+
+    - $1 \leq N \leq 10^5$
+
+     <details>
+     <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        string s;
+        cin >> s;
+        int n = s.size();
+
+        map<int, int> cnt;
+        int r = 0, b = 0;
+        cnt[0] = 0;
+        for (int i = n / 2; i < n; i++)
+        {
+            r += s[i] == 'R';
+            b += s[i] == 'B';
+            cnt[r - b] = i - (n / 2) + 1;
+        }
+
+        int ans = 0;
+        r = 0, b = 0;
+        for (int i = n / 2 - 1; i >= 0; i--)
+        {
+            r += s[i] == 'R';
+            b += s[i] == 'B';
+            int d = b - r;
+            if (cnt.find(d) != cnt.end())
+                ans = max(ans, cnt[d] + n / 2 - i);
+        }
+
+        cout << n - ans;
+        return 0;
+    }
+    ```
+
+    </details>
+
+3.  Count the number of positive integers less than or less to $A$ such that the sum of their digits is $S$. Return the number of numbers modulo $10^9 + 7$.
+
+    Constraints:
+
+    - $1 \leq A \leq 10^{100}$
+    - $0 \leq S \leq 1000$
+
+     <details>
+     <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        string s;
+        cin >> s;
+        int n = s.size();
+
+        int sum;
+        cin >> sum;
+        if (sum == 0)
+        {
+            cout << 0;
+            return 0;
+        }
+
+        vector<vector<vector<long long>>> dp(n, vector<vector<long long>>(2, vector<long long>(sum + 1, -1)));
+        long long MOD = 1e9 + 7;
+
+        function<long long(int, bool, int)> solve = [&](int idx, bool eq, int curSum) -> long long
+        {
+            if (idx == n)
+                return curSum == sum;
+            if (dp[idx][eq][curSum] != -1)
+                return dp[idx][eq][curSum];
+
+            long long tot = 0;
+            int maxD = eq ? s[idx] - '0' : 9;
+            for (int d = 0; d <= maxD; d++)
+            {
+                bool newEq = eq & (d == maxD);
+                int newSum = curSum + d;
+                if (newSum <= sum)
+                {
+                    tot += solve(idx + 1, newEq, newSum);
+                    tot %= MOD;
+                }
+            }
+
+            return dp[idx][eq][curSum] = tot;
+        };
+
+        cout << solve(0, 1, 0);
+        return 0;
+    }
+    ```
+
+     </details>
+
+4.  There are $n$ balloons and $n$ bullets and each balloon is assigned with a particular number (point). Whenever a particular balloon is shot, the number of points increases by
+
+    - The multiplication of points assigned to balloon on left and that of right side.
+    - Points assigned to left if no right exists.
+    - Points assigned to right if no left exists.
+    - Points assigned to itself if no other balloon exists.
+
+    You have to output the maximum number of points possible you can get by shooting the balloons.
+
+    Constraints:
+
+    - $1 \leq n \leq 10^2$
+
+     <details>
+     <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int main() {
+        int n;
+        cin >> n;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+
+        vector<vector<int>> dp(n, vector<int>(n, -1));
+        function<int(int, int)> get = [&](int l, int r) -> int {
+            if (l > r)
+                return 0;
+            if (dp[l][r] != -1)
+                return dp[l][r];
+
+            int ans = 0;
+            for (int k = l; k <= r; k++) {
+                int sc;
+                if (k > l && k < r)
+                    sc = arr[k - 1] * arr[k + 1];
+                else if (k > l)
+                    sc = arr[k - 1];
+                else if (k < r)
+                    sc = arr[k + 1];
+                else
+                    sc = arr[k];
+
+                ans = max(ans, sc + get(l, k - 1) + get(k + 1, r));
+            }
+
+            return dp[l][r] = ans;
+        };
+
+        cout << get(0, n - 1);
+    }
+    ```
+
+     </details>
+
+5.  [Burst Ballons](https://leetcode.com/problems/burst-balloons/description/)
+
+6.  A doctor travels from a division to other division where divisions are connected like a graph (directed graph) and the edge weights are the probabilities of the doctor going from that division to other connected division. The doctor stays $10$ minutes at each division. You will be given a time and you have to find the division which will have the maximum probability of having him.
+
+    - If he reaches a point where there are no further nodes then he leaves the lab after $10$ mins and goes home.
+    - The traveling time is not considered, and thus at the end of the $10^{th}$ min, he will be in next division.
+
+    Constraints:
+
+    - Number of divisions $N$ $(1 \leq N \leq 12)$
+    - Number of test cases $T$ $(1 \leq T \leq 10)$
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    void get()
+    {
+        int n, m, t;
+        cin >> n >> m >> t;
+        int k = t / 10;
+
+        vector<vector<pair<int, double>>> g(n);
+        for (int i = 0; i < m; i++)
+        {
+            int u, v;
+            double p;
+            cin >> u >> v >> p;
+            u--, v--;
+            g[u].push_back({v, p});
+        }
+
+        vector<double> prob(n);
+        prob[0] = 1;
+
+        while (k--)
+        {
+            vector<double> newProb(n, 0);
+            for (int i = 0; i < n; i++)
+                for (auto [v, p] : g[i])
+                    newProb[v] += p * prob[i];
+            prob = newProb;
+        }
+
+        double mxProb = 0;
+        int mxDiv = -1;
+
+        for (int i = 0; i < n; i++)
+        {
+            if (prob[i] - mxProb >= 1e-6)
+            {
+                mxProb = prob[i];
+                mxDiv = i;
+            }
+        }
+
+        mxDiv++;
+        if (mxDiv == 0)
+            cout << 0 << "\n";
+        else
+            cout << mxDiv << " " << fixed << setprecision(6) << mxProb << "\n";
+    }
+
+    int main()
+    {
+        int t;
+        cin >> t;
+        for (int i = 0; i < t; i++)
+        {
+            cout << "#" << i + 1 << " ";
+            get();
+        }
+    }
+    ```
+
+    </details>
+
+7.  There are $N$ pots. Every pot has some water in it. They may be partially filled, so there is an overflow number $O$ associated with every pot which tell how many minimum stone pieces are require for that pot to overflow. So if for a pot $O$ value is $5$, it means minimum $5$ stone pieces should be put in that pot to make it overflow.
+
+    Initially a crow watched those pots and by seeing the water level he anticipated $O$ value correctly for every pot (that is he knew $O_1$ to $O_n$). But when he came back in evening he found that every pot is painted from outside and he is not able to know which pot has what $O$ value. The crow wants some $K$ pots to overflow so that he can serve his child appropriately. For overflowing the pots, he needs to search for the stones in forest (assume that every stone has same size).
+
+    He wants to use minimum number of stones to overflow the $K$ pots. But he doesn't know now which pot has what $O$ value. So the task is to find out the minimum number of stones that the crow requires to make the $K$ pots overflow in the worst case.
+
+    Constraints:
+
+    - $1 \leq N \leq 100$
+    - $1 \leq K \leq N$
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        int n, k;
+        cin >> n >> k;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+        sort(arr.begin(), arr.end());
+
+        vector<vector<int>> dp(n, vector<int>(k + 1, 1e9));
+        for (int i = 0; i < n; i++)
+        {
+            dp[i][0] = 0;
+            dp[i][1] = arr[i] * (n - i);
+        }
+
+        function<int(int, int)> get = [&](int idx, int p) -> int
+        {
+            if (dp[idx][p] != 1e9)
+                return dp[idx][p];
+
+            for (int last = idx + 1; last < n; last++)
+            {
+                int newCost = get(last, p - 1) + (last - idx) * arr[idx];
+                dp[idx][p] = min(dp[idx][p], newCost);
+            }
+
+            return dp[idx][p];
+        };
+
+        int ans = 1e9;
+        for (int i = 0; i < n; i++)
+            ans = min(ans, get(i, k));
+        cout << ans << "\n";
+    }
+    ```
+
+    </details>
+
+8.  [Tallest Billboard](https://leetcode.com/problems/tallest-billboard/solutions/)
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    class Solution {
+    public:
+        int tallestBillboard(vector<int>& arr) {
+            map<int, int> dp;
+            dp[0] = 0;
+
+            for (int i = 0; i < arr.size(); i++) {
+                map<int, int> newDp = dp;
+
+                for (auto [diff, taller]: dp) {
+                    int shorter = taller - diff;
+
+                    // Add to taller side
+                    int newDiff = diff + arr[i];
+                    newDp[newDiff] = max(newDp[newDiff], taller + arr[i]);
+
+                    // Add to smaller side
+                    newDiff = abs(taller - arr[i] - shorter);
+                    newDp[newDiff] = max({
+                        newDp[newDiff],
+                        taller,
+                        shorter + arr[i]
+                    });
+                }
+
+                dp = newDp;
+            }
+
+            return dp[0];
+        }
+    };
+    ```
+
+    </details>
+
+## Online Assessment Question
+
+1.  You are given a grid of $Y \times X$ of $1$ and $0$ elements. You need to perform $K$ operations on the same. In one operation, you need to choose one column of the grid, and flip the values of all the cells of that column. Calculate the maximum possible number of rows that can have all the elements as $1$ after performing $K$ operations. There are $T$ test cases in one test file.
+
+    Constraints:
+
+    - $1 \leq T \leq 10$
+    - $1 \leq Y \leq 10^3$
+    - $1 \leq X \leq 20$
+    - $1 \leq K \leq 20$
+    - $0 \leq grid[i][j] \leq 1$
+
+     <details>
+     <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int get()
+    {
+        int Y, X, k;
+        cin >> Y >> X >> k;
+
+        map<int, int> cnt;
+        for (int i = 0; i < Y; i++)
+        {
+            int m = 0;
+            for (int j = 0; j < X; j++)
+            {
+                int x;
+                cin >> x;
+                m = (m << 1) | x;
+            }
+            cnt[m]++;
+        }
+
+        int ans = 0;
+        int req = (1 << X) - 1;
+
+        for (int mask = 0; mask < (1 << X); mask++)
+        {
+            int c = __builtin_popcount(mask);
+            if (k % 2 != c % 2 || c > k)
+                continue;
+            ans = max(ans, cnt[req ^ mask]);
+        }
+
+        return ans;
+    }
+
+    int main()
+    {
+        int t;
+        cin >> t;
+        for (int i = 0; i < t; i++)
+            cout << "#" << i + 1 << " " << get() << "\n";
+    }
+    ```
+
+     </details>
 
 ---
