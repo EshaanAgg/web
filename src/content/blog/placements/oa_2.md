@@ -5,6 +5,7 @@ pubDate: 2024-10-08
 updateDate: 2024-10-17
 pinned: true
 requireLatex: true
+hasBlogCard: false
 tags: ["placements", "2024"]
 ---
 
@@ -4440,7 +4441,7 @@ The test usually involves 2 coding questions and 1 question involving writing a 
    - If $a_i > a_j$, then $b_i > b_j$
    - If $a_i = a_j$, then $b_i \neq b_j$
 
-   Find the lenght of maximum possible subset.
+   Find the length of maximum possible subset.
 
    Constraints:
 

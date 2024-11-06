@@ -4,6 +4,7 @@ description: Collection of all the resources I used as all the advices that work
 pubDate: 2024-12-01
 pinned: false
 tags: ["placements", "2024"]
+hasBlogCard: false
 ---
 
 ## Competitive Programming & DSA
@@ -25,13 +26,7 @@ These concepts take the most time, and are often the deciding factors in a low-m
 
 [GFG](https://www.geeksforgeeks.org/) is probably the only resource you need for these MCQs. It is very common for the companies to directly pick questions from here, and the explanations are also very good.
 
-Here are also some conscise notes that I started maintainging as I solved these MCQs, as well as from the questions I saw in my online assements and that of my seniors:
-
-- [Operating System]()
-- [Database Management & SQL]()
-- [OOPS in C++]()
-
-I have no plans of updating them, and they probably won't make any sense if you haven't studied the topic first. But if you have, they might be a good refresher and help you in remembering some important or lesser known points, and getting those 'tricky' questions right.
+Here are also some [conscise notes](../../../blog/placements/OOPS.pdf) that I started maintainging as I solved these MCQs, as well as from the questions I saw in my online assements and that of my seniors. I have no plans of updating them, and they probably won't make any sense if you haven't studied the topic first. But if you have, they might be a good refresher and help you in remembering some important or lesser known points, and getting those 'tricky' questions right.
 
 ## CPP Topics
 

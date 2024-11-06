@@ -5,6 +5,7 @@ pubDate: 2024-10-08
 updateDate: 2024-10-17
 pinned: true
 requireLatex: true
+hasBlogCard: false
 tags: ["placements", "2024"]
 ---
 
@@ -1826,7 +1827,7 @@ The MCQs were exactly repeated from other campus and previous year questions. Ev
        int t;
        cin >> t;
 
-       // Calulate primes
+       // Calculate primes
        for (int i = 2; i <= 199; i++)
        {
            int j = 2;
@@ -2604,7 +2605,7 @@ There were $4$ sections in the test and each section had it's own time limit of 
 
     </details>
 
-# Online Assessment Questions
+## Online Assessment Questions
 
 1. You are given a directed graph of $n$ nodes. You are also given $m$ nodes in array $arr$. Return the count of the descendants of any of the given $m$ nodes.
 
@@ -3111,6 +3112,232 @@ There were $4$ sections in the test and each section had it's own time limit of 
     ```
 
     </details>
+
+12. [Fill the Bag](https://codeforces.com/contest/1303/problem/D)
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    void solution()
+    {
+        ll n, w;
+        cin >> w;
+        cin >> n;
+
+        vll arr(n);
+        vll have(64, 0);
+
+        range(i, 0, n) cin >> arr[i];
+        range(i, 0, n) range(j, 0, 64) if ((1ll << j) & arr[i]) have[j]++;
+
+        int ans = 0;
+
+        range(i, 0, 64)
+        {
+            bool req = (1LL << i) & w;
+
+            if (have[i] >= req)
+            {
+                have[i] -= req;
+                if (i + 1 < 64)
+                    have[i + 1] += have[i] / 2;
+                continue;
+            }
+
+            if (!req)
+                continue;
+
+            bool found = false;
+            for (int j = i + 1; j < 64; j++)
+                if (have[j])
+                {
+                    found = true;
+                    ans += j - i;
+                    have[j] -= 1;
+                    have[i] = 2;
+                    range(k, i + 1, j) have[k] = 1;
+                    i--;
+                    break;
+                }
+            if (!found)
+            {
+                cout << -1 << "\n";
+                return;
+            }
+        }
+
+        cout << ans << "\n";
+    }
+    ```
+
+    </details>
+
+13. Given a complete rooted tree with $N$ nodes numbered $1$ to $N$. This tree has it's leaves at the top and root at the bottom. A complete tree is a tree on every leaf of the tree and in order to get all the fruits you have to shake the tree any number of times. But this tree is a little different than the rest it has following properties:
+
+    - Every node has its capacity value that represents the number of fruits a node can hold at any moment.
+    - Only one fruit falls from each node to its present node in one shake.
+    - If a number of fruits at a node is more than its capacity then excess fruits (greater than capacity) on that node at that instant will fall to the ground. This process happens instantaneously hence no shake is required.
+    - The tree is rooted at 1.
+    - You may assume that root is one level above the ground so all fruits which fall from roots lands on the ground.
+
+    You have to find the minimum number of shakes you have to perform such that all the fruits are on the ground.
+
+    Constraints:
+
+    - $1 \leq N \leq 10^5$
+    - $1 \leq A[i], B[i] <= 10^9$
+    - $1 \leq C[i][0], C[i][1] \leq N$
+    - $A[i] = 0$ for non-leaf nodes
+    - Initially $A[i] \leq B[i]$
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int main() {
+        int n;
+        cin >> n;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+        vector<int> cap(n);
+        for (int i = 0; i < n; i++)
+            cin >> cap[i];
+
+        vector<vector<int>> g(n);
+        for (int i = 0; i < n - 1; i++) {
+            int u, v;
+            cin >> u >> v;
+            u--, v--;
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+
+        // ans -> Min time to empty the node
+        // sum -> Total fruits falling from child
+        // depth -> Depth of the node with respect to the leaves
+        vector<int> ans(n), sum(n), depth(n);
+
+        function<void(int, int)> dfs = [&](int u, int p) -> void {
+            // Leaf node
+            if (g[u].size() == 1 && u != 0) {
+                ans[u] = arr[u];
+                depth[u] = 0;
+                sum[u] = 0;
+                return;
+            }
+
+            int maxChild = 0;
+            sum[u] = 0;
+
+            for (int v: g[u]) {
+                if (v == p)
+                    continue;
+                dfs(v, u);
+                sum[u] += ans[v] - depth[v];
+                depth[u] = max(depth[u], depth[v] + 1);
+                maxChild = max(maxChild, ans[v]);
+            }
+
+            ans[u] = maxChild + min(cap[u], sum[u] - (maxChild - depth[u]));
+        };
+        dfs(0, -1);
+
+        cout << ans[0] << "\n";
+    }
+    ```
+
+    </details>
+
+14. You are the prime minister of a country and once you went for a world tour. After $5$ years, when you returned to your country you were shocked to see the condition of the roads between the cities. So, you plan to repair them, but you cannot afford to spend a lot of money. The country can be represented as a $N \times M$ grid, where $country[i,j]$ is a city The cost of repairing a repairing a road between $[i,j]$ and $[i+1,j]$ is $A[i]$ and the cost of repairing a road between $[i,j]$ and $[i,j+1]$ is $B[i]$. Return the minimum cost of repairing roads such that all cities become a connected network. As the cost can be large, return the cost modulo $10^9 + 7$.
+
+    Constraints:
+
+    - $1 \leq N, M \leq 10^5$
+    - $1 \leq A[i], B[i] \leq 10^9$
+
+    <details>
+    <summary>Solution</summary>
+
+    ```cpp showLineNumbers
+    int main()
+    {
+        long long n, m;
+        cin >> n >> m;
+
+        vector<long long> a(n - 1), b(m - 1);
+        for (int i = 0; i < n - 1; i++)
+            cin >> a[i];
+        for (int i = 0; i < m - 1; i++)
+            cin >> b[i];
+
+        sort(a.begin(), a.end());
+        sort(b.begin(), b.end());
+
+        long long i = 0, j = 0;
+        long long ans = 0;
+        long long MOD = 1e9 + 7;
+
+        while (i < n - 1 && j < m - 1)
+        {
+            if (a[i] < b[j])
+            {
+                ans += a[i] * (m - j);
+                i++;
+            }
+            else
+            {
+                ans += b[j] * (n - i);
+                j++;
+            }
+            ans %= MOD;
+        }
+
+        while (i < n - 1)
+        {
+            ans += a[i];
+            i++;
+        }
+        while (j < m - 1)
+        {
+            ans += b[j];
+            j++;
+        }
+        ans %= MOD;
+
+        cout << ans << "\n";
+    }
+    ```
+
+    </details>
+
+## Online Assessment Questions
+
+1. [Recover Binary Search Tree](https://leetcode.com/problems/recover-binary-search-tree/description/)
+
+2. You are given an array of integers. The cost of merging two adjacent integers $a$ and $b$ is $a + b$. After the merging, they become a single integer with the value $a + b$. You need to find the minimum cost to merge all the integers into a single integer.
+
+   Constraints:
+
+   - $1 \leq |A| \leq 100$
+   - $1 \leq A[i] \leq 10^5$
+
+3. You are given an array $arr$. In one operation, you can choose any index $i$, and then update all the indexes $j$ in the array as $A[j] = A[i] | A[j]$ where $|$ is the bitwise OR operator. You need to find the minimum number of operations required to make all the elements of the array equal.
+
+   Constraints:
+
+   - $1 \leq |A| \leq 10^5$
+   - $1 \leq A[i] \leq 5000$
+
+4. You are given an array of strings $words$ and a target string $w$. In one operation you can choose any string from $words$ and take a non empty prefix of the same. Finally at the end, you need to concatenate all the chosen prefixes such that they form the word $w$. You need to find the minimum number of operations required to form the word $w$. You can choose the same string multiple times.
+
+   Constraints:
+
+   - $1 \leq |words| \leq 200$
+   - $1 \leq |w| \leq 200$
+   - $1 \leq |words[i]| \leq 100$
 
 ---
 

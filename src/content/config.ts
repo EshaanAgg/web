@@ -13,6 +13,7 @@ const blogCollection = defineCollection({
       tags: z.string().array().optional(),
       pinned: z.boolean().default(false),
       requireLatex: z.boolean().default(false),
+      hasBlogCard: z.boolean().default(true),
       external: z
         .object({
           link: z.string().url(),

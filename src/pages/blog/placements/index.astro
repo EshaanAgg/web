@@ -1,0 +1,44 @@
+---
+import BlogLayout from "@layouts/BlogLayout.astro";
+
+export const prerender = true;
+---
+
+<BlogLayout
+  title={"Placements '24"}
+  pubDate={new Date("2024-10-10")}
+  description={"A brief overview of the placements process at IIT (BHU) and some resources to crack the same."}
+  url={"/blog/placements"}
+  draft={true}
+  requireLatex={false}
+  readingTime={"2 min read"}
+  external={undefined}
+  image={undefined}
+  imageAlt={undefined}
+  updatedDate={undefined}
+>
+  Hey! This is a brief recap of my journey of placements as a final year student
+  at IIT (BHU). I will be sharing my experiences, some tips and resources that
+  helped me crack the placements process. I have also curated three blogs where
+  I will be sharing all the online assessment questions that I have come across
+  during my placements, as they might be repeated in the future by many
+  companies, or might help you in gaining some insights into the type of
+  questions that are asked in the placements process.
+
+  <ol>
+    <li><a href="/blog/placements/resources">Resources & Generic Advice</a></li>
+    <li><a href="/blog/placements/write_your_own">Write Your Own</a></li>
+    <li>
+      <a href="/blog/placements/oa_1">Online Assessment Questions [Part 1]</a>
+    </li>
+    <li>
+      <a href="/blog/placements/oa_2">Online Assessment Questions [Part 2]</a>
+    </li>
+    <li>
+      <a href="/blog/placements/oa_3">Online Assessment Questions [Part 3]</a>
+    </li>
+  </ol>
+
+   Do let me know if the same helped you in any way. I would love to hear your feedback!
+  Cheers and all the best for your placements!
+</BlogLayout>

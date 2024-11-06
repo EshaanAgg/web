@@ -1,10 +1,11 @@
 ---
-title: "Placements '24: Write Your Own"
+title: "Write Your Own"
 description: Snippets for common implementation of standard library classes & templates that are frequently asked in interviews.
 pubDate: 2024-12-01
 pinned: false
 requireLatex: true
-tags: ["placements", "2024"]
+draft: false
+tags: ["placements", "2024", "cpp"]
 ---
 
 This is a collection of common C++ classes and templates that we often use, and thus are perfect opportunities for interviewers to quiz on to see if the candidate is comfortable with the language, can write clean code, and is aware about the internals of the language.
@@ -297,6 +298,94 @@ public:
     removeOldHits(timestamp);
     return curCnt;
   }
+};
+```
+
+## Infinite Timestamps in the Past
+
+In this variant, we want the hit counter to be able to answer queries of all the time in the past, and the solution should use constant memory. Some inaccuracy is allowed in the answer. To handle the same, we would make use of buckets of size of powers of 2, so that the older buckets store more points and are updated less frequently.
+
+```cpp showLineNumbers
+class HitCouter;
+
+class Bucket
+{
+    int quantum;
+    int cnt;
+    int lastUpdate;
+
+    friend class HitCouter;
+
+public:
+    Bucket(int p)
+    {
+        quantum = 1 << p;
+        cnt = 0;
+        lastUpdate = 0;
+    }
+};
+
+class HitCouter
+{
+    int MAX_BUCKETS = 12;
+    vector<Bucket> buckets;
+    int curTime;
+
+    void shiftBuckets(int deltaTime)
+    {
+        if (!deltaTime)
+            return;
+
+        // Last bucket represents liftime hits, and should not be shifted
+        for (int i = 0; i < MAX_BUCKETS - 1; i++)
+        {
+            Bucket &b = buckets[i];
+            if (curTime - b.lastUpdate >= b.quantum)
+            {
+                buckets[i + 1].cnt += b.cnt;
+                buckets[i].lastUpdate = curTime;
+                buckets[i].cnt = 0;
+            }
+        }
+    }
+
+    void update(int timestamp)
+    {
+        int deltaTime = timestamp - curTime;
+        curTime = timestamp;
+        shiftBuckets(deltaTime);
+    }
+
+public:
+    HitCouter()
+    {
+        curTime = 0;
+        for (int i = 0; i < MAX_BUCKETS; i++)
+            buckets.emplace_back(i);
+    }
+
+    void hit(int timestamp)
+    {
+        update(timestamp);
+        buckets[0].cnt++;
+    }
+
+    int getHits(int timestamp, int prevTime)
+    {
+        update(timestamp);
+
+        int cnt = 0;
+        int idx = 0;
+        for (; idx < MAX_BUCKETS; idx++)
+        {
+            if (prevTime >= buckets[idx].quantum)
+                cnt += buckets[idx].cnt;
+            else
+                break;
+        }
+
+        return cnt;
+    }
 };
 ```
 
