@@ -25,19 +25,6 @@ const posts = (await getCollection("blog"))
     return Number(b.data.pinned) - Number(a.data.pinned);
   });
 
-const additionalBlogCards = [
-  {
-    title: "Placements '24",
-    pubDate: new Date("2024-10-10"),
-    description:
-      "A brief overview of the placements process at IIT (BHU) and some resources to crack the same.",
-    url: "/blog/placements",
-    draft: false,
-    readingTime: "2 min read",
-    tags: ["placements", "iit bhu"],
-  },
-];
-
 const title = "Blog | Eshaan Aggarwal";
 const description =
   "My personal collection of code snippets, starter guides, tutorials and interesting things I found online. Meant to be my safe haven of content that I find too trivial to publish anywhere else.";
@@ -57,20 +44,7 @@ const description =
       </div>
     ) : (
       <ul class="flex flex-col gap-8 sm:border-l sm:dark:border-zinc-800">
-        {/* Additional Special Blogs */}
-        {additionalBlogCards.map((post) => (
-          <BlogCard
-            title={post.title}
-            pubDate={post.pubDate}
-            description={post.description}
-            url={post.url}
-            readingTime={post.readingTime}
-            tags={post.tags}
-            draft={post.draft}
-          />
-        ))}
-
-        {/* Regular blog cards */}
+        {/* Blog cards */}
         {posts.map((post) => (
           <BlogCard
             title={post.data.title}

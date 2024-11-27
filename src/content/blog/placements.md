@@ -1,10 +1,10 @@
 ---
-title: "Placements 2024"
+title: "Placements '24"
 description: A brief of all the online assessments that I witnessed during the season of 2024
 pubDate: 2024-12-01
 updatedDate: 2024-12-01
 draft: false
-tags: ["Placements", "2024"]
+tags: ["placements", "2024"]
 pinned: true
 ---
 
