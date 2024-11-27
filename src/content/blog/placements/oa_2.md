@@ -1,8 +1,8 @@
 ---
 title: "Placements '24: Assessments [Part 2]"
 description: A brief of all the online assessments that I witnessed during the season of 2024.
-pubDate: 2024-10-08
-updateDate: 2024-10-17
+pubDate: 2024-12-01
+updateDate: 2024-12-01
 pinned: true
 requireLatex: true
 hasBlogCard: false
@@ -43,7 +43,7 @@ This is the second part of the series on online assessments that I witnessed dur
     Time Complexity: $O(Q * N \log N)$
 
     ```cpp showLineNumbers
-    bool checkTraversal(int n, vector<set<int>> &g, vector<int> &traversal) {
+    bool checkTraversal(int n, vector<vector<int>> &g, vector<int> &traversal) {
         if (traversal.size() != n)
             return false;
 
@@ -54,7 +54,10 @@ This is the second part of the series on online assessments that I witnessed dur
             if (idx[i] == -1)
                 return false;
 
-        for (auto &ch: g) sort(ch.begin(), ch.end(), [&](int a, int b) { return idx[a] < idx[b]; });
+        for (auto &ch: g)
+            sort(ch.begin(), ch.end(), [&](int a, int b) {
+                return idx[a] < idx[b];
+            });
 
         queue<int> q;
         q.push(0);
@@ -149,13 +152,14 @@ This is the second part of the series on online assessments that I witnessed dur
 
     </details>
 
-3.  You are given a string $s$ that has lowercase English characters. You are also given an integer $n$. You need to generate a string $x$ of length $n$ such that:
+3.  You are given a string $s$ that has lowercase English characters. You are also given an integer $n$. You need to generate a string $x$ of the given length $n$ such that:
 
-    - All of characters present in $s$ must be present in the string.
-    - We will then make a string of length $t$ by repeatedly adding the string $x$ to it untill the string $t$ can be re-arranged to have the string $s$ as a substring.
-    - The generated string $t$ should be of the minimum possible length. If there are multiple possible $t$ with the same length, it should be so that the generated string $t$ is lexicographically smallest.
+    - All of the distinct characters present in $s$ must be present in the string $x$.
+    - We will then make a string $t$ by repeatedly adding the string $x$ to it untill the string $t$ can be rearranged to have the string $s$ as a substring.
+    - The generated string $t$ should be of the minimum possible length.
+    - If there are multiple possible $t$ with the same length, the string $x$ should be chosen so that the generated string $t$ is the lexicographically smallest possible.
 
-    Return the string $x$ that would generate the string $t$.
+    Return the string $x$ that would generate the string $t$. Return empty string if no such string $x$ exists.
 
     <details>
     <summary>Solution</summary>

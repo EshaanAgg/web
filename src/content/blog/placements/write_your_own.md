@@ -18,6 +18,8 @@ This is a collection of common C++ classes and templates that we often use, and 
   - [Base Variant](#base-variant)
   - [Unordered Timestamps](#unordered-timestamps)
   - [Concurrent Hit Counter](#concurrent-hit-counter)
+  - [Infinite Timestamps in the Past](#infinite-timestamps-in-the-past)
+- [Singleton Design Pattern](#singleton-design-pattern)
 
 ---
 
@@ -387,6 +389,80 @@ public:
         return cnt;
     }
 };
+```
+
+---
+
+# Singleton Design Pattern
+
+A singleton class is a class such that you can only have one instance of the class. This is useful when you want to have a single instance of a class that is shared across the application. The singleton class is implemented using a static member variable, and a static member function that returns the instance of the class.
+
+Singletons are useful when we want to apply some functionalities to a "global" set of data, but we do not want to pass the object or the data/member functions around. Having the same encapsulated in a singleton class makes it easier to manage and use throughout the application. They can effectively be managed using namespaces as well, but the singleton class provides a more object-oriented approach.
+
+Here are some good examples of a singleton class:
+
+- Logger
+- Configuration
+- Random Number Generator
+- Database Connection
+
+```cpp
+class Singleton {
+public:
+  static Singleton& get() {
+    static Singleton instance;
+    return instance;
+  }
+
+  void foo() {};
+
+private:
+  // Make the constructor private so that the class cannot be instantiated
+  // from outside, and delete the other constructors to avoid copying
+  Singleton() {}
+  Singleton(const Singleton&) = delete;
+  Singleton& operator=(const Singleton&) = delete;
+};
+
+int main() {
+  Singleton &s = Singleton::get();
+  s.foo();
+
+  // Or equivalently
+  Singleton::get().foo();
+
+  return 0;
+}
+```
+
+If you want to call the member functions directly on the class, you can make the member functions static as well with a bit of indirection.
+
+```cpp
+class Singleton {
+public:
+  static Singleton& get() {
+    static Singleton instance;
+    return instance;
+  }
+
+  static void foo() {
+    get().IFoo();
+  }
+
+private:
+  void IFoo() {
+    // Implementation of foo
+  }
+
+  Singleton() {}
+  Singleton(const Singleton&) = delete;
+  Singleton& operator=(const Singleton&) = delete;
+};
+
+int main() {
+  Singleton::foo();
+  return 0;
+}
 ```
 
 ---

@@ -1,8 +1,8 @@
 ---
 title: "Placements '24: Assessments [Part 3]"
 description: A brief of all the online assessments that I witnessed during the season of 2024.
-pubDate: 2024-10-08
-updateDate: 2024-10-17
+pubDate: 2024-12-01
+updateDate: 2024-12-01
 pinned: true
 requireLatex: true
 hasBlogCard: false
@@ -2864,7 +2864,7 @@ There were $4$ sections in the test and each section had it's own time limit of 
 
     </details>
 
-5.  You live in Orange town. There are a lot of markets around that are connected with roads. These markets sell oranges at some prices. The town is not very well developed and they still use carts to transport goods from one place to the other. The roads connect two markets together and have one attribute associated with them. The attribute is the price to go from one market to the other in an empty cart. The town also has a tax factor, the tax factor is the number by which the price associated with a road needs to be multiplied, so it can go from one market to the other IF you are carrying oranges in your cart. So if a road's original price was $5$ coins and tax factor of the town was $6$ then in an empty cart it would take $5$ coins to travel the road but if the cart contained oranges, it would cost $5 x 6 = 30$ coins.
+5.  You live in Orange town. There are a lot of markets around that are connected with roads. These markets sell oranges at some prices. The town is not very well developed and they still use carts to transport goods from one place to the other. The roads connect two markets together and have one attribute associated with them. The attribute is the price to go from one market to the other in an empty cart. The town also has a tax factor, the tax factor is the number by which the price associated with a road needs to be multiplied, so it can go from one market to the other IF you are carrying oranges in your cart. So if a road's original price was $5$ coins and tax factor of the town was $6$ then in an empty cart it would take $5$ coins to travel the road but if the cart contained oranges, it would cost $5 \cdot 6 = 30$ coins.
 
     You wonder what would be the cheapest way to buy oranges if you were initially at each market. You can either buy at the market you're at or travel to some other market, buy oranges there, and travel back to the original market.
 

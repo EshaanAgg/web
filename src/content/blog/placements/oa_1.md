@@ -1,8 +1,8 @@
 ---
 title: "Placements '24: Assessments [Part 1]"
 description: A brief of all the online assessments that I witnessed during the season of 2024.
-pubDate: 2024-10-08
-updateDate: 2024-10-17
+pubDate: 2024-12-01
+updateDate: 2024-12-01
 pinned: true
 requireLatex: true
 hasBlogCard: false
