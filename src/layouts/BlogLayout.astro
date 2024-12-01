@@ -16,13 +16,14 @@ interface Props {
   updatedDate: Date | undefined;
   readingTime: string;
   draft: boolean;
+  slug: string;
   requireLatex: boolean;
   external:
-    | undefined
     | {
         platform: string;
         link: string;
-      };
+      }
+    | undefined;
 }
 
 const {
@@ -36,6 +37,7 @@ const {
   readingTime,
   external,
   requireLatex,
+  slug,
 } = Astro.props;
 
 const ogImage = {
@@ -142,5 +144,5 @@ const fullUpdatedDate = updatedDate?.toLocaleDateString("en", {
   >
     <slot />
   </article>
-  <Pagination />
+  <Pagination slug={slug} />
 </AppLayout>

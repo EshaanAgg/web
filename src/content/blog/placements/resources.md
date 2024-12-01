@@ -2,9 +2,12 @@
 title: "Placements '24: Resources & Advice"
 description: Collection of all the resources I used as all the advices that worked the best for me.
 pubDate: 2024-12-01
-pinned: false
 tags: ["placements", "2024"]
 hasBlogCard: false
+draft: false
+series:
+  name: "placements"
+  part: 2
 ---
 
 ## Competitive Programming & DSA
@@ -26,7 +29,11 @@ These concepts take the most time, and are often the deciding factors in a low-m
 
 [GFG](https://www.geeksforgeeks.org/) is probably the only resource you need for these MCQs. It is very common for the companies to directly pick questions from here, and the explanations are also very good.
 
-Here are also some [conscise notes](../../../blog/placements/OOPS.pdf) that I started maintainging as I solved these MCQs, as well as from the questions I saw in my online assements and that of my seniors. I have no plans of updating them, and they probably won't make any sense if you haven't studied the topic first. But if you have, they might be a good refresher and help you in remembering some important or lesser known points, and getting those 'tricky' questions right.
+Here are also some [conscise notes about OOPS](../../../blog/placements/OOPS.pdf) that I started maintainging as I solved these MCQs, as well as from the questions I saw in my online assements and that of my seniors. I have no plans of updating them, and they probably won't make any sense if you haven't studied the topic first. But if you have, they might be a good refresher and help you in remembering some important or lesser known points, and getting those 'tricky' questions right.
+
+Database Management, SQL, and Operating Systems are a much do if you are from a circuital branch. The questions that are asked are usually basic and standard for the most part, but you need to be aware about them and have a good understanding of the concepts. As usual, MCQS from GFG to test your mettle and YouTube videos of any online educator that you like would be a good start.
+
+Computer networks in also usually included in CS concepts, but I decided to skip them in the interest of time. A very few companies ask questions from this topic (like `Cisco`) and for very specific roles (like Network Engineer). You might want to read about them if you are interested in such roles. Many of my friends who just covered some basics topics like TCP/IP, OSI model, and HTTPS, were able to answer "most" of the netwroking questions in the OAs as well as the interviews.
 
 ## CPP Topics
 
@@ -159,7 +166,3 @@ When preparing for interviews, these are some common topics that I found to be t
     ```
 
     </details>
-
-#### PS
-
-Computer networks in also usually included in CS concepts, but I decided to skip them in the interest of time. A very few companies ask questions from this topic (like `Cisco`) and for very specific roles (like Network Engineer). You might want to read about them if you are interested in such roles.

@@ -3,9 +3,12 @@ title: "Placements '24: Assessments [Part 1]"
 description: A brief of all the online assessments that I witnessed during the season of 2024.
 pubDate: 2024-12-01
 updateDate: 2024-12-01
-pinned: true
 requireLatex: true
 hasBlogCard: false
+draft: false
+series:
+  name: "placements"
+  part: 4
 tags: ["placements", "2024"]
 ---
 
@@ -263,8 +266,8 @@ Graviton is known for it's subjective tests. It did not visit our campus, but I 
 
    ```cpp
    for (int i = 0; i < m; i++) {
-   int toAdd = (data[i] >> 7) & 1;
-   sum += toAdd * data[i];
+        int toAdd = (data[i] >> 7) & 1;
+        sum += toAdd * data[i];
    }
    ```
 

@@ -2,10 +2,13 @@
 title: "Write Your Own"
 description: Snippets for common implementation of standard library classes & templates that are frequently asked in interviews.
 pubDate: 2024-12-01
-pinned: false
 requireLatex: true
+pinned: true
 draft: false
 tags: ["placements", "2024", "cpp"]
+series:
+  name: "placements"
+  part: 3
 ---
 
 This is a collection of common C++ classes and templates that we often use, and thus are perfect opportunities for interviewers to quiz on to see if the candidate is comfortable with the language, can write clean code, and is aware about the internals of the language.

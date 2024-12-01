@@ -22,17 +22,14 @@ const { Content } = await post.render();
 ---
 
 <BlogLayout
-  title={frontmatter.title}
-  pubDate={frontmatter.pubDate}
   image={frontmatter.hero}
   imageAlt={frontmatter.heroAlt}
-  description={frontmatter.description}
   url={post.slug}
   updatedDate={frontmatter.updatedDate}
   readingTime={getReadingTime(post.body).text}
   external={frontmatter.external}
-  draft={frontmatter.draft}
-  requireLatex={frontmatter.requireLatex}
+  slug={post.slug}
+  {...frontmatter}
 >
   <Content />
 </BlogLayout>

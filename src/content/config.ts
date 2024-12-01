@@ -14,6 +14,12 @@ const blogCollection = defineCollection({
       pinned: z.boolean().default(false),
       requireLatex: z.boolean().default(false),
       hasBlogCard: z.boolean().default(true),
+      series: z
+        .object({
+          name: z.string(),
+          part: z.number(),
+        })
+        .optional(),
       external: z
         .object({
           link: z.string().url(),

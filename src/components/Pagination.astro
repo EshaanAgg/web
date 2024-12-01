@@ -1,16 +1,34 @@
 ---
 import { getCollection } from "astro:content";
 
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+
 const posts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
   .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
 
-const index = posts.findIndex((post) => {
-  return Astro.request.url.includes(post.slug);
-});
+const index = posts.findIndex((post) => post.slug === slug);
 
-const nextPost = posts[index + 1];
-const prevPost = posts[index - 1];
+let nextPost = posts[index + 1],
+  prevPost = posts[index - 1];
+
+const postData = posts[index]?.data;
+
+// If the current post is part of series, update the next and previous post
+if (postData?.series) {
+  const seriesPosts = posts
+    .filter((post) => post.data.series?.name === postData.series?.name)
+    .sort((a, b) => (a.data.series?.part ?? 0) - (b.data.series?.part ?? 0));
+
+  const seriesIndex = seriesPosts.findIndex((post) => post.slug === slug);
+  if (seriesIndex != 0) prevPost = seriesPosts[seriesIndex - 1];
+  if (seriesIndex != seriesPosts.length - 1)
+    nextPost = seriesPosts[seriesIndex + 1];
+}
 ---
 
 <aside class="flex flex-col sm:flex-row mt-10 gap-4 w-full">
