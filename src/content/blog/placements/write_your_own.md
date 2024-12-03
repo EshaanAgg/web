@@ -22,6 +22,7 @@ This is a collection of common C++ classes and templates that we often use, and 
   - [Unordered Timestamps](#unordered-timestamps)
   - [Concurrent Hit Counter](#concurrent-hit-counter)
   - [Infinite Timestamps in the Past](#infinite-timestamps-in-the-past)
+- [Vector](#vector)
 - [Singleton Design Pattern](#singleton-design-pattern)
 
 ---
@@ -391,6 +392,116 @@ public:
 
         return cnt;
     }
+};
+```
+
+---
+
+# Vector
+
+The `std::vector` is a dynamic array that can grow and shrink in size. It is a sequence container that encapsulates dynamic size arrays. The storage of the vector is handled automatically, being expanded and contracted as needed. Vectors usually occupy more space than static arrays, because more memory is allocated to handle future growth. This way a vector does not need to reallocate each time an element is inserted, but only when the additional memory is exhausted.
+
+For our implementation, we set the capacity of the vector to be powers of 2, so that the reallocation is done less frequently (though other exponential growth factors can be used as well). We will make use of templates to make the vector generic, and try to provide the same interface as the `std::vector`. We will also provide the `operator[]` to access the elements of the vector, and implement iterators to traverse the vector.
+
+Note that in the following implementation, we have used `std:::move` to move the elements of the vector so that we can avoid copying the elements. To also provide support for `emplace_back`, we have used the `Args &&...args` to forward the arguments to the constructor of the object, and thus the template class needs an additional template parameter parameter `Args` which is vardiadic.
+
+```cpp showLineNumbers
+template <typename T, typename... Args>
+class Vector
+{
+public:
+  typedef T *iterator;
+
+  // Constructors
+  Vector() : capacity(1), size(0) {
+    arr = new T[capacity];
+  }
+
+  Vector(int cap) : capacity(cap), size(0) {
+    arr = new T[capacity];
+  }
+
+  // Destructor
+  ~Vector() {
+    delete[] arr;
+  }
+
+  void emplace_back(Args &&...args)
+  {
+    push_back(T(std::forward<Args>(args)...));
+  }
+
+  void push_back(T &&val)
+  {
+    if (size == capacity)
+      _resize();
+    arr[size++] = move(val);
+  }
+
+  void pop_back()
+  {
+    if (size > 0)
+      size--;
+    if (size < capacity / 2)
+      _shrink();
+  }
+
+  int len()
+  {
+    return size;
+  }
+
+  T front()
+  {
+    return arr[0];
+  }
+
+  T back()
+  {
+    return arr[size - 1];
+  }
+
+  // Iterators
+  iterator begin()
+  {
+    return arr;
+  }
+
+  iterator end()
+  {
+    return arr + size;
+  }
+
+  // Overloading the operators
+  T &operator[](int idx)
+  {
+    return arr[idx];
+  }
+
+private:
+  int capacity;
+  int size;
+  T *arr;
+
+  void _resize()
+  {
+    capacity *= 2;
+    T *newArr = new T[capacity];
+    for (int i = 0; i < size; i++)
+        newArr[i] = move(arr[i]);
+    delete[] arr;
+    arr = newArr;
+  }
+
+  void _shrink()
+  {
+    capacity /= 2;
+    T *newArr = new T[capacity];
+    for (int i = 0; i < size; i++)
+        newArr[i] = move(arr[i]);
+    delete[] arr;
+    arr = newArr;
+  }
 };
 ```
 

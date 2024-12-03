@@ -156,4 +156,21 @@ const canonicalURL = new URL(Astro.url).href;
   else document.documentElement.classList.add("dark");
 
   window.localStorage.setItem("theme", theme);
+
+  // Make request to increment views
+  const slug = location.pathname;
+
+  const incrementViews = async () => {
+    const res = await fetch(`/api/views/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ slug }),
+    });
+
+    if (!res.ok) console.log(`Failed to increment views for the path: ${slug}`);
+  };
+
+  incrementViews();
 </script>

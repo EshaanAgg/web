@@ -35,6 +35,12 @@ Database Management, SQL, and Operating Systems are a much do if you are from a 
 
 Computer networks in also usually included in CS concepts, but I decided to skip them in the interest of time. A very few companies ask questions from this topic (like `Cisco`) and for very specific roles (like Network Engineer). You might want to read about them if you are interested in such roles. Many of my friends who just covered some basics topics like TCP/IP, OSI model, and HTTPS, were able to answer "most" of the netwroking questions in the OAs as well as the interviews.
 
+## Puzzles & Quant Resouce
+
+Other than the above topics, puzzles and probability questions are also very common in OAs & interviews alike. The good news about them is that they have been more or less standardized, so you can find a lot of resources online to practice them. [Brainstellar](https://brainstellar.com/) is a must do if you are aiming for Quant roles or roles in major fin-tech giants (Making a habit of 30 minutes daily practice is a good idea). [GeeksforGeeks](https://www.geeksforgeeks.org/) is also a good resource for these questions, and you can find a lot of them in the `Puzzles` section of the website.
+
+If you want to dwell even deeper into the same, [A Practical Guide To Quantitative Finance Interviews]() by Xinfeng Zhou, better known as the "Green Book" is the most trusted source. I never managed to read it, but the introduction chapter on puzzles is something that I really enjoyed. [Quant Guide](https://www.quantguide.io/) (AKA the Leetcode for Quant) and [Puzzled Quant](https://www.puzzledquant.com/) are some other resources that I have heard good things about, but never used myself.
+
 ## CPP Topics
 
 When preparing for interviews, these are some common topics that I found to be the favourite amoung interviewers, specially for C++ developer roles or low level system roles. [Learn CPP](https://www.learncpp.com/) is a great resource for these topics and learning C++ nitigrities in general, but it you are short on time (like I was), these are some topics that you should focus on:
