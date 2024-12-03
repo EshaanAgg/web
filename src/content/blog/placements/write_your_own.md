@@ -2,6 +2,7 @@
 title: "Write Your Own"
 description: Snippets for common implementation of standard library classes & templates that are frequently asked in interviews.
 pubDate: 2024-12-01
+updatedDate: 2024-12-03
 requireLatex: true
 pinned: true
 draft: false
@@ -23,6 +24,10 @@ This is a collection of common C++ classes and templates that we often use, and 
   - [Concurrent Hit Counter](#concurrent-hit-counter)
   - [Infinite Timestamps in the Past](#infinite-timestamps-in-the-past)
 - [Vector](#vector)
+- [Semaphore](#semaphore)
+  - [With Condition Variables](#with-condition-variables)
+  - [Without Condition Variables](#without-condition-variables)
+- [Producer Consumer Problem](#producer-consumer-problem)
 - [Singleton Design Pattern](#singleton-design-pattern)
 
 ---
@@ -31,7 +36,9 @@ This is a collection of common C++ classes and templates that we often use, and 
 
 ## General Smart Pointer
 
-```cpp
+This is the general implementation of a smart pointer that manages the memory of the pointer. The smart pointer is a class that wraps a raw pointer and manages the memory of the raw pointer. The smart pointer is responsible for deleting the memory when the object goes out of scope. The smart pointer is an application of the RAII (Resource Acquisition Is Initialization) idiom, where the resource is acquired in the constructor and released in the destructor.
+
+```cpp showLineNumbers
 template <typename T>
 class AutoPtr {
     T *ptr;
@@ -64,16 +71,18 @@ class AutoPtr {
 }
 ```
 
-### Problems with `AutoPtr`:
+While this class is a good starting point, it has some limitations:
 
 - When passed to function by value, the pointer is moved to the function and the memory would be freed when the function returns. Thus in the original function, this can lead to a dangling pointer.
 - This deletes using the non-array `delete` operator, and thus if the pointer was allocated using `new[]`, it would lead to undefined behaviour.
 
-Thus they were replaced by `std::unique_ptr`, `std::shared_ptr`, and `std::weak_ptr` in C++11.
+Because of many more such reasons, the `AutoPtr` class was first introduced in `C++98`, but was later deprecated in `C++11`. It was replaced by `std::unique_ptr`, `std::shared_ptr`, and `std::weak_ptr`, which implement the move semantics and the copy semantics in a more robust way.
 
 ## Unique Pointer
 
-```cpp
+A `std::unique_ptr` is a smart pointer that owns and manages another object through a pointer and disposes of that object when the `std::unique_ptr` goes out of scope. The `std::unique_ptr` is unique in the sense that it cannot be copied or assigned to another `std::unique_ptr`, and thus there is only one owner of the object (the owner can be transferred using the move semantics).
+
+```cpp showLineNumbers
 template<typename T>
 class UniquePtr {
   T *ptr;
@@ -108,7 +117,9 @@ public:
 
 ## Shared Pointer
 
-```cpp
+A `std::shared_ptr` is a smart pointer that retains shared ownership of an object through a pointer. Several `std::shared_ptr` objects may own the same object. The object is destroyed and its memory deallocated when all `std::shared_ptr` objects that own it are destroyed or reset. The `std::shared_ptr` uses a reference count to keep track of the number of `std::shared_ptr` objects that own the object.
+
+```cpp showLineNumbers
 template<typename T>
 class SharedPtr {
     T *ptr;
@@ -503,6 +514,146 @@ private:
     arr = newArr;
   }
 };
+```
+
+---
+
+# Semaphore
+
+A semaphore is a synchronization primitive that is used to control access to a shared resource. It is a variable that is used to control access to a shared resource by multiple processes in a concurrent system such that the resource is not used by more than a certain number of process at a time. The semaphore has two operations, `acquire` and `release`, which are also known as `P` and `V` operations respectively. The `acquire` function waits until the resource is available, and then decrements the available count. The `release` function increments the available count and notifies one of the waiting threads.
+
+## With Condition Variables
+
+This implementation uses a `std::mutex` and a `std::condition_variable` to implement the semaphore. A condition variable allows a thread to be signaled when something of interest to that thread occurs, which is useful to avoid busy waiting. Note the use of `std::unique_lock` to lock the mutex, instead of the usual `std::lock_guard`, as the `std::condition_variable` requires the mutex to be locked when calling `wait`.
+
+```cpp showLineNumbers
+class Semaphore
+{
+  size_t avail;
+  std::mutex mtx;
+  std::condition_variable cv;
+
+public:
+  Semaphore(int avail = 1) : avail(avail){}
+
+  void acquire() // P(x)
+  {
+    std::unique_lock<std::mutex> lk(mtx);
+    // Wait until the lambda function returns true
+    cv.wait(lk, [this](){
+      return avail > 0;
+    });
+    avail--;
+  }
+
+  void release() // V(x)
+  {
+    std::unique_lock<std::mutex> lk(mtx);
+    avail++;
+    cv.notify_one();
+  }
+};
+```
+
+## Without Condition Variables
+
+Since we are not using condition variables, we need to busy wait until the resource is available. This is not a good practice as it wastes CPU cycles, but it is useful to understand the concept of semaphores. We now make use of `std::atomic` to make the operations atomic, and a `std::mutex` to protect the critical section.
+
+```cpp showLineNumbers
+struct Semaphore {
+  int size;
+  atomic<int> count;
+  mutex updateMutex;
+
+  Semaphore(int n) : size(n) { count.store(0); }
+
+  void aquire() {
+    while (1) {
+      while (count >= size) {}
+
+      updateMutex.lock();
+      if (count >= size) {
+          updateMutex.unlock();
+          continue;
+      }
+      ++count;
+      updateMutex.unlock();
+      break;
+    }
+  }
+
+  void release() {
+    updateMutex.lock();
+    if (count > 0) {
+        --count;
+    } // Else log error or throw exception
+    updateMutex.unlock();
+  }
+};
+```
+
+---
+
+# Producer Consumer Problem
+
+The infamous Producer-Consumer problem, also called the Bounded-Buffer problem, is one of the famous real-world scenarios of synchronization. The problem describes two processes, the producer and the consumer, who share a common, fixed-size buffer used as a queue. The producer's job is to generate data, put it into the buffer, and start again. At the same time, the consumer is consuming the data (i.e., removing it from the buffer), one piece at a time. The problem is to make sure that the producer won't try to add data into the buffer if it's full and that the consumer won't try to remove data from an empty buffer.
+
+We make use of the following classes to implement the producer-consumer problem:
+
+- `std::mutex`: We use a mutex to protect the critical section, i.e., the buffer.
+- `std::condition_variable`: We use a condition variable to notify the consumer when the buffer is not empty and the producer when the buffer is not full.
+- `std::queue`: We use a queue to store the data.
+
+In the main function, we create two threads, one for the producer and one for the consumer. The producer produces data and pushes it into the buffer, and the consumer consumes the data by popping it from the buffer. The producer waits if the buffer is full, and the consumer waits if the buffer is empty.
+
+```cpp showLineNumbers
+class ProducerConsumer {
+  std::mutex mtx;
+  std::condition_variable cv;
+  std::queue<int> buffer;
+  const unsigned int capacity = 10;
+
+public:
+  void producer(int item) {
+    std::unique_lock<std::mutex> lk(mtx);
+    cv.wait(lk, [this](){
+      return buffer.size() < capacity;
+    });
+    buffer.push(item);
+    std::cout << "Produced: " << item << " | Buffer Size: " << buffer.size() << std::endl;
+    cv.notify_all();
+  }
+
+  void consumer() {
+    std::unique_lock<std::mutex> lk(mtx);
+    cv.wait(lk, [this](){
+      return !buffer.empty();
+    });
+    int item = buffer.front();
+    buffer.pop();
+    std::cout << "Consumed: " << item << " | Buffer Size: " << buffer.size() << std::endl;
+    cv.notify_all();
+  }
+};
+
+int main() {
+  ProducerConsumer pc;
+
+  std::thread producer([&pc](){
+    for (int i = 0; i < 100; i++)
+      pc.producer(i);
+  });
+
+  std::thread consumer([&pc](){
+    for (int i = 0; i < 100; i++)
+      pc.consumer();
+  });
+
+  producer.join();
+  consumer.join();
+
+  return 0;
+}
 ```
 
 ---

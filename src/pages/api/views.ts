@@ -18,7 +18,6 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const slug = body.slug;
-  console.log("views", slug);
 
   try {
     // Get the current count
@@ -28,7 +27,6 @@ export const POST: APIRoute = async ({ request }) => {
       .where(eq(Views.slug, slug))
       .execute();
 
-    console.log("currentCount", currentCount);
     // If the record exists, increment the count
     if (currentCount.length > 0) {
       await db

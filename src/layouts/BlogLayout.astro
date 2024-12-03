@@ -50,9 +50,7 @@ const fullPubDate = pubDate.toLocaleDateString("en", {
 });
 
 const fullUpdatedDate = updatedDate?.toLocaleDateString("en", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
+  dateStyle: "full",
 });
 ---
 
@@ -131,12 +129,12 @@ const fullUpdatedDate = updatedDate?.toLocaleDateString("en", {
 
   <!-- Updated Dialog Box -->
   {
-    updatedDate && (
+    updatedDate ? (
       <article class="dark:text-blue-300 py-2 px-4 mb-6 rounded-md text-sm sm:text-base border border-blue-400 transition-all bg-blue-600/20">
         <span class="font-semibold">Last updated: </span>
         {fullUpdatedDate}
       </article>
-    )
+    ) : null
   }
 
   <article

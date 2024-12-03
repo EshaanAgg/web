@@ -2,6 +2,7 @@
 title: "Placements '24: Resources & Advice"
 description: Collection of all the resources I used as all the advices that worked the best for me.
 pubDate: 2024-12-01
+updatedDate: 2024-12-03
 tags: ["placements", "2024"]
 hasBlogCard: false
 draft: false
@@ -43,7 +44,11 @@ If you want to dwell even deeper into the same, [A Practical Guide To Quantitati
 
 ## CPP Topics
 
-When preparing for interviews, these are some common topics that I found to be the favourite amoung interviewers, specially for C++ developer roles or low level system roles. [Learn CPP](https://www.learncpp.com/) is a great resource for these topics and learning C++ nitigrities in general, but it you are short on time (like I was), these are some topics that you should focus on:
+`WARNING`: This section is probably not for you unless you are aiming for a dedicated C++ developer role or a low level role like system programming. If you are aiming for a general SDE role, you should be fine with the basics of C++ and the topics that are covered in the DSA section.
+
+[Learn CPP](https://www.learncpp.com/) is a great resource for these topics and learning C++ nitigrities in general. [The Modern CPP Tutorial](https://changkun.de/modern-cpp/en-us/00-preface/) and [CMU Databases's 15445 Bootcamp](https://github.com/cmu-db/15445-bootcamp) are also some resources that I found post the placement season that I wish I had known about earlier.
+
+Do spend good time on learning about your language in general (apart from the typical competitive programming), and how it works under the hood. If you are short on time, I would recommend focusing on the following topics:
 
 - [Void Pointers](https://www.learncpp.com/cpp-tutorial/void-pointers/)
 

@@ -21,4 +21,6 @@ This is a humble attempt to curate the resources that I wish I had, so please le
 4. [Online Assessment Questions [Part 2]](/blog/placements/oa_2)
 5. [Online Assessment Questions [Part 3]](/blog/placements/oa_3)
 
+Much thanks to all the seniors and friends who helped me in this journey, and for even helping with many of these resources and problems. It wouldn't have been possible without them.
+
 Cheers and all the best for your placements!

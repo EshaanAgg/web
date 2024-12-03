@@ -2,7 +2,6 @@
 title: "Placements '24: Assessments [Part 2]"
 description: A brief of all the online assessments that I witnessed during the season of 2024.
 pubDate: 2024-12-01
-updateDate: 2024-12-01
 requireLatex: true
 hasBlogCard: false
 draft: false

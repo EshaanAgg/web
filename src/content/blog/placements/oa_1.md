@@ -2,7 +2,6 @@
 title: "Placements '24: Assessments [Part 1]"
 description: A brief of all the online assessments that I witnessed during the season of 2024.
 pubDate: 2024-12-01
-updateDate: 2024-12-01
 requireLatex: true
 hasBlogCard: false
 draft: false
@@ -12,7 +11,7 @@ series:
 tags: ["placements", "2024"]
 ---
 
-Sitting for placements is a huge rollercoster ride, but having some idea of what to expect can make the ride a bit smoother. Here is a brief of some online assessments (patterns, questions & tips) that I either personally gave or heard about from my peers during the season of 2024.
+Here is a brief of some online assessments (patterns, questions & tips) that I either personally gave or heard about from my peers during the season of 2024.
 
 - [GreyOrange](#greyorange)
 - [Squarepoint Capital](#squarepoint-capital)
