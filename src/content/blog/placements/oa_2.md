@@ -3611,7 +3611,7 @@ The test usually involves 2 coding questions and 1 question involving writing a 
 
     </details>
 
-4. Given $n$ balls of some colors, where the $i^{th} ball's color is a[i]$, you need to find the minimum number of arrangements of these balls module $10^9 + 7$ where you can perform an operation atmost once, in which you can choose all balls of one color and change their color to some other color.
+4. Given $n$ balls of some colors, where the $i^{th}$ ball's color is $a[i]$, you need to find the minimum number of arrangements of these balls module $10^9 + 7$ where you can perform an operation atmost once, in which you can choose all balls of one color and change their color to some other color.
 
    - $1 \leq n \leq 10^5$
    - $1 \leq a[i] \leq n$

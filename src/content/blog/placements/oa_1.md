@@ -513,7 +513,7 @@ Graviton is known for it's subjective tests. It did not visit our campus, but I 
 
    1. Prove that there is a one to one correspondence between the sequence of length $n-2$ and the labelled tree.
    2. Find the total number of labelled trees of $n$ vertices using this reduction.
-   3. Find the number of labelled trees with $10$ vertices whose degree of $i$th vertex is $a[i]$ where $a[i] = [5,4,2,1,1,1,1,1,1,1]$.
+   3. Find the number of labelled trees with $10$ vertices whose degree of $i^{th}$ vertex is $a[i]$ where $a[i] = [5,4,2,1,1,1,1,1,1,1]$.
 
 8. Let $A$ be an $n \times n$ diagonal matrix with characteristic polynomial $(x - c_1)^{d_1} (x - c_2)^{d_2} * ... * (x - c_k)^{d_k}$ where $c_1, c_2, ..., c_k$ are distinct. Let $V$ be the vector space of all $n \times n$ matrices $B$ such that $AB = BA$. Prove that the dimension of $V$ is $d_1^2 + d_2^2 + ... + d_k^2$.
 
@@ -931,12 +931,12 @@ Constraints:
 
    </details>
 
-4. You are a book collector aiming to sell your collection of $A$ books. The books are arranged in a line with the $i$th book to the left of the $(i + 1)$th book. The thickness of each book is represented by an array $B$ (where $B[i]$ is the thickness of the $i$th book) and each book has a unique thickness.
+4. You are a book collector aiming to sell your collection of $A$ books. The books are arranged in a line with the $i^{th}$ book to the left of the $(i + 1)$th book. The thickness of each book is represented by an array $B$ (where $B[i]$ is the thickness of the $i^{th}$ book) and each book has a unique thickness.
 
    To enhance the appeal of your books, you can apply a special protective covering to some of them. However, this cover is expensive and thus you want tp minimize its use while ensuring the following conditions are met:
 
    - You should apply the cover to at least one book.
-   - If you apply the cover to the $i$th book, you must also apply the cover all books that are thicker than the $i$th book.
+   - If you apply the cover to the $i^{th}$ book, you must also apply the cover all books that are thicker than the $i^{th}$ book.
    - There must exist at least one subarray (contiguous segment) of books of size at least $C$ such that the number of books with the protective cover is greater than the number of books without the cover.
 
    Your task is to determine the smallest number of books on which you should apply the protective cover to satify the above conditions.
@@ -1018,7 +1018,7 @@ Constraints:
 
    - $1 \leq A \leq 10^5$
 
-6. You are a librarian, and after a long day, you decide to collect all the books kept on tables. In front of you, there are several stacks of books. $A[i]$ denotes the size of the $i$th stack of books. In one move you can pick an existing stack and merge it with another stack of books. The efforts required for this task is the size of stack being added. You have also decided that for any stack you will not add books to it for more than $B$ times added to any other stack. What is the minimum effort required to collect all the books in one stack?
+6. You are a librarian, and after a long day, you decide to collect all the books kept on tables. In front of you, there are several stacks of books. $A[i]$ denotes the size of the $i^{th}$ stack of books. In one move you can pick an existing stack and merge it with another stack of books. The efforts required for this task is the size of stack being added. You have also decided that for any stack you will not add books to it for more than $B$ times added to any other stack. What is the minimum effort required to collect all the books in one stack?
 
    Problem Constraints:
 
@@ -1039,7 +1039,7 @@ Constraints:
 
 2. You are given a string of the form `a/b+c/d` where $a, b, c, d$ are integers upto $2000$. You need to calculate the value $\frac{a}{b} + \frac{c}{d}$ in the simplest form as $\frac{p}{q}$ where $p$ and $q$ are coprime integers. Return a string of the form `p/q`.
 
-3. You are given an array called $balance$ where $balance[i]$ denotes the balance of the $i$th account. You are also given an array $requests$ where $requests[i]$ denotes the $i$th transaction request. Each transaction request is a string of the form `timestamp [withdraw|deposit] amount accountIdx`. You need to process these requests subject to the following conditions:
+3. You are given an array called $balance$ where $balance[i]$ denotes the balance of the $i^{th}$ account. You are also given an array $requests$ where $requests[i]$ denotes the $i^{th}$ transaction request. Each transaction request is a string of the form `timestamp [withdraw|deposit] amount accountIdx`. You need to process these requests subject to the following conditions:
 
    - The timestamps are processed in increasing order & in seconds.
    - A transaction may be invalid if the account balance is less than the amount to be withdrawn or the `accountIdx` is invalid.

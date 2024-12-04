@@ -101,11 +101,6 @@ This is the third part of the series on online assessments that I witnessed duri
    - $1 \leq a, b, c \leq n$
    - $1 \leq cost_i \leq 10^9$
 
-<details>
-<summary>Solution</summary>
-
-</details>
-
 4. Raju works for PhonePe and needs to deliver QR codes to Vanous merchants in a city laid out as an inom grid, Each shop in the grid requires a certain number of QR codes. Raju starts his journey at the top-left corner of the grid $(0,0)$ and needs to reach the bottom-right corner $(n-1, m-1)$. He can only move right or down at any step. Raju wants to distribute the maximum number of QR codes in a single commute. But there's a twist, To assist a merchant more efficiently Raju chooses to double the number of QR codes for one specific merchant along his path. However, he can only do this for one shop in his entire Journey. Your task is to help Raju determine the maximum number of QR's he would need on his way to the destination, Help considering the option to double the value of exactly one cell.
 
    Constraints:
