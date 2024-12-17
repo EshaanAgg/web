@@ -7,7 +7,6 @@ draft: false
 hero: "./images/go.png"
 heroAlt: "Go Gopher with the heading 'Languages I Used to Know, Featuring Go Lang'"
 tags: ["Go", "2023"]
-pinned: true
 external:
   link: https://blogs.copsiitbhu.co.in/languages-i-used-to-know-go
   platform: Hashnode

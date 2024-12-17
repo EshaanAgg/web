@@ -1,11 +1,15 @@
 ---
 title: "Learning TypeScipt | Advent of TS '24"
 description: A editorial-cum-educative blog teaching the basic features of typescripts, inspired by the Advent of TypeScript '24 exercise.
-pubDate: 2023-12-20
-tags: ["TypeScript", "2023"]
+pubDate: 2024-12-18
+tags: ["TypeScript", "2024"]
 hero: "./images/aots24.png"
 heroAlt: "Christmas background with caption 'Learn TS with Advent of TypeScript'"
 draft: false
+pinned: true
+external:
+  link: https://blogs.copsiitbhu.co.in/learning-typescipt-advent-of-ts-24/
+  platform: Hashnode
 ---
 
 I love the concept of Advent Calendars, and I am glad there is one for TypeScript, too! 🎄
