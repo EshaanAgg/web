@@ -1,1 +1,8 @@
 * text eol=lf
+
+# Mark image files as binary to prevent CRLF/LF normalization
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
