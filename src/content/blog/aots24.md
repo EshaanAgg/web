@@ -2,6 +2,7 @@
 title: "Learning TypeScipt | Advent of TS '24"
 description: A editorial-cum-educative blog teaching the basic features of typescripts, inspired by the Advent of TypeScript '24 exercise.
 pubDate: 2024-12-18
+updatedDate: 2024-12-21
 tags: ["TypeScript", "2024"]
 hero: "./images/aots24.png"
 heroAlt: "Christmas background with caption 'Learn TS with Advent of TypeScript'"
@@ -30,11 +31,14 @@ PS. Try solving the problems yourself before looking for solutions. It is a grea
 
 To define a type in typescript, you use the `type` keyword followed by the name of the type and its definition. There are many primitive types associated with TypeScript, such as `number`, `string`, `boolean`, `null`, `undefined`, `symbol`, and `object`. You can also define custom types using the `type` keyword.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 ```typescript showLineNumbers
 type Demand = number;
 ```
+
+</details>
 
 ---
 
@@ -42,11 +46,14 @@ type Demand = number;
 
 The types are not limited to "type"s; you can use numbers, strings, and constants (declared with `const`) as types. This is useful when you want to limit a variable's values.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 ```typescript showLineNumbers
 type Demand = 900000;
 ```
+
+</details>
 
 ---
 
@@ -54,7 +61,8 @@ type Demand = 900000;
 
 TypeScript can be used to annotate functions as well. You can define the types of arguments that a function takes and the type of the function's return value. This is a major advantage of TypeScript over JavaScript, as it allows you to catch type errors at compile time and helps ensure that all the expected values are passed to the function.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 ```typescript showLineNumbers
 const survivalRatio = (input: number) => {
@@ -66,6 +74,8 @@ const survivalRatio = (input: number) => {
 };
 ```
 
+</details>
+
 ---
 
 ## [Day 4](https://www.adventofts.com/events/2024/4)
@@ -76,7 +86,8 @@ The `typeof` operator can be used to determine the type of a variable at runtime
 
 When using type unions, you can use conditionals to narrow the type associated with the provided variable. TypeScript is smart enough to understand that if a variable is checked for a particular type, it must be of that type in the subsequent code blocks.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 ```typescript showLineNumbers
 const survivalRatio = (input: number | string) => {
@@ -89,6 +100,8 @@ const survivalRatio = (input: number | string) => {
 };
 ```
 
+</details>
+
 ---
 
 ## [Day 5](https://www.adventofts.com/events/2024/5)
@@ -99,7 +112,8 @@ Generics are defined using the `<>` syntax, followed by the type parameter's nam
 
 Generics can be thought of as variables for types. They allow you to write functions, classes, and interfaces that can work with any data without specifying the type explicitly until you consume the function or class. They can be a bit tiresome to understand at first, but once you get the hang of them, they can be a powerful tool in your TypeScript arsenal.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 ```typescript showLineNumbers
 const createRoute = <T>(author: string, route: T): T => {
@@ -108,13 +122,16 @@ const createRoute = <T>(author: string, route: T): T => {
 };
 ```
 
+</details>
+
 ---
 
 ## [Day 6](https://www.adventofts.com/events/2024/6)
 
 The [extends](https://www.typescriptlang.org/docs/handbook/2/generics.html#generic-constraints) keyword can be used to define constraints on the type parameter of a generic function or class. This allows you to restrict the types that can be passed to the function or class and helps to ensure that the function or class works correctly with the data passed to it.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 ```typescript showLineNumbers
 const createRoute = <Route extends number | string>(
@@ -126,6 +143,8 @@ const createRoute = <Route extends number | string>(
 };
 ```
 
+</details>
+
 ---
 
 ## [Day 7](https://www.adventofts.com/events/2024/7)
@@ -134,7 +153,8 @@ The [const](https://www.typescriptlang.org/docs/handbook/2/generics.html#generic
 
 `const` is particularly useful for narrowing the variable type, as TypeScript can infer the type of a constant based on the value assigned to it.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 ```typescript showLineNumbers
 const createRoute = <const Route extends string[]>(
@@ -147,6 +167,8 @@ const createRoute = <const Route extends string[]>(
 });
 ```
 
+</details>
+
 ---
 
 ## [Day 8](https://www.adventofts.com/events/2024/8)
@@ -157,7 +179,8 @@ You can use the concept of TypeScipt [modules](https://www.typescriptlang.org/d
 
 Today will also be a good day to brush up on the concept of [interfaces](https://www.typescriptlang.org/docs/handbook/2/objects.html#interfaces) in TypeScript, which are used to define the shape of an object. Though interfaces and types are similar, interfaces are more commonly used to define the structure of an object. They are "extendable" in nature, making them a better choice when you want to define an object's structure that other users can extend in the future.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 ```typescript showLineNumbers
 declare namespace NodeJS {
@@ -169,13 +192,16 @@ declare namespace NodeJS {
 }
 ```
 
+</details>
+
 ---
 
 ## [Day 9](https://www.adventofts.com/events/2024/9)
 
 [Modules](https://www.typescriptlang.org/docs/handbook/2/modules.html) can also define types for NPM packages and external libraries. Using the [export](https://www.typescriptlang.org/docs/handbook/2/modules.html#export) keyword allows you to export a type from a module, making it available to others that import it. This is particularly useful if you want to define some internal types in a module that you do not want your module's other modules and consumers to have access to.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 ```typescript showLineNumbers
 declare module "santas-special-list" {
@@ -187,6 +213,8 @@ declare module "santas-special-list" {
   export type List = Child[];
 }
 ```
+
+</details>
 
 ---
 
@@ -233,7 +261,8 @@ console.log(StatusCode[200]); // "OK"
 
 Enums can be changed or extended by assigning new numbers or values during their declaration. This flexibility makes them a powerful feature in TypeScript for managing sets of related constants.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 Well, the first thought is to create a simple enum with the required mappings, something like:
 
@@ -267,6 +296,8 @@ enum Gift {
 }
 ```
 
+</details>
+
 ---
 
 ## [Day 11](https://www.adventofts.com/events/2024/11)
@@ -288,7 +319,8 @@ Looping over the keys of an object can be done using the `keyof` operator, which
 
 PS. This is the beginning of the actual "hard" part of the Advent of TypeScript, and the problems scale very quickly from this onwards. The solutions use many advanced TypeScript features and would probably not strike you if you see them for the first time. Please do not get demotivated, and you can try solving the other [TypeHero](https://typehero.dev/) challenges to get a better hang of such problem-solving patterns.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 First, let us read through the provided tests and try to reason about what is happening. After a couple of glances, we realize that, indeed, the type `Excuse` is a constructor type in which we can pass any object with a key value, and then the final returned object from the constructor is a string of the form `${key}: ${value}.` We can break the solution into multiple parts and solve it piecewise:
 
@@ -312,7 +344,7 @@ type Excuse<T extends StringRecord> = new (obj: T) => Stringify<T>;
 
 3. In the last step, we define the `Excuse` type, a constructor type that accepts an object of type `T` and returns a string of the form `${key}: ${value}`. We make use of the `Stringify` type to ensure that the object passed to the constructor is of the correct type.
 
----
+</details>
 
 ## [Day 12](https://www.adventofts.com/events/2024/12)
 
@@ -334,7 +366,8 @@ type Reversed = Reverse<Original>; // ["Charlie", "Bob", "Alice"]
 
 This is a common recursive pattern! I would highly encourage you to first test out this recursive pattern on your own for today's problem (without seeing the hint) and then try thinking if the same can be improved upon to work with the humongous input provided in this day's tests!
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 Today's solution is a bit longer and has multiple moving parts. I have tried to break them into smaller parts and combine them to form the final solution.
 
@@ -396,6 +429,8 @@ This was indeed a lengthy day, but after this day, you should feel comfortable w
 
 PS. All the code I have shown you today can be compressed and typed in way fewer keystrokes (by inlining the types and removing some type constraints with `extends`), but I have tried to keep the code as verbose as possible to make it easier to understand. You can try to compress the code and see how much you can reduce the number of lines and characters in the code!
 
+</details>
+
 ---
 
 ## [Day 13](https://www.adventofts.com/events/2024/13)
@@ -409,7 +444,8 @@ In TypeScript, variance describes how types relate to each other, particularly i
 
 To ensure type safety, these distinctions matter when working with generic constraints, function types, and array-like structures. You can read about the same in detail [here](https://www.sandromaglione.com/articles/covariant-contravariant-and-invariant-in-typescript) and see how their implementations can be realized practically. The [variance annotations section from the official documentation](https://www.typescriptlang.org/docs/handbook/2/generics.html#variance-annotations) might also be a good reference for solving today's problem.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 The generic of `Demand` needs to be invariant to any types passed to it (it doesn't accept any more specific or vague types). We can use the `out` keyword so that only anything more specific can be passed to `T`, and the `in` keyword so that only anything more general can be passed to `T`.
 
@@ -420,6 +456,8 @@ type Demand<in out T> = {
 ```
 
 PS. This solution is exactly what the official documentation says you SHOULD NOT do! I couldn't figure out a better solution, and the provided tests were not very helpful in this case. If you have a better solution, do let me know!
+
+</details>
 
 ---
 
@@ -465,7 +503,8 @@ async function* asyncGenFunc(): AsyncGenerator<number, void, string> {
 
 Equipped with this knowledge, you can now try to solve today's problem!
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 Today's challenge is easier than the previous ones, and it can be solved by studying the provided tests. In the tests, we use the `ReturnType` utility type to extract the return type of the provided generator function, which is equivalent to the `R` type in the `Generator` type.
 
@@ -475,6 +514,8 @@ Thus a simple `infer` and `extends` can be used to extract the return type of th
 type PerfReview<T> =
   T extends AsyncGenerator<infer R, infer _, infer _> ? R : never;
 ```
+
+</details>
 
 ---
 
@@ -494,7 +535,8 @@ Here the type `Arr` is a utility type that creates an array of the specified len
 
 You can also use this technique to perform other arithmetic operations and get creative.
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 The solution is a bit more complex than the previous ones but is easy to implement once you get the hang of the same:
 
@@ -542,6 +584,8 @@ The type then iterates over the input string, dividing it into two parts: `First
 
 The `TrimLeft`, `TrimRight`, and `Trim` types are utility types that trim the input string from the left, right, and both sides, respectively. This removes any leading or trailing dashes from the input string. These are necessary to handle edge cases like `---A--` or `----` that might be present in some of the test cases. Finally, the `GetRoute` type is a utility type that takes the input string and first trims it to remove the troublesome leading and trailing dashes and then processes it to extract the route and the number of dashes in each route name.
 
+</details>
+
 ---
 
 ## [Day 16](https://www.adventofts.com/events/2024/16)
@@ -582,7 +626,8 @@ addThree(1)(2, 3);
 
 Can you use this technique to solve today's problem? (Hint: The number of arguments you apply in each step is not fixed and can vary based on the input. Thus, you might need to define a union of all possible invocations!).
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 This is one of the days where seeing the solution first and then trying to reason about it might be a better approach.
 
@@ -620,6 +665,8 @@ declare function DynamicParamsCurrying<Fn extends (...args: any[]) => any>(
 ): Curry<Parameters<Fn>, ReturnType<Fn>>;
 ```
 
+</details>
+
 ---
 
 ## [Day 17](https://www.adventofts.com/events/2024/17)
@@ -628,7 +675,8 @@ TypeScript provides several [utility types](https://www.typescriptlang.org/docs/
 
 Read about them, and even try implementing them yourself to better understand the power of the TypeScript ecosystem!
 
-### Solution
+<details>
+<summary>Solution</summary>
 
 This day was a bit trickier than usual, as getting the types correct for the utility functions was an underestimated task. The final solution would look something like:
 
@@ -650,5 +698,241 @@ const makeBox = <T>(value: T): { value: T } => ({ value });
 For the `compose` function, we make use of 4 type parameters, where `A` is the input type, `B` is the type of the first function's output, `C` is the type of the second function's output, and `D` is the final output type. Defining these variables allowed us to correctly constrain the signatures of the intermediate functions `f`, `g`, and `h`. We could also have used the TypeScipt utility type `ReturnType` to extract the return type and `Parameters` to extract the parameters of the functions, but the same was not required in this case.
 
 To define the types of the utility functions, we make use of utility types such as `Lowercase` and `Uppercase`, along with typecasting with the [as](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions) keyword to ensure that the return types are of the correct type. We also use template literal types to extract a string's first character and an array's first item.
+
+</details>
+
+---
+
+## [Day 18](https://www.adventofts.com/events/2024/18)
+
+TypeScript's type inference is a powerful feature, but sometimes's too powerful! You might need to make use of the [NoInfer](https://www.typescriptlang.org/docs/handbook/2/generics.html#generic-functions) utility type to prevent TypeScript from inferring the type of a function's argument sometimes!
+
+<details>
+<summary>Solution</summary>
+
+Today's problem is perhaps the most elementary use of the `NoInfer` type:
+
+```typescript showLineNumbers
+const createStreetLight = <T extends string>(
+  colors: T[],
+  defaultColor: NoInfer<T>,
+) => {
+  console.log(colors);
+  return defaultColor;
+};
+```
+
+We want to provide a default color for the street light, but we don't want TypeScript to infer the type of the default color from the value of the `defaultColor` argument. Rather, it should try to infer it from either the `colors` array or the type provided explicitly and enforce that the `defaultColor` is the same type as the colors in the array. If we weren't to use the `NoInfer` type, TypeScript would infer the type of `defaultColor` as the type of the value passed to it, which opens up to type errors! A simple wrap of the `T` type with `NoInfer` ensures that TypeScript does not infer the type of the default color from the value passed to it.
+
+</details>
+
+---
+
+## [Day 19](https://www.adventofts.com/events/2024/19)
+
+Today's challenge might seem like a stretch, but it requires only simple template matching and some help from the `Trim` helpers we composed in the previous day's solutions! (Hint: Developing smaller types that parse one type of statement or remove extraneous characters might be a good approach to simplify the associated complexity!)
+
+<details>
+<summary>Solution</summary>
+
+There are multiple ways of approaching the problem, but here is what I came up with:
+
+```typescript showLineNumbers
+type ParseVariableDeclaration<T extends string> = T extends `${
+  | "let"
+  | "const"
+  | "var"} ${infer Name} = "${infer Value}"`
+  ? {
+      id: Name;
+      type: "VariableDeclaration";
+    }
+  : never;
+
+type ParseFunctionCall<T extends string> = T extends `${infer _}(${infer Arg})`
+  ? {
+      type: "CallExpression";
+      argument: Arg;
+    }
+  : never;
+
+type ParseStatement<S extends string> =
+  S extends `${"let" | "const" | "var"}${any}`
+    ? ParseVariableDeclaration<S>
+    : ParseFunctionCall<S>;
+
+type TrimFront<S extends string> = S extends `${" " | "\t" | "\n"}${infer Rest}`
+  ? TrimFront<Rest>
+  : S;
+
+type TrimBack<S extends string> = S extends `${infer Rest}${" " | "\t" | "\n"}`
+  ? TrimBack<Rest>
+  : S;
+
+type Trim<S extends string> = TrimFront<TrimBack<S>>;
+
+type Parse<S extends string> =
+  Trim<S> extends `${infer Stat};${infer Rest}`
+    ? [ParseStatement<Stat>, ...Parse<Rest>]
+    : [];
+```
+
+The `ParseVariableDeclaration` and `ParseFunctionCall` are the most elementary types of statements our parser supports and use simple template matching to extract the required information. I was pretty satisfied with the use of `${"let" | "const" | "var"}` in the `ParseVariableDeclaration` type, as it helped me to condense the code and make it more readable.
+
+The `ParseStatement` type is the main type that parses the provided string as a single statement. We just check if the statement begins with either of `var`, `let` or `const` and then parse it as a variable declaration, else we parse it as a function call. The `TrimFront` and `TrimBack` are simple utilities that remove whitespaces, tabs, and newlines from the front and the end of the provided type string, and `Trim` works as a wrapper around both of them.
+
+Finally, the `Parse` type is the main type that parses the provided string as a series of statements. We use the `;` character as a delimiter to split the string into individual statements and then parse each statement using the `ParseStatement` type. The result is an array of parsed statements, and basic recursion is used to complete the job!
+
+</details>
+
+---
+
+## [Day 20](https://www.adventofts.com/events/2024/20)
+
+Can you build upon the previous day's solution to implement a slightly more powerful parser?
+
+<details>
+<summary>Solution</summary>
+
+```typescript showLineNumbers
+type TrimFront<S extends string> = S extends `${" " | "\t" | "\n"}${infer Rest}`
+  ? TrimFront<Rest>
+  : S;
+
+type TrimBack<S extends string> = S extends `${infer Rest}${" " | "\t" | "\n"}`
+  ? TrimBack<Rest>
+  : S;
+
+type Trim<S extends string> = TrimFront<TrimBack<S>>;
+
+type ParseDeclaration<T extends string, Curr extends unknown[]> = T extends `${
+  | "let"
+  | "const"
+  | "var"} ${infer Name} = "${any}"`
+  ? [...Curr, Name]
+  : Curr;
+
+type ParseUsed<
+  T extends string,
+  Curr extends unknown[],
+> = T extends `${infer _}(${infer Arg})` ? [...Curr, Arg] : Curr;
+
+type AnalyzeScope<
+  S extends string,
+  Dec extends unknown[] = [],
+  Used extends unknown[] = [],
+> =
+  Trim<S> extends `${infer Stat};${infer Rest}`
+    ? AnalyzeScope<Rest, ParseDeclaration<Stat, Dec>, ParseUsed<Stat, Used>>
+    : {
+        declared: Dec;
+        used: Used;
+      };
+```
+
+The solution is a remodification of the previous day's solution. We first start with the basic `Trim` utilities to remove the leading and trailing whitespaces, tabs, and newlines from the provided string. We then modify the `ParseStatement` utilities to accept the current statement and an additional variable `Curr` (which represents a list of the currently parsed variables). This type parses the appropriate type of the statement and adds the newly parsed variable to the `Curr` list.
+
+Finally the `AnalyzeScope` is a simple wrapper that maintains two variables `Dec` (for the declaration variables) and `Used` (for the used variables). It uses the `ParseDeclaration` and `ParseUsed` types to parse the provided string and extract the declared and used variables. The result is an object with the declared and used variables, and the function uses basic recursion to parse the entire string.
+
+</details>
+
+---
+
+## [Day 21](https://www.adventofts.com/events/2024/21)
+
+Think about how you might use recursion and some utility types to perform a difference operation on two lists!
+
+<details>
+<summary>Solution</summary>
+
+A brute force way of implementing the difference operation between two lists might look as:
+
+```typescript showLineNumbers
+type In<Element, List extends unknown[]> = List extends [
+  infer First,
+  ...infer Rest,
+]
+  ? First extends Element
+    ? true
+    : In<Element, Rest>
+  : false;
+
+type Diff<A extends unknown[], B extends unknown[]> = A extends [
+  infer First,
+  ...infer Rest,
+]
+  ? In<First, B> extends true
+    ? Diff<Rest, B>
+    : [First, ...Diff<Rest, B>]
+  : [];
+```
+
+Here, the `In` type checks if an element is present in a list by recursively infering the first element of the list and checking if it matches the provided element. The `Diff` type then uses the `In` type to check if the first element of the first list is present in the second list. If it is, it skips the element, else it adds it to the result list. The process is repeated recursively until the first list is exhausted. While this implementation is good enough for small lists, it might not be the most efficient for large lists due to the recursive nature of the solution. We can instead use a more efficient solution that replaces the recursive calls for the `In` type with a more efficient lookup operation using some TypeScipt magic:
+
+```typescript showLineNumbers
+type Difference<
+  A extends readonly unknown[],
+  B extends readonly unknown[],
+  Curr extends unknown[] = [],
+> = A extends [infer Head, ...infer Rest]
+  ? Head extends B[number]
+    ? Difference<Rest, B, Curr>
+    : Difference<Rest, B, [...Curr, Head]>
+  : Curr;
+```
+
+We make use of the neat fact that we can use `Arr[number]` to get a union of all the elements of any array `Arr` in TypeScript. Thus, we can use `B[number]` to get a union of all the elements of the second list `B`. We then check if the `Head` element of the first list is present in the second list, and if it is, we skip it, else we add it to the `Curr` list. This way, we can avoid the recursive calls for the `In` type and make the solution more efficient.
+
+Once we have this utility type in place, we just need to modify the structure of the final output type from yesterday's solution to use the `Difference` type:
+
+```typescript showLineNumbers
+type TrimFront<S extends string> = S extends `${" " | "\t" | "\n"}${infer Rest}`
+  ? TrimFront<Rest>
+  : S;
+
+type TrimBack<S extends string> = S extends `${infer Rest}${" " | "\t" | "\n"}`
+  ? TrimBack<Rest>
+  : S;
+
+type Trim<S extends string> = TrimFront<TrimBack<S>>;
+
+type ParseDeclaration<T extends string, Curr extends unknown[]> = T extends `${
+  | "let"
+  | "const"
+  | "var"} ${infer Name} = "${any}"`
+  ? [...Curr, Name]
+  : Curr;
+
+type ParseUsed<
+  T extends string,
+  Curr extends unknown[],
+> = T extends `${infer _}(${infer Arg})` ? [...Curr, Arg] : Curr;
+
+type Difference<
+  A extends readonly unknown[],
+  B extends readonly unknown[],
+  Curr extends unknown[] = [],
+> = A extends [infer Head, ...infer Rest]
+  ? Head extends B[number]
+    ? Difference<Rest, B, Curr>
+    : Difference<Rest, B, [...Curr, Head]>
+  : Curr;
+
+type Lint<
+  S extends string,
+  Dec extends unknown[] = [],
+  Used extends unknown[] = [],
+> =
+  Trim<S> extends `${infer Stat};${infer Rest}`
+    ? Lint<Rest, ParseDeclaration<Stat, Dec>, ParseUsed<Stat, Used>>
+    : {
+        scope: {
+          declared: Dec;
+          used: Used;
+        };
+        unused: Difference<Dec, Used>;
+      };
+```
+
+</details>
 
 ---
