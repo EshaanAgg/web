@@ -15,6 +15,10 @@ module.exports = {
       typography: (theme) => ({
         DEFAULT: {
           css: {
+            // Blockquote styling
+            'blockquote p:first-of-type::before': false,
+            'blockquote p:first-of-type::after': false,
+
             "code::before": {
               content: '""',
             },
