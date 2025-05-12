@@ -2,7 +2,10 @@
 title: "Consuming Messages | BYO Kafka"
 description: All the concepts, and documentation you need to know to need to pass the "Consume Messages" test in the Build Your Own Kafka challenge.
 pubDate: 2025-05-12
+updatedDate: 2025-05-13
 tags: ["kafka", "codecrafters", "2025"]
+hero: "./images/byok.png"
+heroAlt: "A deck of numbered cards from 1 to 5 and text 'Build Your Own Kafka' with CodeCrafter's logo"
 draft: false
 pinned: true
 ---
@@ -105,13 +108,13 @@ And all of this comes from reading **log files** stored on disk. All the log fil
 
 There are primarily two types of log files you need to be aware of:
 
-1.  Cluster Metadata Logs
+1.  **Cluster Metadata Logs**
 
     Kafka stores cluster metadata in a special topic called `__cluster_metadata`. This includes all the high-level information about topics, partitions, and leaders. The names of the log files in this directory correspond to the offsets of the first record in each file. The first one is always `00000000000000000000.log`, and subsequent files are approximate multiples of `S`, where `S` is the size of the log segment.
 
     > There would be just one cluster-metatdata log file in the tests. Thus the only cluster log file you need to parse is present at `/tmp/kraft-combined-logs/__cluster_metadata/00000000000000000000.log`.
 
-2.  Topic Log Files
+2.  **Topic Log Files**
 
     Message data for each topic is stored in subdirectories named after the topic and its partition — for example, for a topic named `test-topic` with two partitions, the first log files would be:
 
@@ -126,7 +129,7 @@ Both of these files follow the same binary encoding, but contain different types
 
 ### Reading the log files
 
-Both the cluster metadata and topic log files are in a binary format, and follow the same structure. Each log file consists a number of `RecordBatches` serialized into binary one after the other. `RecordBatch` is the basic unit of storage in Kafka and contains a set of records, which are the actual data that is being stored.
+Both the cluster metadata and topic log files are stored on disk following the same serialization protocol. Each log file consists a number of `RecordBatches` serialized into binary one after the other. `RecordBatch` is the basic unit of storage in Kafka and contains a set of records, which are the actual data that is being stored.
 
 The on-disk format of a `RecordBatch` is:
 
@@ -210,7 +213,7 @@ headerValue => BYTE[]
 
 Please note that the all of the length fields used in the above rules may also have their value set to `-1`, which means that the corresponding field is not set. For example, if the `keyLength` is set to `-1`, then the `key` field should be ignored.
 
-The value byte array is the actual message that is being stored in the record. In the case of topic log files, the value is the actual message that is being produced to the topic, and thus need no processing. However, in the case of cluster metadata logs, the value is a byte array that needs to be parsed to get the actual metadata.
+The value byte array is the actual data that is being stored in the record, that may or may not need further deserialization. In the case of topic log files, the value is the actual message that was sent to the topic, and thus needs no further processing. However, in the case of cluster metadata logs, the value is a sequence of bytes that needs to be parsed to get the actual metadata.
 
 ### Parsing the record value for cluster metadata logs
 
@@ -283,13 +286,13 @@ So, enough of the theory. Now the fun part: how should you go about implementing
    - If the topic is not present in your metadata, the response should only contain one partition with the `UNKNOWN_TOPIC_ID_ERROR_CODE` (100) error code.
 
    - If the topic exists, loop over each of the requested partition indexes and create a partition in the `response.partitions` array corresponding to it.
-     - The tester always send valid partition indexes, so you don't need to worry about invalid parition indexes.
+     - The tester always send valid partition indexes, so you don't need to worry about invalid partition indexes.
      - You should read the data directly from the topic log file for the topic - partition pair **without parsing**! The `records` field required in the response partition is nothing is this exact data, prepended by the length of this data encoded as a variable unsigned integer!
 
 It's quite a mouthful already, but I promise you it's easier that it seems! Reading all this at one go is overwhelming, but you are not expected to keep it all in your mind at once. The stages breakdown on the platform will help you to implement all of this functionality incrementally, so don't worry! Think of this blog as a reference on the encoding formats for when you need it, and nothing more!
 
 ## Shameless self-promotion
 
-If you're having troubles implementing the same, you can refer to my [implementation](https://github.com/EshaanAgg/toy-kafka). Starring [this implementation](https://github.com/EshaanAgg/toy-kafka) or [my blog](https://github.com/EshaanAgg/web) would be a great way to stroke my fragile tech-bro ego and would let me know that this blog helped you! If you have any suggestions or feedback on the same, I would love to hear from you either through [GitHub issues](https://github.com/EshaanAgg/web/issues) or on the CodeCrafters forum!
+If you're having troubles implementing the same, you can refer to my [implementation](https://github.com/EshaanAgg/toy-kafka). Starring [this implementation](https://github.com/EshaanAgg/toy-kafka) or [my blog](https://github.com/EshaanAgg/web) would be a great way to stroke my fragile tech-bro ego and would let me know that this blog helped you! If you have any suggestions or feedback on the same, I would love to hear from you either through [GitHub issues](https://github.com/EshaanAgg/web/issues) or on the [CodeCrafters forum](https://forum.codecrafters.io/t/blog-curating-all-the-pre-requisites-for-the-consuming-messages-extension/10438)!
 
 Until the time we update our implementation to handle all those 100's of request parameters we ignored, so long traveller.
