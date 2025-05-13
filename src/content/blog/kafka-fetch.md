@@ -291,8 +291,8 @@ So, enough of the theory. Now the fun part: how should you go about implementing
 
 It's quite a mouthful already, but I promise you it's easier that it seems! Reading all this at one go is overwhelming, but you are not expected to keep it all in your mind at once. The stages breakdown on the platform will help you to implement all of this functionality incrementally, so don't worry! Think of this blog as a reference on the encoding formats for when you need it, and nothing more!
 
-## Shameless self-promotion
+## Endnotes
 
-If you're having troubles implementing the same, you can refer to my [implementation](https://github.com/EshaanAgg/toy-kafka). Starring [this implementation](https://github.com/EshaanAgg/toy-kafka) or [my blog](https://github.com/EshaanAgg/web) would be a great way to stroke my fragile tech-bro ego and would let me know that this blog helped you! If you have any suggestions or feedback on the same, I would love to hear from you either through [GitHub issues](https://github.com/EshaanAgg/web/issues) or on the [CodeCrafters forum](https://forum.codecrafters.io/t/blog-curating-all-the-pre-requisites-for-the-consuming-messages-extension/10438)!
+If you're having troubles implementing in any of the stages, maybe refering to my [implementation](https://github.com/EshaanAgg/toy-kafka) might help? If you blog this blog helpful, starring [this implementation](https://github.com/EshaanAgg/toy-kafka) or [the blog](https://github.com/EshaanAgg/web) would be a great way to ~help me combat my tech impostor syndrome~ let me know that this blog helped you! If you have any suggestions or feedback on the same, I would love to hear from you either through [GitHub issues](https://github.com/EshaanAgg/web/issues) or on the [CodeCrafters forum](https://forum.codecrafters.io/t/blog-curating-all-the-pre-requisites-for-the-consuming-messages-extension/10438)!
 
-Until the time we update our implementation to handle all those 100's of request parameters we ignored, so long traveller.
+Until next time, happy coding! 🚀

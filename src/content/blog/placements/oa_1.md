@@ -1030,7 +1030,7 @@ Constraints:
 
 1. A cryptarithm is a mathematical puzzle where the goal is to find the correspondence between letters and digits such that the given arithmetic equation consisting of letters holds true. Given a cryptarithm as an array of strings $crypt$, count the number of its valid solutions.
 
-   The solution is valid if each letter represents a different digit, and the leading digit of a multi-digit number is not zero. The cryptarithm contains only capital letters and does not contain any leading zeros. $crypt$ has the following structure: $[wordl, word2, word3]$, which stands for the $word1 + word2 = word3$ cryptarithm. Is is guranteed that the length of the cryptarithm is $3$.
+   The solution is valid if each letter represents a different digit, and the leading digit of a multi-digit number is not zero. The cryptarithm contains only capital letters and does not contain any leading zeros. $crypt$ has the following structure: $[word1, word2, word3]$, which stands for the $word1 + word2 = word3$ cryptarithm. Is is guranteed that the length of the cryptarithm is $3$.
 
    Constraints:
 
