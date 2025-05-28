@@ -84,52 +84,52 @@ Because of many more such reasons, the `AutoPtr` class was first introduced in `
 A `std::unique_ptr` is a smart pointer that owns and manages another object through a pointer and disposes of that object when the `std::unique_ptr` goes out of scope. The `std::unique_ptr` is unique in the sense that it cannot be copied or assigned to another `std::unique_ptr`, and thus there is only one owner of the object (the owner can be transferred using the move semantics).
 
 ```cpp showLineNumbers
-#include <iostream>
-
 template <typename T>
-class UniquePtr
+class UniquePointer
 {
-    T *ptr;
+  T *ptr;
 
 public:
-    UniquePtr(T *ptr = nullptr) : ptr(ptr) {}
-    ~UniquePtr()
-    {
-      delete ptr;
-    }
+  UniquePointer(T *ptr = nullptr) : ptr(ptr) {}
 
-    // Disable copy
-    UniquePtr(const UniquePtr &) = delete;
-    UniquePtr &operator=(const UniquePtr &) = delete;
+  ~UniquePointer()
+  {
+    delete ptr;
+  }
 
-    // Move constructor
-    UniquePtr(UniquePtr &&other) : ptr(other.ptr)
-    {
-      other.ptr = nullptr;
-    }
+  // Disable the copy constructor and copy assignment
+  UniquePointer(UniquePointer &other) = delete;
+  UniquePointer &operator=(UniquePointer &other) = delete;
 
-    // Move assignment
-    UniquePtr &operator=(UniquePtr &&other)
-    {
-      // Check for self-assignment
-      if (this != &other) {
-          delete ptr;
-          ptr = other.ptr;
-          other.ptr = nullptr;
-      }
+  UniquePointer(UniquePointer &&other)
+  {
+    ptr = other.ptr;
+    other.ptr = nullptr;
+  }
+
+  UniquePointer &operator=(UniquePointer &&other)
+  {
+    if (this == other)
       return *this;
-    }
 
-    // Overload operators
-    T &operator*() const { return *ptr; }
-    T *operator->() const { return ptr; }
+    ptr = other.ptr;
+    other.ptr = nullptr;
+  }
+
+  // Overload operators
+  T &operator*() const { return *ptr; }
+  T *operator->() const { return ptr; }
 };
 
 int main()
 {
-    auto y = UniquePtr(new int(5));
-    int v = *y;
-    std::cout << v;
+  UniquePointer<int> uptr(new int(42));
+  cout << "Value: " << *uptr << "\n"; // Should print 42
+
+  UniquePointer<int> uptr2 = std::move(uptr);
+  cout << "Value after move: " << *uptr2 << "\n"; // Should print 42
+
+  return 0;
 }
 ```
 
@@ -138,70 +138,108 @@ int main()
 A `std::shared_ptr` is a smart pointer that retains shared ownership of an object through a pointer. Several `std::shared_ptr` objects may own the same object. The object is destroyed and its memory deallocated when all `std::shared_ptr` objects that own it are destroyed or reset. The `std::shared_ptr` uses a reference count to keep track of the number of `std::shared_ptr` objects that own the object.
 
 ```cpp showLineNumbers
-template<typename T>
-class SharedPtr {
-    T *ptr;
-    int *count;
+template <typename T>
+class SharedPointer
+{
+  T *ptr;
+  int *refCount;
 
-  void cleanUp() {
-    (*count)--;
-    if (*count == 0) {
+  void _clean()
+  {
+    // If the SharedPointer was moved, then both
+    // ptr and refCount will be nullptr.
+    if (refCount == nullptr)
+      return;
+
+    // Decrease the reference count. If the same reaches
+    // to zero, then there are no more observers of the
+    // object, so we can delete it.
+    if (--(*refCount) == 0)
+    {
       delete ptr;
-      delete count;
+      delete refCount;
     }
   }
 
-  public:
-    SharedPtr(T *ptr = nullptr): ptr(ptr) {
-      if (ptr)
-        count = new int(1);
-      else
-        count = new int(0);
-    }
+public:
+  SharedPointer(T *p = nullptr) : ptr(p)
+  {
+    refCount = new int(1);
+  }
 
-    ~SharedPtr() { cleanUp(); }
+  ~SharedPointer() { _clean(); }
 
-    // Copy constructor
-    SharedPtr(SharedPtr &other) {
-      ptr = other.ptr;
-      count = other.count;
-      if (ptr)
-        (*count)++;
-    }
+  // Copy constructor
+  SharedPointer(SharedPointer &other)
+  {
+    ptr = other.ptr;
+    refCount = other.refCount;
+    ++(*refCount);
+  }
 
-    // Copy assignment operator
-    SharedPtr& operator=(SharedPtr &other) {
-      cleanUp();
-
-      ptr = other.ptr;
-      count = other.count;
-      if (ptr)
-        (*count)++;
-
+  // Copy assignment operator
+  SharedPointer &operator=(SharedPointer &other)
+  {
+    // Check for self-assignment
+    if (this == &other)
       return *this;
-    }
 
-    // Move constructor
-    SharedPtr(SharedPtr &&other) {
-      ptr = other.ptr;
-      count = other.count;
-      other.ptr = nullptr;
-      other.count = nullptr;
-    }
+    // Release the current resources
+    _clean();
 
-    // Move assignment operator
-    SharedPtr& operator=(SharedPtr &&other) {
-      cleanUp();
+    // Copy the resources from the other SharedPointer
+    // and increase the reference count
+    ptr = other.ptr;
+    refCount = other.refCount;
+    ++(*refCount);
+  }
 
-      ptr = other.ptr;
-      count = other.count;
-      other.ptr = nullptr;
-      other.count = nullptr;
-    }
+  // Move operator
+  SharedPointer(SharedPointer &&other)
+  {
+    // Get the resources from the other SharedPointer
+    // and set it's resources to nullptr
+    ptr = other.ptr;
+    refCount = other.refCount;
 
-    // Overloading operators
-    T& operator*() const { return *ptr; }
-    T* operator->() const { return ptr; }
+    other.ptr = nullptr;
+    other.refCount = nullptr;
+  }
+
+  // Move assignment operator
+  SharedPointer &operator=(SharedPointer &&other)
+  {
+    // Release current resources
+    _clean();
+
+    // Get the resources from the other SharedPointer
+    // and set it's resources to nullptr
+    ptr = other.ptr;
+    refCount = other.refCount;
+
+    other.ptr = nullptr;
+    other.refCount = nullptr;
+  }
+
+  // Overloading operators
+  T &operator*() { return *ptr; }
+  T *operator->() { return ptr; }
+
+  int use_count() { return *refCount; }
+};
+
+int main()
+{
+  SharedPointer<int> sp1(new int(42));
+  cout << "Value: " << *sp1 << ", Use count: " << sp1.use_count() << "\n";
+
+  SharedPointer<int> sp2 = sp1;
+  cout << "Value after copy: " << *sp2 << ", Use count: " << sp2.use_count() << "\n";
+
+  SharedPointer<int> sp3 = std::move(sp2);
+  cout << "Value after move: " << *sp3 << ", Use count: " << sp3.use_count() << "\n";
+
+  return 0;
 }
 ```
 
@@ -548,29 +586,47 @@ The two core operations are:
 This implementation uses `std::atomic` and avoids the need for condition variables or kernel-level blocking but can be inefficient under contention due to busy-waiting.
 
 ```cpp
-#include <atomic>
-
 class Mutex
 {
-  std::atomic<int> locked;
+  atomic<int> locked;
 
-  public:
-    Mutex() : locked(0) {}
+public:
+  Mutex() { locked.store(0); }
 
   void lock()
   {
     int expected = 0;
-    // Spin until we successfully change 0 -> 1
-    while (!locked.compare_exchange_strong(expected, 1, std::memory_order_acquire)) {
-      expected = 0; // Reset expected after failure
-    }
+    while (!locked.compare_exchange_strong(expected, 1, memory_order_acquire))
+      expected = 0;
   }
 
   void unlock()
   {
-    locked.store(0, std::memory_order_release);
+    int expected = 1;
+    if (!locked.compare_exchange_strong(expected, 0, memory_order_release))
+      throw "unlock called without locking";
   }
 };
+
+int main()
+{
+  int cnt = 0;
+  Mutex mtx;
+
+  auto worker = [&cnt, &mtx](int id)
+  {
+    mtx.lock();
+    cnt++;
+    cout << "[" << id << "] Incremented cnt to " << cnt << "\n";
+    mtx.unlock();
+  };
+
+  vector<thread> threads;
+  for (int i = 1; i <= 5; i++)
+    threads.emplace_back(worker, i);
+  for (auto &t : threads)
+    t.join();
+}
 ```
 
 `compare_exchange_strong(expected, desired)` atomically compares `locked` with `expected`. If they are equal, it sets `locked` to `desired` and returns `true`. Otherwise, it updates `expected` with the current value of `locked` and returns `false`. We also use `std::memory_order_acquire` on lock and `std::memory_order_release` on unlock to ensure proper ordering of memory operations across threads.
@@ -588,30 +644,57 @@ This implementation uses a `std::mutex` and a `std::condition_variable` to imple
 ```cpp showLineNumbers
 class Semaphore
 {
-  size_t avail;
-  std::mutex mtx;
-  std::condition_variable cv;
+  // cnt denotes the number of available resources currently.
+  // available denotes the maximum number of resources that can be acquired.
+  // If cnt is 0, then the semaphore is locked.
+  int cnt, available;
+  mutex mtx;
+  condition_variable cv;
 
 public:
-  Semaphore(int avail = 1) : avail(avail){}
+  Semaphore(int available = 1) : cnt(available), available(available) {}
 
-  void acquire() // P(x)
+  void acquire()
   {
-    std::unique_lock<std::mutex> lk(mtx);
-    // Wait until the lambda function returns true
-    cv.wait(lk, [this](){
-      return avail > 0;
-    });
-    avail--;
+    unique_lock lk(mtx);
+    cv.wait(lk, [this]()
+      { return cnt > 0; });
+    cnt--;
   }
 
-  void release() // V(x)
+  void release()
   {
-    std::unique_lock<std::mutex> lk(mtx);
-    avail++;
+    unique_lock lk(mtx);
+    cnt++;
+    if (cnt > available)
+      throw "release called without acquiring lock";
     cv.notify_one();
   }
 };
+
+int main()
+{
+  Semaphore sem(3);
+
+  // Start multiple threads that sleep for a while after acquiring the semaphore
+  auto worker = [&sem](int id)
+  {
+    cout << "[" << id << "] Trying to ACQ\n";
+    sem.acquire();
+    cout << "[" << id << "] ACQ success. Sleeping\n";
+    this_thread::sleep_for(chrono::seconds(id));
+    cout << "[" << id << "] Releasing\n";
+    sem.release();
+  };
+
+  vector<thread> threads;
+  for (int i = 1; i <= 5; i++)
+    threads.emplace_back(worker, i);
+
+  for (auto &t : threads)
+    t.join();
+  cout << "All threads completed.\n";
+}
 ```
 
 ## Without Condition Variables
@@ -619,36 +702,69 @@ public:
 Since we are not using condition variables, we need to busy wait until the resource is available. This is not a good practice as it wastes CPU cycles, but it is useful to understand the concept of semaphores. We now make use of `std::atomic` to make the operations atomic, and a `std::mutex` to protect the critical section.
 
 ```cpp showLineNumbers
-struct Semaphore {
-  int size;
-  atomic<int> count;
-  mutex updateMutex;
 
-  Semaphore(int n) : size(n) { count.store(0); }
+class SemaphorePrimitive
+{
+  // cnt denotes the number of available resources currently.
+  // available denotes the maximum number of resources that can be acquired.
+  // If cnt is 0, then the semaphore is locked.
+  int available;
+  atomic<int> cnt;
+  mutex mtx;
 
-  void aquire() {
-    while (1) {
-      while (count >= size) {}
+public:
+  SemaphorePrimitive(int maxCnt) : available(maxCnt)
+  {
+    cnt.store(maxCnt);
+  }
 
-      updateMutex.lock();
-      if (count >= size) {
-          updateMutex.unlock();
-          continue;
-      }
-      ++count;
-      updateMutex.unlock();
-      break;
+  void acquire()
+  {
+    while (1)
+    {
+      while (cnt == 0) { }
+
+      lock_guard lk(mtx);
+      if (!cnt)
+        continue;
+      cnt--;
+      return;
     }
   }
 
-  void release() {
-    updateMutex.lock();
-    if (count > 0) {
-        --count;
-    } // Else log error or throw exception
-    updateMutex.unlock();
+  void release()
+  {
+    lock_guard lk(mtx);
+    cnt++;
+    if (cnt > available)
+      throw "release called without acquiring lock"S;
   }
 };
+
+
+int main()
+{
+  SemaphorePrimitive sem(3);
+
+  // Start multiple threads that sleep for a while after acquiring the semaphore
+  auto worker = [&sem](int id)
+  {
+    cout << "[" << id << "] Trying to ACQ\n";
+    sem.acquire();
+    cout << "[" << id << "] ACQ success. Sleeping\n";
+    this_thread::sleep_for(chrono::seconds(id));
+    cout << "[" << id << "] Releasing\n";
+    sem.release();
+  };
+
+  vector<thread> threads;
+  for (int i = 1; i <= 5; i++)
+    threads.emplace_back(worker, i);
+
+  for (auto &t : threads)
+    t.join();
+  cout << "All threads completed.\n";
+}
 ```
 
 ---
@@ -731,29 +847,48 @@ Here are some good examples of a singleton class:
 - Database Connection
 
 ```cpp
-class Singleton {
+
+class Singleton
+{
+  int state;
+
+  Singleton() : state(0) {} // Private constructor to prevent instantiation
+
+  // Delete constructors and assignment
+  Singleton(const Singleton &other) = delete;
+  Singleton(const Singleton &&other) = delete;
+  Singleton &operator=(const Singleton &other) = delete;
+  Singleton &operator=(const Singleton &&other) = delete;
+
 public:
-  static Singleton& get() {
+  static Singleton *getInstance()
+  {
     static Singleton instance;
-    return instance;
+    return &instance;
   }
 
-  void foo() {};
+  int get()
+  {
+      return state;
+  }
 
-private:
-  // Make the constructor private so that the class cannot be instantiated
-  // from outside, and delete the other constructors to avoid copying
-  Singleton() {}
-  Singleton(const Singleton&) = delete;
-  Singleton& operator=(const Singleton&) = delete;
+  int incr()
+  {
+      return ++state;
+  }
 };
 
-int main() {
-  Singleton &s = Singleton::get();
-  s.foo();
+int main()
+{
+  Singleton *a = Singleton::getInstance();
+  Singleton *b = Singleton::getInstance();
 
-  // Or equivalently
-  Singleton::get().foo();
+  cout << "States: " << a->get() << " " << b->get() << "\n";
+  cout << "Incr: " << a->incr() << " " << b->incr() << "\n";
+  cout << "States: " << a->get() << " " << b->get() << "\n";
+
+  cout << "Equal: " << (a == b) << "\n";
+  cout << "Address: " << a << " " << b << "\n";
 
   return 0;
 }
