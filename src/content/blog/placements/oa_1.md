@@ -51,16 +51,16 @@ PS. I have tried to add the solutions of the problems from the time that I had s
 
 ## Quant Desk Analyst
 
-Two coding questions were asked which were same for all the students were asked.
+Two coding questions were asked which were same for all the students.
 
-1. A simple implementation of two pointers was to be done, which was described in the question itself. Brute approach needed. LC Easy level.
+1. A simple implementation of two pointers needed to be done, which was described in the question itself. Brute approach needed. LC Easy level.
 
 2. You are given a matrix of size $100 X 100$ with values between $1$ and $50$. In one operation, you can choose any one element, and delete all the elements with the same value in the row and column of the picked element (along with the element itself). Give the minimum number of operations to delete all the elements.
 
    <details>
    <summary>Spoiler</summary>
 
-   You can read about [question 2](https://leetcode.com/discuss/interview-question/5846629/SquarePoint-OA-Desk-Quant) here. The question actually turns out to be NP Complete, and thus the best you can do is brute force and try all orderings. In the OA to pass the questions, you had to use the (incorrect) greedy approach, where you would always choose the element whose deletion would result in the maximum number of deletions. To solve it in actual constraints, you can [try this](https://codeforces.com/gym/101246/problem/C) on Codeforces.
+   You can read about [question 2](https://leetcode.com/discuss/interview-question/5846629/SquarePoint-OA-Desk-Quant) here. The question actually turns out to be NP complete, and thus the best you can do is brute force and try all orderings. To pass the question, you had to use a (incorrect) greedy approach, where you would always choose the element whose deletion would result in the maximum number of deletions. To solve it in actual constraints, you can [try this](https://codeforces.com/gym/101246/problem/C) on Codeforces.
 
    </details>
 
@@ -82,7 +82,7 @@ Two coding questions were asked which were same for all the students were asked.
 
    </details>
 
-4. You are given two numbers $minVal$ and $maxVal$ and an array $arr$. You need to calculate the number of contigous subarrays with minimum value as $minVal$ and maximum value as $maxVal$. Length of array is upto was $10^5$.
+4. You are given two numbers ($minVal$ and $maxVal$) and an array $arr$. You need to calculate the number of subarrays of $arr$ with minimum value as $minVal$ and maximum value as $maxVal$. Length of array is upto was $10^5$.
 
    This problem was a restatement of a problem on [Leetcode](https://leetcode.com/problems/count-subarrays-with-fixed-bounds/).
 
@@ -131,7 +131,7 @@ Two coding questions were asked which were same for all the students were asked.
 
 ## Software Developer
 
-Everyone had different questions, but most of them were LC Easy or Medium. The questions often had vague wording so a lot of hit and trial was required to pass the test cases. Questions from the previous years were repeated. Only 2 programming questions were present for one student.
+Everyone had different questions, but most of them were LC Easy or Medium. The questions often had vague wording so a lot of hit and trial was required to pass the test cases. Questions from previous years were repeated. Only 2 programming questions were present for one student.
 
 1. You are given a list of words and a search word. For each prefix in the search word (let's say $X$), you need to find at max 3 lexicographically smallest words from the dictionary that have the same prefix X.
 
@@ -453,17 +453,17 @@ Graviton is known for it's subjective tests. It did not visit our campus, but I 
      - What challenges do you anticipate in managing a deep pipeline of this nature? Propose techniques and strategies to address these challenges effectively.
      - Design a branch prediction mechanism suitable for this architecture, discussing how your design would balance prediction accuracy and the associated performance overhead.
 
-7. Given an array $a$ of $n$ integers, we have to split the array into continuous non-empty subarrays. Let’s say there are $k$ subarrays and let the $i^{th}$ subarray be from $[l(i) to r(i)]$ — both inclusive. Hence a split of the array will satisfy $k \geq 1$, $[l(i) \leq r(i)]$ for $1 \leq i \leq k$, $l(1) = 1$, $r(k) = n$, $r(i) + 1 = l(i+1)$ for $1 \leq i \leq k$.
+7. Given an array $a$ of $n$ integers, we have to split the array into continuous non-empty subarrays. Let’s say there are $k$ subarrays and let the $i^{th}$ subarray be from $l(i)$ to $r(i)$ — both inclusive. Hence a split of the array will satisfy $l(i) \leq r(i)$, $l(1) = 1$, $r(k) = n$, $r(i) + 1 = l(i+1)$ for $1 \leq i < k$.
 
    Each subarray has a value assigned to it. For a subarray from $l$ to $r$, the value $val(l, r)$ is calculated as follows:
 
    - First calculate:
-   - $sum = a[l] + a[l+1] + a[l+2] + ... + a[r-1] + a[r]$
-   - $size = r - l + 1$
+     - $sum = a[l] + a[l+1] + a[l+2] + ... + a[r-1] + a[r]$
+     - $size = r - l + 1$
    - Then $val(l, r)$ is:
-   - $0$, if $sum = 0$
-   - $+size$, if $sum > 0$
-   - $-size$, if $sum < 0$
+     - $0$, if $sum = 0$
+     - $+size$, if $sum > 0$
+     - $-size$, if $sum < 0$
 
    The value of a split of the array is the sum of values of all the subarrays of the split. You are requested to find the maximum value of a split possible (over all possible splits of the array).
 
@@ -2692,6 +2692,8 @@ A lot of these questions have been mixed with questions that were asked in the i
    ```
 
     </details>
+
+---
 
 # 26 Miles Capital
 

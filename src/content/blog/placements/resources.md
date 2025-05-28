@@ -13,9 +13,9 @@ series:
 
 ## Competitive Programming & DSA
 
-No suprise, this by far is the most important part that you need to focus on. Don't start at the last minute, and try to inculcate the habit of solving questions and discussing with your peers early on.
+No suprise, this is the most important part that you need to focus on. Don't start at the last minute, and try to inculcate the habit of solving questions and discussing with your peers early.
 
-- Give contests regularly! [Codeforces](https://codeforces.com/) is the best platform for upsolving as well as giving contests. Many companies known for difficult tests often give direct restatements of the problems from here. Codeforces blogs on topics are great too!
+- Give contests regularly! [Codeforces](https://codeforces.com/) is the best platform for upsolving as well as giving contests. Many companies known for difficult tests often give direct restatements of the problems from here. Codeforces blogs are great learning resources too!
 - In the final month leading to placement OAs, I also started giving [LeetCode](https://leetcode.com/), [AtCoder](https://atcoder.jp/), and [Codechef](www.codechef.com) contests. I absolutely love AtCoder Beginner contests, have grown acustomed to the LeetCode ones, and hate Codechef. But they all have their own charm, and you should try them all to see which one you like the best.
 - The [CSES problem set](https://cses.fi/) is a gold mine that is often overlooked. I personally used it in two manners:
   - Solving it periodically to ensure that I know the basics of a topic. Many questions from the same are used as subproblems in other problems, and the general solving techniques that I picked up from here helped me a lot. There have been many a times when I was unable to solve some LC questions, and then found articles and solutions of the same building on some CSES problems.

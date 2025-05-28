@@ -293,6 +293,6 @@ It's quite a mouthful already, but I promise you it's easier that it seems! Read
 
 ## Endnotes
 
-If you're having troubles implementing in any of the stages, maybe refering to my [implementation](https://github.com/EshaanAgg/toy-kafka) might help? If you blog this blog helpful, starring [this implementation](https://github.com/EshaanAgg/toy-kafka) or [the blog](https://github.com/EshaanAgg/web) would be a great way to ~help me combat my tech impostor syndrome~ let me know that this blog helped you! If you have any suggestions or feedback on the same, I would love to hear from you either through [GitHub issues](https://github.com/EshaanAgg/web/issues) or on the [CodeCrafters forum](https://forum.codecrafters.io/t/blog-curating-all-the-pre-requisites-for-the-consuming-messages-extension/10438)!
+If you're having troubles implementing any of the stages, maybe refering to my [implementation](https://github.com/EshaanAgg/toy-kafka) might help? If you found this blog helpful, starring [the implementation](https://github.com/EshaanAgg/toy-kafka) or [this blog](https://github.com/EshaanAgg/web) would be a great way to ~help me combat my tech impostor syndrome~ let me know that the same! If you have any suggestions or feedback, I would love to hear from you either via [GitHub issues](https://github.com/EshaanAgg/web/issues) or on the [CodeCrafters forum](https://forum.codecrafters.io/t/blog-curating-all-the-pre-requisites-for-the-consuming-messages-extension/10438)!
 
 Until next time, happy coding! 🚀

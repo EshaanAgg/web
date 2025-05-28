@@ -2,7 +2,7 @@
 title: "Write Your Own"
 description: Snippets for common implementation of standard library classes & templates that are frequently asked in interviews.
 pubDate: 2024-12-01
-updatedDate: 2024-12-03
+updatedDate: 2025-05-28
 requireLatex: true
 pinned: true
 draft: false
@@ -24,6 +24,7 @@ This is a collection of common C++ classes and templates that we often use, and 
   - [Concurrent Hit Counter](#concurrent-hit-counter)
   - [Infinite Timestamps in the Past](#infinite-timestamps-in-the-past)
 - [Vector](#vector)
+- [Mutex](#mutex)
 - [Semaphore](#semaphore)
   - [With Condition Variables](#with-condition-variables)
   - [Without Condition Variables](#without-condition-variables)
@@ -83,36 +84,53 @@ Because of many more such reasons, the `AutoPtr` class was first introduced in `
 A `std::unique_ptr` is a smart pointer that owns and manages another object through a pointer and disposes of that object when the `std::unique_ptr` goes out of scope. The `std::unique_ptr` is unique in the sense that it cannot be copied or assigned to another `std::unique_ptr`, and thus there is only one owner of the object (the owner can be transferred using the move semantics).
 
 ```cpp showLineNumbers
-template<typename T>
-class UniquePtr {
-  T *ptr;
+#include <iostream>
+
+template <typename T>
+class UniquePtr
+{
+    T *ptr;
 
 public:
-  UniquePtr(T* ptr = nullptr): ptr(ptr) {}
-  ~UniquePtr() {
-    delete ptr;
-  }
+    UniquePtr(T *ptr = nullptr) : ptr(ptr) {}
+    ~UniquePtr()
+    {
+      delete ptr;
+    }
 
-  // Disable the copy assignment and copy constructor
-  UniquePtr(UniquePtr &ptr) = delete;
-  UniquePtr& operator=(UniquePtr &other) = delete;
+    // Disable copy
+    UniquePtr(const UniquePtr &) = delete;
+    UniquePtr &operator=(const UniquePtr &) = delete;
 
-  // Move constructor
-  UniquePtr(UniquePtr &&other) {
-    ptr = other.ptr;
-    other.ptr = nullptr;
-  }
+    // Move constructor
+    UniquePtr(UniquePtr &&other) : ptr(other.ptr)
+    {
+      other.ptr = nullptr;
+    }
 
-  // Move assignment operator
-  void operator=(UniquePtr &&other) {
-    ptr = other.ptr;
-    other.ptr = nullptr;
-  }
+    // Move assignment
+    UniquePtr &operator=(UniquePtr &&other)
+    {
+      // Check for self-assignment
+      if (this != &other) {
+          delete ptr;
+          ptr = other.ptr;
+          other.ptr = nullptr;
+      }
+      return *this;
+    }
 
-  // Overloading Opertor
-  T& operator*() const { return *this; }
-  T* operator->() const {return this; }
+    // Overload operators
+    T &operator*() const { return *ptr; }
+    T *operator->() const { return ptr; }
 };
+
+int main()
+{
+    auto y = UniquePtr(new int(5));
+    int v = *y;
+    std::cout << v;
+}
 ```
 
 ## Shared Pointer
@@ -515,6 +533,47 @@ private:
   }
 };
 ```
+
+---
+
+# Mutex
+
+A mutex (short for mutual exclusion) is a synchronization primitive that provides exclusive access to a shared resource. When one thread holds the mutex, other threads that try to acquire it will have to wait. This simple implementation uses busy-waiting (spinning) and the `compare-and-swap` (CAS) atomic primitive to ensure that only one thread can acquire the mutex at a time.
+
+The two core operations are:
+
+- `lock()` — Attempts to acquire the lock by atomically setting the internal state to "locked" (`1`).
+- `unlock()` — Sets the internal state to "unlocked" (`0`), allowing another thread to acquire it.
+
+This implementation uses `std::atomic` and avoids the need for condition variables or kernel-level blocking but can be inefficient under contention due to busy-waiting.
+
+```cpp
+#include <atomic>
+
+class Mutex
+{
+  std::atomic<int> locked;
+
+  public:
+    Mutex() : locked(0) {}
+
+  void lock()
+  {
+    int expected = 0;
+    // Spin until we successfully change 0 -> 1
+    while (!locked.compare_exchange_strong(expected, 1, std::memory_order_acquire)) {
+      expected = 0; // Reset expected after failure
+    }
+  }
+
+  void unlock()
+  {
+    locked.store(0, std::memory_order_release);
+  }
+};
+```
+
+`compare_exchange_strong(expected, desired)` atomically compares `locked` with `expected`. If they are equal, it sets `locked` to `desired` and returns `true`. Otherwise, it updates `expected` with the current value of `locked` and returns `false`. We also use `std::memory_order_acquire` on lock and `std::memory_order_release` on unlock to ensure proper ordering of memory operations across threads.
 
 ---
 
