@@ -26,21 +26,27 @@ This is a collection of common C++ classes and templates that we often use, and 
   - [Unordered Timestamps](#unordered-timestamps)
   - [Concurrent Hit Counter](#concurrent-hit-counter)
   - [Infinite Timestamps in the Past](#infinite-timestamps-in-the-past)
+- [Singleton Design Pattern](#singleton-design-pattern)
 - [Vector](#vector)
 - [Mutex](#mutex)
 - [Semaphore](#semaphore)
   - [With Condition Variables](#with-condition-variables)
   - [Without Condition Variables](#without-condition-variables)
 - [Producer Consumer Problem](#producer-consumer-problem)
-- [Singleton Design Pattern](#singleton-design-pattern)
-- [Reader \& Writer Problem](#reader--writer-problem)
   - [Without Condition Variables](#without-condition-variables-1)
   - [With Condition Variables](#with-condition-variables-1)
+- [Reader \& Writer Problem](#reader--writer-problem)
+  - [Without Condition Variables](#without-condition-variables-2)
+  - [With Condition Variables](#with-condition-variables-2)
 - [Dining Philosophers Problem](#dining-philosophers-problem)
   - [Naive Solution (Prone to Deadlock)](#naive-solution-prone-to-deadlock)
   - [Use Ordering](#use-ordering)
   - [Use a Semaphore to Limit Access](#use-a-semaphore-to-limit-access)
   - [Condition Variable to Avoid Starvation](#condition-variable-to-avoid-starvation)
+- [Barbershop Problem](#barbershop-problem)
+- [The Smoking Cigarettes Problem](#the-smoking-cigarettes-problem)
+  - [Problem History](#problem-history)
+  - [Solution](#solution)
 
 </details>
 
@@ -477,6 +483,99 @@ public:
 
 ---
 
+# Singleton Design Pattern
+
+A singleton class is a class such that you can only have one instance of the class. This is useful when you want to have a single instance of a class that is shared across the application. The singleton class is implemented using a static member variable, and a static member function that returns the instance of the class.
+
+Singletons are useful when we want to apply some functionalities to a "global" set of data, but we do not want to pass the object or the data/member functions around. Having the same encapsulated in a singleton class makes it easier to manage and use throughout the application. They can effectively be managed using namespaces as well, but the singleton class provides a more object-oriented approach.
+
+Here are some good examples of a singleton class:
+
+- Logger
+- Configuration
+- Random Number Generator
+- Database Connection
+
+```cpp
+
+class Singleton
+{
+  int state;
+
+  Singleton() : state(0) {} // Private constructor to prevent instantiation
+
+  // Delete constructors and assignment
+  Singleton(const Singleton &other) = delete;
+  Singleton(const Singleton &&other) = delete;
+  Singleton &operator=(const Singleton &other) = delete;
+  Singleton &operator=(const Singleton &&other) = delete;
+
+public:
+  static Singleton *getInstance()
+  {
+    static Singleton instance;
+    return &instance;
+  }
+
+  int get()
+  {
+      return state;
+  }
+
+  int incr()
+  {
+      return ++state;
+  }
+};
+
+int main()
+{
+  Singleton *a = Singleton::getInstance();
+  Singleton *b = Singleton::getInstance();
+
+  cout << "States: " << a->get() << " " << b->get() << "\n";
+  cout << "Incr: " << a->incr() << " " << b->incr() << "\n";
+  cout << "States: " << a->get() << " " << b->get() << "\n";
+
+  cout << "Equal: " << (a == b) << "\n";
+  cout << "Address: " << a << " " << b << "\n";
+
+  return 0;
+}
+```
+
+If you want to call the member functions directly on the class, you can make the member functions static as well with a bit of indirection.
+
+```cpp
+class Singleton {
+public:
+  static Singleton& get() {
+    static Singleton instance;
+    return instance;
+  }
+
+  static void foo() {
+    get().IFoo();
+  }
+
+private:
+  void IFoo() {
+    // Implementation of foo
+  }
+
+  Singleton() {}
+  Singleton(const Singleton&) = delete;
+  Singleton& operator=(const Singleton&) = delete;
+};
+
+int main() {
+  Singleton::foo();
+  return 0;
+}
+```
+
+---
+
 # Vector
 
 The `std::vector` is a dynamic array that can grow and shrink in size. It is a sequence container that encapsulates dynamic size arrays. The storage of the vector is handled automatically, being expanded and contracted as needed. Vectors usually occupy more space than static arrays, because more memory is allocated to handle future growth. This way a vector does not need to reallocate each time an element is inserted, but only when the additional memory is exhausted.
@@ -786,6 +885,53 @@ int main()
 
 The infamous Producer-Consumer problem, also called the Bounded-Buffer problem, is one of the famous real-world scenarios of synchronization. The problem describes two processes, the producer and the consumer, who share a common, fixed-size buffer used as a queue. The producer's job is to generate data, put it into the buffer, and start again. At the same time, the consumer is consuming the data (i.e., removing it from the buffer), one piece at a time. The problem is to make sure that the producer won't try to add data into the buffer if it's full and that the consumer won't try to remove data from an empty buffer.
 
+## Without Condition Variables
+
+We will make use of two semphores, `empty` and `full` to keep track of the number of empty and full slots in the buffer. The producer will wait on the `empty` semaphore before adding an item to the buffer, and the consumer will wait on the `full` semaphore before removing an item from the buffer. The `mutex` is used to protect the critical section, i.e., the buffer.
+
+We will also use an additional `mutex` to protect the access to the buffer, and a `queue` to store the data. The producer will push data into the queue, and the consumer will pop data from the queue.
+
+```cpp showLineNumbers
+class ProducerConsumer {
+  mutex mtx;
+  queue <int> buffer;
+
+  semaphore empty;
+  semaphore full;
+
+public:
+  ProducerConsumer(int capacity):  {
+    empty = semaphore(capacity); // The count of empty slots in the buffer
+    full = semaphore(0); // The count of full slots in the buffer
+  }
+
+  void producer(int item) {
+    empty.acquire(); // Wait for an empty slot
+
+    mtx.lock(); // Lock the mutex to protect the buffer
+    buffer.push(item);
+    cout << "Produced: " << item << " | Buffer Size: " << buffer.size() << endl;
+    mtx.unlock();
+
+    full.release(); // Notify that there is a new item in the buffer
+  }
+
+  void consumer() {
+    full.acquire(); // Wait for a full slot
+
+    mtx.lock(); // Lock the mutex to protect the buffer
+    int item = buffer.front();
+    buffer.pop();
+    cout << "Consumed: " << item << " | Buffer Size: " << buffer.size() << endl;
+    mtx.unlock();
+
+    empty.release(); // Notify that there is an empty slot in the buffer
+  }
+}
+```
+
+## With Condition Variables
+
 We make use of the following classes to implement the producer-consumer problem:
 
 - `std::mutex`: We use a mutex to protect the critical section, i.e., the buffer.
@@ -807,8 +953,10 @@ public:
     cv.wait(lk, [this](){
       return buffer.size() < capacity;
     });
+
     buffer.push(item);
     std::cout << "Produced: " << item << " | Buffer Size: " << buffer.size() << std::endl;
+
     cv.notify_all();
   }
 
@@ -817,9 +965,11 @@ public:
     cv.wait(lk, [this](){
       return !buffer.empty();
     });
+
     int item = buffer.front();
     buffer.pop();
     std::cout << "Consumed: " << item << " | Buffer Size: " << buffer.size() << std::endl;
+
     cv.notify_all();
   }
 };
@@ -846,102 +996,9 @@ int main() {
 
 ---
 
-# Singleton Design Pattern
-
-A singleton class is a class such that you can only have one instance of the class. This is useful when you want to have a single instance of a class that is shared across the application. The singleton class is implemented using a static member variable, and a static member function that returns the instance of the class.
-
-Singletons are useful when we want to apply some functionalities to a "global" set of data, but we do not want to pass the object or the data/member functions around. Having the same encapsulated in a singleton class makes it easier to manage and use throughout the application. They can effectively be managed using namespaces as well, but the singleton class provides a more object-oriented approach.
-
-Here are some good examples of a singleton class:
-
-- Logger
-- Configuration
-- Random Number Generator
-- Database Connection
-
-```cpp
-
-class Singleton
-{
-  int state;
-
-  Singleton() : state(0) {} // Private constructor to prevent instantiation
-
-  // Delete constructors and assignment
-  Singleton(const Singleton &other) = delete;
-  Singleton(const Singleton &&other) = delete;
-  Singleton &operator=(const Singleton &other) = delete;
-  Singleton &operator=(const Singleton &&other) = delete;
-
-public:
-  static Singleton *getInstance()
-  {
-    static Singleton instance;
-    return &instance;
-  }
-
-  int get()
-  {
-      return state;
-  }
-
-  int incr()
-  {
-      return ++state;
-  }
-};
-
-int main()
-{
-  Singleton *a = Singleton::getInstance();
-  Singleton *b = Singleton::getInstance();
-
-  cout << "States: " << a->get() << " " << b->get() << "\n";
-  cout << "Incr: " << a->incr() << " " << b->incr() << "\n";
-  cout << "States: " << a->get() << " " << b->get() << "\n";
-
-  cout << "Equal: " << (a == b) << "\n";
-  cout << "Address: " << a << " " << b << "\n";
-
-  return 0;
-}
-```
-
-If you want to call the member functions directly on the class, you can make the member functions static as well with a bit of indirection.
-
-```cpp
-class Singleton {
-public:
-  static Singleton& get() {
-    static Singleton instance;
-    return instance;
-  }
-
-  static void foo() {
-    get().IFoo();
-  }
-
-private:
-  void IFoo() {
-    // Implementation of foo
-  }
-
-  Singleton() {}
-  Singleton(const Singleton&) = delete;
-  Singleton& operator=(const Singleton&) = delete;
-};
-
-int main() {
-  Singleton::foo();
-  return 0;
-}
-```
-
----
-
 # Reader & Writer Problem
 
-The readers-writers problem is a classic synchronization problem in computer science that deals with coordinating access to a shared resource among multiple concurrent processes or threads. You have a shared data structure (like a database, file, or memory location) that multiple threads want to access simultaneously. There are two types of operations:
+The readers-writers problem is a classic synchronization problem in computer science that deals with coordinating access to a shared resource among multiple concurrent processes or threads. You have a shared data structure (like a database, file, or memory location) that multiple threads want to access simultaneously. There are two types of processes:
 
 - Readers: Only read the data without modifying it
 - Writers: Modify/update the data
@@ -954,23 +1011,27 @@ For the correctness of the implementation, we need to ensure the following:
 
 ## Without Condition Variables
 
-This is a reader's preference version, where the writer may sufeer from starvation if readers continuously acquire the lock.
+This is a reader's preference version, where the writer may suffer from starvation if readers continuously acquire the lock.
+
+We use a `binary_semaphore` to check if a writer is currently present or not. The `write_semaphore` is initialized to $1$, which means that the writer can acquire the lock if no readers are present. The mutex `reader_mutex` is used to protect concurrent access to the `reader_count` variable and to ensure that concurrent readers can increment or decrement the count safely.
 
 ```cpp showLineNumbers
 class ReadWriteLock
 {
 private:
-  int reader_count = 0;
+  int reader_count;
   mutex reader_mutex;
-  binary_semaphore write_semaphore{1};
+  binary_semaphore write_semaphore;
 
 public:
+  ReadWriteLock() : reader_count(0), write_semaphore(1) {}
+
   void reader_lock()
   {
     lock_guard lock(reader_mutex);
 
     reader_count++;
-    // First reader blocks writers
+    // First reader blocks all the writer
     if (reader_count == 1)
       write_semaphore.acquire();
   }
@@ -1060,13 +1121,13 @@ public:
 
 # Dining Philosophers Problem
 
-The Dining Philosophers Problem is a classic concurrency problem that illustrates the challenges of **resource allocation** among multiple competing threads (philosophers).
+The Dining Philosophers Problem is a classic concurrency problem that illustrates the challenges of resource allocation among multiple competing threads (philosophers).
 
 - Five philosophers sit around a table.
 - Each has a plate of food and needs two forks to eat: the fork on the left and the one on the right.
-- Forks are shared between adjacent philosophers (i.e., philosopher `i` shares fork `i` with `i+1`, modulo 5).
+- Forks are shared between adjacent philosophers (i.e., philosopher $i$ shares fork $i$ with $i+1$, modulo $5$).
 
-Each philosopher alternates between **thinking** and **eating**. The challenge is to design a strategy that avoids deadlock and starvation while allowing all philosophers to eat.
+Each philosopher alternates between thinking and eating. The challenge is to design a strategy that avoids deadlock and starvation while allowing all philosophers to eat.
 
 ## Naive Solution (Prone to Deadlock)
 
@@ -1242,3 +1303,349 @@ public:
   }
 };
 ```
+
+---
+
+# Barbershop Problem
+
+The Barbershop Problem is a classic synchronization problem that involves a barber, customers, and a waiting room. The operating rules of the barbershop are as follows:
+
+- There is a single barber who cuts hair. The barber can only cut hair when there is a customer, and sleeps when there are no customers.
+- There is a waiting room with a limited number of chairs.
+- Customers arrive at random intervals. When they arrive and find the barber busy, they sit in the waiting room if there is space. If not, they leave.
+
+We make use of the `counting_semaphore` to represent the number of available chairs in the waiting room, and two `binary_semaphore`s to signal between the barber and the customers. The barber will wait for a customer to be ready, and the customer will wait for the barber to be ready after they signal that they are ready for a haircut.
+
+```cpp showLineNumbers
+class Barbershop {
+  counting_semaphore waiting_room;   // Represents number of available chairs
+  binary_semaphore customer_ready{0};  // Customer signals barber
+  binary_semaphore barber_ready{0};    // Barber signals customer
+
+public:
+  Barbershop(int chairs)
+    :waiting_room(chairs) {}
+
+  void customer(int id) {
+    // Try to get a chair in the waiting room
+    if (!waiting_room.try_acquire()) {
+      cout << "Customer " << id << " left due to no available chairs." << endl;
+      return;
+    }
+
+    customer_ready.release();   // Notify the barber
+    barber_ready.acquire();     // Wait until the barber is ready
+    waiting_room.release();     // Free the chair
+
+    cout << "Customer " << id << " is getting a haircut." << endl;
+  }
+
+  void barber_work() {
+    while (true) {
+      customer_ready.acquire();  // Wait for customer
+
+      this_thread::sleep_for(chrono::seconds(1)); // Haircut time
+      barber_ready.release();    // Signal to customer that haircut is done
+
+      cout << "Barber finished a haircut." << endl;
+    }
+  }
+};
+```
+
+---
+
+# The Smoking Cigarettes Problem
+
+In this classic problem, there are three smokers, each with an infinite supply of one of the ingredients:
+
+- Smoker $A$ has tobacco
+- Smoker $B$ has paper
+- Smoker $C$ has matches
+
+An agent continously places two random ingredients on the table. The smoker who has the third item makes and smokes a cigarette. The agent waits until atleast one of the smokers has smoked a cigarette before placing the next two items.
+
+If you try to solve this with no synchronization, then we run into a number of race conditions and deadlocks:
+
+1. Multiple smokers might try to access the table at the same time.
+2. A smoker might grab one of the ingredients, while other smokers grab the other ingredient, leading to a situation where no smoker can complete their cigarette. This would lead to a deadlock, as the agent would be waiting for a smoker to finish smoking before placing the next two items.
+
+## Problem History
+
+Intially proposed by Edsger Dijkstra in $1965$, the problem has been used to illustrate the challenges of synchronization in concurrent programming. It was first aimed to solve under two constraints:
+
+1. The source code of the agent cannot be changed (analogous the source code of a OS allocating resources).
+2. The smokers (processes) cannot use mutexes, semaphores, or condition variables to synchronize their actions.
+
+It has been shown that the given problem is impossible to solve under these constraints. Thus it is proposed that the second constraint be relaxed, as it is an artificial constraint that does not reflect real-world scenarios. Processes and softwares do have access to synchronization primitives, which allow the problem to be solved.
+
+## Solution
+
+The solution involves using semaphores for synchronization, and makes use of "pusher" threads for each ingredient. The agent thread places two ingredients on the table, and the corresponding "pusher" threads signal the smokers when they can smoke. Each smoker waits for their ingredient to be available before smoking.
+
+```cpp showLineNumbers
+class SmokingCigarettes {
+  // Table state and mutex to prevent access conflicts
+  mutex mtx;
+  bool tabacco_present = false, paper_present = false, matches_present = false;
+
+  // Semaphores to signal when ingredients are ready
+  // Used by AGENT
+  binary_semaphore tobacco_ready, paper_ready, matches_ready;
+  binary_semaphore agent_ready;
+
+  // SMOKER semaphores to signal when a smoker is ready to smoke
+  binary_semaphore tobacco_smoker, paper_smoker, matches_smoker;
+
+public:
+  SmokingCigarettes():
+    tobacco_ready(0), paper_ready(0), matches_ready(0),
+    agent_ready(1), tobacco_smoker(0), paper_smoker(0), matches_smoker(0) {}
+
+  void agent() {
+    while (true) {
+      agent_ready.acquire(); // Wait for the agent to be ready
+
+      // Randomly place two ingredients on the table
+      int notRelease = rand() % 3;
+      if (notRelease == 0) {
+        tobacco_ready.release();
+        paper_ready.release();
+        cout << "Agent placed Tobacco and Paper on the table." << endl;
+      } else if (notRelease == 1) {
+        paper_ready.release();
+        matches_ready.release();
+        cout << "Agent placed Paper and Matches on the table." << endl;
+      } else {
+        matches_ready.release();
+        tobacco_ready.release();
+        cout << "Agent placed Matches and Tobacco on the table." << endl;
+      }
+    }
+  }
+
+  // There would be three "pusher" functions, one for each ingredient
+  void pusher_tobacco() {
+    while (true) {
+      tobacco_ready.acquire(); // Wait for tobacco to be ready
+      lock_guard<mutex> lock(mtx); // Acquire the mutex to access the table
+
+      if (paper_present) {
+        // Paper is present, that means the "pusher" for paper already ran
+        // and placed matches on the table
+        paper_present = false;
+        // Paper & Tobacco are present, so the Matches smoker can smoke
+        matches_smoker.release();
+      } else if (matches_present) {
+        matches_present = false;
+        paper_smoker.release();
+      } else {
+        tobacco_present = true; // Place tobacco on the table
+      }
+    }
+  }
+
+  // There would be three such functions, one for each smoker
+  // When a smoker is allowed to smoke by the pushers, it smokes the cigarette
+  // and notifies the agent to place more ingredients
+  void tobacco_smoke() {
+    while (true) {
+      tobacco_smoker.acquire();
+
+      cout << "Tobacco smoker is smoking a cigarette." << endl;
+      this_thread::sleep_for(chrono::seconds(1)); // Simulate smoking time
+
+      agent_ready.release(); // Notify the agent to place more ingredients
+    }
+  }
+}
+```
+
+This implementation skips some details for brevity, such as the actual implementation of the `pusher_paper` and `pusher_matches` functions, which would be similar to the `pusher_tobacco` function. In you want a runable CPP code, you can find the same here:
+
+<details>
+<summary>Click to view the complete code</summary>
+
+Make sure you use `C++20` or later to compile this code, as it uses `std::binary_semaphore`. The `GCC` compilation command for the same would be:
+
+```bash
+g++ -std=c++20 -pthread smoking.cpp -o smoking
+```
+
+<br/>
+
+```cpp
+#include <iostream>
+#include <thread>
+#include <mutex>
+#include <semaphore>
+#include <chrono>
+#include <random>
+
+using namespace std;
+
+class SmokingCigarettes
+{
+  mutex mtx;
+  bool tobacco_present = false, paper_present = false, matches_present = false;
+  binary_semaphore tobacco_ready{0}, paper_ready{0}, matches_ready{0};
+  binary_semaphore agent_ready{1};
+  binary_semaphore tobacco_smoker{0}, paper_smoker{0}, matches_smoker{0};
+
+public:
+  void agent()
+  {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dist(0, 2);
+
+    while (true)
+    {
+      agent_ready.acquire();
+
+      int notRelease = dist(gen);
+      if (notRelease == 0)
+      {
+        tobacco_ready.release();
+        paper_ready.release();
+        cout << "Agent placed Tobacco and Paper on the table." << endl;
+      }
+      else if (notRelease == 1)
+      {
+        paper_ready.release();
+        matches_ready.release();
+        cout << "Agent placed Paper and Matches on the table." << endl;
+      }
+      else
+      {
+        matches_ready.release();
+        tobacco_ready.release();
+        cout << "Agent placed Matches and Tobacco on the table." << endl;
+      }
+    }
+  }
+
+  void pusher_tobacco()
+  {
+    while (true)
+    {
+      tobacco_ready.acquire();
+      lock_guard lock(mtx);
+      if (paper_present)
+      {
+        paper_present = false;
+        matches_smoker.release();
+      }
+      else if (matches_present)
+      {
+        matches_present = false;
+        paper_smoker.release();
+      }
+      else
+        tobacco_present = true;
+    }
+  }
+
+  void pusher_paper()
+  {
+    while (true)
+    {
+      paper_ready.acquire();
+      lock_guard lock(mtx);
+      if (tobacco_present)
+      {
+        tobacco_present = false;
+        matches_smoker.release();
+      }
+      else if (matches_present)
+      {
+        matches_present = false;
+        tobacco_smoker.release();
+      }
+      else
+        paper_present = true;
+    }
+  }
+
+  void pusher_matches()
+  {
+    while (true)
+    {
+      matches_ready.acquire();
+      lock_guard lock(mtx);
+      if (tobacco_present)
+      {
+        tobacco_present = false;
+        paper_smoker.release();
+      }
+      else if (paper_present)
+      {
+        paper_present = false;
+        tobacco_smoker.release();
+      }
+      else
+        matches_present = true;
+    }
+  }
+
+  void tobacco_smoke()
+  {
+    while (true)
+    {
+      tobacco_smoker.acquire();
+      cout << "Tobacco smoker is smoking a cigarette." << endl;
+      this_thread::sleep_for(chrono::seconds(1));
+      agent_ready.release();
+    }
+  }
+
+  void paper_smoke()
+  {
+    while (true)
+    {
+      paper_smoker.acquire();
+      cout << "Paper smoker is smoking a cigarette." << endl;
+      this_thread::sleep_for(chrono::seconds(1));
+      agent_ready.release();
+    }
+  }
+
+  void matches_smoke()
+  {
+    while (true)
+    {
+      matches_smoker.acquire();
+      cout << "Matches smoker is smoking a cigarette." << endl;
+      this_thread::sleep_for(chrono::seconds(1));
+      agent_ready.release();
+    }
+  }
+};
+
+int main()
+{
+  SmokingCigarettes system;
+
+  thread agent_thread(&SmokingCigarettes::agent, &system);
+
+  thread pusher1(&SmokingCigarettes::pusher_tobacco, &system);
+  thread pusher2(&SmokingCigarettes::pusher_paper, &system);
+  thread pusher3(&SmokingCigarettes::pusher_matches, &system);
+
+  thread smoker1(&SmokingCigarettes::tobacco_smoke, &system);
+  thread smoker2(&SmokingCigarettes::paper_smoke, &system);
+  thread smoker3(&SmokingCigarettes::matches_smoke, &system);
+
+  agent_thread.join();
+  pusher1.join();
+  pusher2.join();
+  pusher3.join();
+  smoker1.join();
+  smoker2.join();
+  smoker3.join();
+
+  return 0;
+}
+```
+
+</details>

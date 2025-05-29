@@ -3,16 +3,18 @@ interface Props {
   title: string;
   description: string;
   pubDate: Date;
+  updatedDate: Date | undefined;
   url: string;
   readingTime: string;
   tags: string[] | undefined;
   draft: boolean;
 }
 
-const { title, description, pubDate, url, readingTime, tags, draft } =
+const { title, description, pubDate, updatedDate, url, readingTime, tags, draft } =
   Astro.props;
 
-const fullDate = pubDate.toLocaleDateString("en", {
+// Show the updated date if available, otherwise use the publication date
+const fullDate = (updatedDate ?? pubDate).toLocaleDateString("en", {
   year: "numeric",
   month: "long",
   day: "numeric",

@@ -14,9 +14,12 @@ const posts = (await getCollection("blog"))
     // Prioritize draft blogs
     if (a.data.draft && !b.data.draft) return -1;
 
-    // Sort by publishing date if they have the same pinned status
-    if (b.data.pinned == a.data.pinned)
-      return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+    // Sort by dates if they have the same pinned status
+    if (b.data.pinned == a.data.pinned) {
+      const aDate = a.data.updatedDate ?? a.data.pubDate; // Use updatedDate if available, else pubDate
+      const bDate = b.data.updatedDate ?? b.data.pubDate;
+      return bDate.valueOf() - aDate.valueOf();
+    }
 
     // Prioritize pinned blogs
     return Number(b.data.pinned) - Number(a.data.pinned);
@@ -46,6 +49,7 @@ const description =
           <BlogCard
             title={post.data.title}
             pubDate={post.data.pubDate}
+            updatedDate={post.data.updatedDate}
             description={post.data.description}
             url={`/blog/${post.slug}/`}
             readingTime={getReadingTime(post.body).text}
