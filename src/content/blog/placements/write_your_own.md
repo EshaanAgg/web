@@ -2,7 +2,7 @@
 title: "Write Your Own"
 description: Snippets for common implementation of standard library classes & templates that are frequently asked in interviews.
 pubDate: 2024-12-01
-updatedDate: 2025-05-28
+updatedDate: 2025-05-29
 requireLatex: true
 pinned: true
 draft: false
@@ -30,6 +30,14 @@ This is a collection of common C++ classes and templates that we often use, and 
   - [Without Condition Variables](#without-condition-variables)
 - [Producer Consumer Problem](#producer-consumer-problem)
 - [Singleton Design Pattern](#singleton-design-pattern)
+- [Reader \& Writer Problem](#reader--writer-problem)
+  - [Without Condition Variables](#without-condition-variables-1)
+  - [With Condition Variables](#with-condition-variables-1)
+- [Dining Philosophers Problem](#dining-philosophers-problem)
+  - [Naive Solution (Prone to Deadlock)](#naive-solution-prone-to-deadlock)
+  - [Use Ordering](#use-ordering)
+  - [Use a Semaphore to Limit Access](#use-a-semaphore-to-limit-access)
+  - [Condition Variable to Avoid Starvation](#condition-variable-to-avoid-starvation)
 
 ---
 
@@ -922,6 +930,312 @@ int main() {
   Singleton::foo();
   return 0;
 }
+```
+
+---
+
+# Reader & Writer Problem
+
+The readers-writers problem is a classic synchronization problem in computer science that deals with coordinating access to a shared resource among multiple concurrent processes or threads. You have a shared data structure (like a database, file, or memory location) that multiple threads want to access simultaneously. There are two types of operations:
+
+- Readers: Only read the data without modifying it
+- Writers: Modify/update the data
+
+For the correctness of the implementation, we need to ensure the following:
+
+- Multiple readers can read simultaneously - Since they don't change the data, concurrent reading is safe.
+- Only one writer can write at a time - Writing must be exclusive to prevent data corruption.
+- Readers and writers cannot access simultaneously - A writer needs exclusive access with no readers present.
+
+## Without Condition Variables
+
+This is a reader's preference version, where the writer may sufeer from starvation if readers continuously acquire the lock.
+
+```cpp showLineNumbers
+class ReadWriteLock
+{
+private:
+  int reader_count = 0;
+  mutex reader_mutex;
+  binary_semaphore write_semaphore{1};
+
+public:
+  void reader_lock()
+  {
+    lock_guard lock(reader_mutex);
+
+    reader_count++;
+    // First reader blocks writers
+    if (reader_count == 1)
+      write_semaphore.acquire();
+  }
+
+  void reader_unlock()
+  {
+    lock_guard lock(reader_mutex);
+
+    reader_count--;
+    if (reader_count == 0)
+      write_semaphore.release();
+  }
+
+  void writer_lock()
+  {
+    write_semaphore.acquire();
+  }
+
+  void writer_unlock()
+  {
+    write_semaphore.release();
+  }
+};
+```
+
+## With Condition Variables
+
+Using conditions variables, we can addtionally provide preference to either reader or writer threads if the same is desired.
+
+```cpp showLineNumbers
+class ReadWriteLockCV
+{
+private:
+  int reader_count = 0;
+  int waiting_writers = 0;
+  bool writer_active = false;
+
+  condition_variable reader_cv;
+  condition_variable writer_cv;
+  mutex mtx;
+
+public:
+  void reader_lock()
+  {
+    unique_lock lock(mtx);
+    reader_cv.wait(lock, [this]
+      { return !writer_active && waiting_writers == 0; });
+
+    reader_count++;
+  }
+
+  void reader_unlock()
+  {
+    unique_lock lock(mtx);
+    reader_count--;
+    if (reader_count == 0)
+      writer_cv.notify_one();
+  }
+
+  void writer_lock()
+  {
+    unique_lock lock(mtx);
+    waiting_writers++;
+    writer_cv.wait(lock, [this]
+      { return reader_count == 0 && !writer_active; });
+
+    waiting_writers--;
+    writer_active = true;
+  }
+
+  void writer_unlock()
+  {
+    unique_lock lock(mtx);
+    writer_active = false;
+
+    // Preference: writers first or readers first
+    if (waiting_writers > 0)
+      writer_cv.notify_one(); // Prefer writers
+    else
+      reader_cv.notify_all(); // Prefer readers
+  }
+};
+
+```
+
+---
+
+# Dining Philosophers Problem
+
+The Dining Philosophers Problem is a classic concurrency problem that illustrates the challenges of **resource allocation** among multiple competing threads (philosophers).
+
+- Five philosophers sit around a table.
+- Each has a plate of food and needs two forks to eat: the fork on the left and the one on the right.
+- Forks are shared between adjacent philosophers (i.e., philosopher `i` shares fork `i` with `i+1`, modulo 5).
+
+Each philosopher alternates between **thinking** and **eating**. The challenge is to design a strategy that avoids deadlock and starvation while allowing all philosophers to eat.
+
+## Naive Solution (Prone to Deadlock)
+
+```cpp showLineNumbers
+class DiningPhilosophersNaive
+{
+private:
+  mutex forks[5];
+
+public:
+  void wants_to_eat(
+    int philosopher,
+    function<void()> pick_left_fork,
+    function<void()> pick_right_fork,
+    function<void()> eat,
+    function<void()> put_left_fork,
+    function<void()> put_right_fork
+  ) {
+    int left = philosopher;
+    int right = (philosopher + 1) % 5;
+
+    // Naively lock left then right fork
+    lock_guard<mutex> left_lock(forks[left]);
+    lock_guard<mutex> right_lock(forks[right]);
+
+    pick_left_fork();
+    pick_right_fork();
+    eat();
+    put_right_fork();
+    put_left_fork();
+  }
+};
+```
+
+This can **deadlock** if all philosophers pick up their left fork at the same time.
+
+## Use Ordering
+
+Avoid circular wait by ensuring that not all philosophers try to pick up forks in the same order.
+
+```cpp showLineNumbers
+class DiningPhilosophersOrdered
+{
+private:
+  mutex forks[5];
+
+public:
+  void wants_to_eat(
+    int philosopher,
+    function<void()> pick_left_fork,
+    function<void()> pick_right_fork,
+    function<void()> eat,
+    function<void()> put_left_fork,
+    function<void()> put_right_fork
+  ) {
+    int left = philosopher;
+    int right = (philosopher + 1) % 5;
+
+    if (philosopher % 2 == 0)
+    {
+      lock_guard<mutex> first_lock(forks[left]);
+      lock_guard<mutex> second_lock(forks[right]);
+
+      pick_left_fork();
+      pick_right_fork();
+      eat();
+      put_right_fork();
+      put_left_fork();
+    }
+    else
+    {
+      lock_guard<mutex> first_lock(forks[right]);
+      lock_guard<mutex> second_lock(forks[left]);
+
+      pick_right_fork();
+      pick_left_fork();
+      eat();
+      put_left_fork();
+      put_right_fork();
+    }
+  }
+};
+```
+
+## Use a Semaphore to Limit Access
+
+Use a semaphore to allow at most 4 philosophers to try to pick up forks at once.
+
+```cpp showLineNumbers
+class DiningPhilosophersSemaphore
+{
+private:
+  mutex forks[5];
+  // Only 4 philosophers can try to eat at once
+  counting_semaphore<4> entry{4};
+
+public:
+  void wants_to_eat(
+    int philosopher,
+    function<void()> pick_left_fork,
+    function<void()> pick_right_fork,
+    function<void()> eat,
+    function<void()> put_left_fork,
+    function<void()> put_right_fork
+  ) {
+    entry.acquire();
+
+    int left = philosopher;
+    int right = (philosopher + 1) % 5;
+
+    {
+      lock_guard<mutex> left_lock(forks[left]);
+      lock_guard<mutex> right_lock(forks[right]);
+
+      pick_left_fork();
+      pick_right_fork();
+      eat();
+      put_right_fork();
+      put_left_fork();
+    }
+
+    entry.release();
+  }
+};
+```
+
+## Condition Variable to Avoid Starvation
+
+```cpp showLineNumbers
+class DiningPhilosophersCV
+{
+private:
+  mutex mtx;
+  condition_variable cv;
+  bool forks[5] = {false, false, false, false, false};
+
+public:
+  void wants_to_eat(
+    int philosopher,
+    function<void()> pick_left_fork,
+    function<void()> pick_right_fork,
+    function<void()> eat,
+    function<void()> put_left_fork,
+    function<void()> put_right_fork
+  ) {
+    int left = philosopher;
+    int right = (philosopher + 1) % 5;
+
+    // Acquire both forks
+    {
+      unique_lock<mutex> lock(mtx);
+      cv.wait(lock, [&]
+        { return !forks[left] && !forks[right]; });
+
+      forks[left] = true;
+      forks[right] = true;
+    }
+
+    // Critical section (outside lock)
+    pick_left_fork();
+    pick_right_fork();
+    eat();
+    put_right_fork();
+    put_left_fork();
+
+    // Release both forks
+    {
+      lock_guard<mutex> lock(mtx);
+      forks[left] = false;
+      forks[right] = false;
+      cv.notify_all(); // Notify all waiting philosophers
+    }
+  }
+};
 ```
 
 ---
