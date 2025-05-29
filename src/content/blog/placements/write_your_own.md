@@ -14,6 +14,9 @@ series:
 
 This is a collection of common C++ classes and templates that we often use, and thus are perfect opportunities for interviewers to quiz on to see if the candidate is comfortable with the language, can write clean code, and is aware about the internals of the language.
 
+<details>
+<summary><b>Table of Contents</b></summary>
+  
 - [Smart Pointers](#smart-pointers)
   - [General Smart Pointer](#general-smart-pointer)
   - [Unique Pointer](#unique-pointer)
@@ -38,6 +41,8 @@ This is a collection of common C++ classes and templates that we often use, and 
   - [Use Ordering](#use-ordering)
   - [Use a Semaphore to Limit Access](#use-a-semaphore-to-limit-access)
   - [Condition Variable to Avoid Starvation](#condition-variable-to-avoid-starvation)
+
+</details>
 
 ---
 
@@ -1237,5 +1242,3 @@ public:
   }
 };
 ```
-
----
