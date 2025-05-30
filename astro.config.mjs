@@ -1,3 +1,4 @@
+import db from "@astrojs/db";
 import netlify from "@astrojs/netlify";
 import preact from "@astrojs/preact";
 import sitemap from "@astrojs/sitemap";
@@ -9,21 +10,25 @@ import { readFileSync } from "node:fs";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 
-import db from "@astrojs/db";
-
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), sitemap(), preact(), astroExpressiveCode({
-    theme: "slack-dark",
-    styleOverrides: {
-      codeFontSize: "0.8rem",
-    },
-    plugins: [pluginLineNumbers()],
-    defaultProps: {
-      showCopyButton: true,
-      showLineNumbers: false,
-    },
-  }), db()],
+  integrations: [
+    tailwind(),
+    sitemap(),
+    preact(),
+    astroExpressiveCode({
+      theme: "slack-dark",
+      styleOverrides: {
+        codeFontSize: "0.8rem",
+      },
+      plugins: [pluginLineNumbers()],
+      defaultProps: {
+        showCopyButton: true,
+        showLineNumbers: false,
+      },
+    }),
+    db(),
+  ],
 
   site: "https://eshaanagg.netlify.app/",
 

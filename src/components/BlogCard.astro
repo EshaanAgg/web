@@ -10,8 +10,16 @@ interface Props {
   draft: boolean;
 }
 
-const { title, description, pubDate, updatedDate, url, readingTime, tags, draft } =
-  Astro.props;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  url,
+  readingTime,
+  tags,
+  draft,
+} = Astro.props;
 
 // Show the updated date if available, otherwise use the publication date
 const fullDate = (updatedDate ?? pubDate).toLocaleDateString("en", {
