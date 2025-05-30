@@ -10,6 +10,15 @@ const Views = defineTable({
   },
 });
 
+const ViewsPerMonth = defineTable({
+  columns: {
+    monthYear: column.text({ primaryKey: true, length: 7 }), // Format: YYYY-MM
+    count: column.number({
+      default: 1,
+    }),
+  },
+});
+
 export default defineDb({
-  tables: { Views },
+  tables: { Views, ViewsPerMonth },
 });
