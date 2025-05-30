@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+ 
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+ 
 
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+ 
 import type { APIRoute } from "astro";
 import { db, Views, sql, eq } from "astro:db";
 

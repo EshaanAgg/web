@@ -12,7 +12,8 @@ const posts = (await getCollection("blog"))
   .filter((blog) => blog.data.hasBlogCard)
   .sort((a, b) => {
     // Prioritize draft blogs
-    if (a.data.draft && !b.data.draft) return -1;
+    if (a.data.draft != b.data.draft)
+      return Number(b.data.draft) - Number(a.data.draft);
 
     // Sort by dates if they have the same pinned status
     if (b.data.pinned == a.data.pinned) {

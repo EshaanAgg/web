@@ -29,6 +29,13 @@ pnpm dev
 
 - The site is fully repsonsive and is shipped with ZERO JavaScript.
 - We use Astro's `content` directory to manage all the blogs in Markdown.
+- Blog support includes:
+  - Tags
+  - Series
+  - Latex support
+  - OG images
+  - Draft blogs
+- Tracking of views per page using [Astro DB](https://docs.astro.build/en/guides/astro-db/).
 
 ## Credits
 
