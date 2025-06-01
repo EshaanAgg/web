@@ -252,3 +252,16 @@ In this code, we have a class hierarchy with virtual functions. Since A & B are 
 3. Why do we need both IP addresses and MAC addresses in networking? Since MAC addresses are unique to each device, why not just use them for routing?
 
 4. If class `A` is a friend of class `B`, and class `C` is a derived class of `B`, then can you access the private members of `A` from `C`? (No)
+
+5. What is the use of the `inline` keyword in C++? What are the advantages and disadvantages of using it?
+
+<details>
+<summary> Answer </summary>
+
+In C++, the `inline` keyword is a request to the compiler to replace a function call with the actual function body at the point of the call. The primary goal of the same is to reduce function call overhead, which includes the time taken to push arguments onto the stack, jump to the function's code, and return. Inline functions are most effective for small functions that are called frequently.
+
+The important fact to note that the `inline` keyword is a request, not a command. The compiler may choose not to inline a function based on various factors, like function size, complexity, or compiler settings. Excessive inlining can increase code size, potentially impacting performance due to increased instruction cache misses. `inline` functions are often defined in header files because the compiler needs the function's definition to perform inlining. Functions defined within a class definition are implicitly inline.
+
+Some functions cannot be inlined, such as recursive functions or functions with loops or switch statements. Since C++17, variables can also be declared inline, mainly to avoid multiple definitions in different translation units.
+
+</details>

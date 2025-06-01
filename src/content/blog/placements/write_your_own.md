@@ -28,6 +28,7 @@ This is a collection of common C++ classes and templates that we often use, and 
   - [Infinite Timestamps in the Past](#infinite-timestamps-in-the-past)
 - [Singleton Design Pattern](#singleton-design-pattern)
 - [Vector](#vector)
+- [Thread Pool Manager](#thread-pool-manager)
 - [Versioned Queue](#versioned-queue)
   - [Requirements](#requirements)
   - [Solution](#solution)
@@ -52,6 +53,7 @@ This is a collection of common C++ classes and templates that we often use, and 
   - [Solution](#solution-1)
 - [Template Metaprogramming](#template-metaprogramming)
   - [GCD](#gcd)
+  - [Array Dimensions](#array-dimensions)
 
 </details>
 
@@ -687,6 +689,123 @@ private:
     delete[] arr;
     arr = newArr;
   }
+};
+```
+
+---
+
+# Thread Pool Manager
+
+Implement a thread pool class that manages a pool of worker threads to execute submitted tasks asynchronously. The thread pool should maintain a fixed number of threads and a task queue to handle incoming tasks.
+
+The implementation should include:
+
+- A constructor that creates a specified number of worker threads
+- A `submit()` function that accepts a callable (function, lambda, etc.) and its arguments, returning a `std::future` for the result
+- Proper cleanup of all threads when the pool is destroyed
+- Support for tasks with different return types
+
+Other key requirements that the implementation should follow:
+
+- Tasks must be executed in the order they are submitted
+- The thread pool must handle exceptions thrown by tasks
+- The implementation should avoid race conditions and deadlocks
+
+```cpp showLineNumbers
+#include <bits/stdc++.h>
+using namespace std;
+
+using Task = function<void()>;
+
+class ThreadPool
+{
+private:
+  vector<thread> workers;
+  queue<Task> tasks;
+
+  mutex mtx;
+  condition_variable cv;
+  bool stop;
+
+public:
+  ThreadPool(size_t numThreads)
+    : stop(false)
+  {
+    for (size_t i = 0; i < numThreads; ++i)
+    {
+      workers.emplace_back([this]() {
+        do {
+          Task task;
+
+          {
+            // Block the thread until a task is available or stop is true
+            unique_lock lk(mtx);
+            cv.wait(lk, [this]() {
+              return stop || !tasks.empty();
+            });
+
+            if (stop && tasks.empty())
+              return;
+
+            // Get a task from the queue
+            task = move(tasks.front());
+            tasks.pop();
+          }
+
+          try {
+            task(); // run the task
+          } catch (const exception &e) {
+            // Exceptions are handled in the future
+            cerr << "Exception in thread: " << e.what() << endl;
+          }
+        } while (true);
+      });
+    }
+  }
+
+  ~ThreadPool()
+  {
+    {
+      unique_lock lk(mtx);
+      stop = true;
+    }
+
+    cv.notify_all();
+
+    // Join all the threads to the main thread
+    // so that the main thread waits for all threads to finish
+    for (thread &worker : workers)
+      if (worker.joinable())
+        worker.join();
+  }
+
+  // Submit a task to the thread pool and get a future
+  template <typename F, typename... Args>
+  auto submit(F &&f, Args &&...args)
+    -> future<invoke_result_t<F, Args...>>
+  {
+    using return_type = invoke_result_t<F, Args...>;
+
+    auto task = make_shared<packaged_task<return_type()>>(
+      bind(forward<F>(f), forward<Args>(args)...));
+
+    future<return_type> res = task->get_future();
+
+    {
+      unique_lock lk(mtx);
+      if (stop)
+        throw runtime_error("submit on stopped ThreadPool");
+      tasks.emplace([task]()
+          { (*task)(); });
+    }
+
+    cv.notify_one(); // Notify one thread that a task is available
+    return res;
+  }
+
+  // Delete the copy constructor and assignment operator
+  ThreadPool(const ThreadPool &) = delete;
+  ThreadPool &operator=(const ThreadPool &) = delete;
 };
 ```
 
@@ -1813,5 +1932,45 @@ int main()
   static_assert(get_gcd<48, 18> == 6, "GCD of 48 and 18 should be 6");
   static_assert(get_gcd<56, 98> == 14, "GCD of 56 and 98 should be 14");
   static_assert(get_gcd<101, 10> == 1, "GCD of 101 and 10 should be 1");
+}
+```
+
+## Array Dimensions
+
+We want to implement a template metafunction that calculates the number of dimensions in an array type at compile time. We also expect the same to work for non-array types and return 0 dimensions.
+
+```cpp showLineNumbers
+// Base case for any type that is not an array
+template <typename T>
+struct ArrayDimensions
+{
+  static constexpr int value = 0;
+};
+
+// Recursive template specialization for array types
+template <typename T, std::size_t N>
+struct ArrayDimensions<T[N]>
+{
+  static constexpr int value = 1 + ArrayDimensions<T>::value; // Add 1 for the current dimension
+};
+
+template <typename T>
+struct ArrayDimensions<T[]>
+{
+  static constexpr int value = 1 + ArrayDimensions<T>::value; // Handle dynamic arrays as well
+};
+
+// Helper type alias to simplify usage
+template <typename T>
+constexpr int get_array_dimensions = ArrayDimensions<T>::value;
+
+int main()
+{
+  static_assert(get_array_dimensions<int> == 0, "int should have 0 dimensions");
+  static_assert(get_array_dimensions<int[5]> == 1, "int[5] should have 1 dimension");
+  static_assert(get_array_dimensions<int[3][4]> == 2, "int[3][4] should have 2 dimensions");
+  static_assert(get_array_dimensions<int[2][3][4]> == 3, "int[2][3][4] should have 3 dimensions");
+  static_assert(get_array_dimensions<int[]> == 1, "int[] should have 1 dimension");
+  static_assert(get_array_dimensions<int[][6][7][8]> == 4, "int[][6][7][8] should have 4 dimensions");
 }
 ```
