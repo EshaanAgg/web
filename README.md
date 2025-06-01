@@ -35,6 +35,7 @@ pnpm dev
   - Latex support
   - OG images
   - Draft blogs
+  - Progress bar for reading
 - Tracking of views per page using [Astro DB](https://docs.astro.build/en/guides/astro-db/).
 
 ## Credits

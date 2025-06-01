@@ -1,0 +1,29 @@
+<div
+  class="fixed top-0 left-0 right-0 z-50 h-3 opacity-70"
+  id="progress-bar-container"
+>
+  <div
+    id="progress-bar"
+    class="bg-teal-400 h-1 mx-auto rounded-full mt-0.5 transition-all duration-300 ease-in-out"
+    style="width: 3%"
+  >
+  </div>
+</div>
+
+<script>
+  const progressBar = document.getElementById("progress-bar");
+
+  const setScrollProgress = () => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight =
+      document.documentElement.scrollHeight -
+      document.documentElement.clientHeight;
+    const rawPercent = (scrollTop / scrollHeight) * 100;
+    const scrollPercent = Math.max(rawPercent, 3); // Ensure at least 3%
+
+    if (progressBar) progressBar.style.width = `${scrollPercent}%`;
+  };
+
+  window.addEventListener("scroll", setScrollProgress);
+  setScrollProgress();
+</script>
