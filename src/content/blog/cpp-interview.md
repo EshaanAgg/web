@@ -2,7 +2,7 @@
 title: "C++ (& Systems) Interview Questions"
 description: Some tricky CPP (and other releated topics) questions that I have seen in interviews.
 pubDate: 2025-05-30
-requireLatex: false
+requireLatex: true
 draft: true
 tags: ["cpp", "2025"]
 ---
@@ -136,6 +136,113 @@ When `B` is constructed, the member `a` is first default-constructed via `A()` â
 
 </details>
 
+## Question 3
+
+What is the output of the following code?
+
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+class A {
+public:
+  A() {
+    cout << "A's constructor\n";
+  }
+
+  ~A() {
+    cout << "A's destructor\n";
+    throw runtime_error("Error in A's destructor");
+  }
+};
+
+int main() {
+  try {
+    A a;
+  } catch (const runtime_error &e) {
+    cout << "Caught exception: " << e.what() << "\n";
+  }
+  return 0;
+}
+```
+
+<br />
+
+<details>
+<summary> Answer </summary>
+
+> Destuctors cannot throw exceptions in C++. Constructors can. If a constructor throws an exception, the destructor will not be called for that object.
+
+```
+Runtime error occurs after printing:
+A's constructor
+A's destructor
+```
+
+Destructors in C++ are not allowed to throw exceptions. If an exception is thrown from a destructor during stack unwinding (i.e., when an exception is already being handled), it leads to `std::terminate` being called, which results in program termination with a runtime error that cannot be caught. Destructor's default to `noexcept` behavior.
+
+</details>
+
+## Question 4
+
+What is the output of the following code?
+
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+class A {
+public:
+  void fun() { cout << "A"; }
+};
+
+class B : public A {
+public:
+  void fun() { cout << "B"; }
+};
+
+class C : public B {
+public:
+  virtual void fun() { cout << "C"; }
+};
+
+class D : public C {
+public:
+  void fun() { cout << "D"; }
+};
+
+int main() {
+  D d;
+
+  A &a = d;
+  a.fun();
+
+  B &b = d;
+  b.fun();
+
+  C &c = d;
+  c.fun();
+
+  d.fun();
+
+  return 0;
+}
+```
+
+<br />
+<details>
+<summary> Answer </summary>
+
+> Using references to upcast is the same concept as using pointers to upcast, and the whole process of creation of the virtual table and `vptr` is the same as well. The only difference is that references are not null, and they cannot be reassigned.
+
+```
+ABDD
+```
+
+In this code, we have a class hierarchy with virtual functions. Since A & B are not virtual, they will call the respective functions in their own class. However, since C is virtual, it will call the overridden function in D.
+
+</details>
+
 ## Descriptive Questions
 
 1. What are virtual functions in C++? Why do we need them? Can static member functions be virtual?
@@ -143,3 +250,5 @@ When `B` is constructed, the member `a` is first default-constructed via `A()` â
 2. What is 3-way handshake in TCP, and why is it necessary?
 
 3. Why do we need both IP addresses and MAC addresses in networking? Since MAC addresses are unique to each device, why not just use them for routing?
+
+4. If class `A` is a friend of class `B`, and class `C` is a derived class of `B`, then can you access the private members of `A` from `C`? (No)

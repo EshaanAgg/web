@@ -2,7 +2,7 @@
 title: "Write Your Own"
 description: Snippets for common implementation of standard library classes & templates that are frequently asked in interviews.
 pubDate: 2024-12-01
-updatedDate: 2025-05-29
+updatedDate: 2025-06-01
 requireLatex: true
 pinned: true
 draft: false
@@ -28,6 +28,9 @@ This is a collection of common C++ classes and templates that we often use, and 
   - [Infinite Timestamps in the Past](#infinite-timestamps-in-the-past)
 - [Singleton Design Pattern](#singleton-design-pattern)
 - [Vector](#vector)
+- [Versioned Queue](#versioned-queue)
+  - [Requirements](#requirements)
+  - [Solution](#solution)
 - [Mutex](#mutex)
 - [Semaphore](#semaphore)
   - [With Condition Variables](#with-condition-variables)
@@ -46,7 +49,9 @@ This is a collection of common C++ classes and templates that we often use, and 
 - [Barbershop Problem](#barbershop-problem)
 - [The Smoking Cigarettes Problem](#the-smoking-cigarettes-problem)
   - [Problem History](#problem-history)
-  - [Solution](#solution)
+  - [Solution](#solution-1)
+- [Template Metaprogramming](#template-metaprogramming)
+  - [GCD](#gcd)
 
 </details>
 
@@ -111,14 +116,11 @@ class UniquePointer
 public:
   UniquePointer(T *ptr = nullptr) : ptr(ptr) {}
 
-  ~UniquePointer()
-  {
-    delete ptr;
-  }
+  ~UniquePointer() { delete ptr; }
 
   // Disable the copy constructor and copy assignment
-  UniquePointer(UniquePointer &other) = delete;
-  UniquePointer &operator=(UniquePointer &other) = delete;
+  UniquePointer(const UniquePointer &other) = delete;
+  UniquePointer &operator=(const UniquePointer &other) = delete;
 
   UniquePointer(UniquePointer &&other)
   {
@@ -157,6 +159,8 @@ int main()
 A `std::shared_ptr` is a smart pointer that retains shared ownership of an object through a pointer. Several `std::shared_ptr` objects may own the same object. The object is destroyed and its memory deallocated when all `std::shared_ptr` objects that own it are destroyed or reset. The `std::shared_ptr` uses a reference count to keep track of the number of `std::shared_ptr` objects that own the object.
 
 ```cpp showLineNumbers
+#include <iostream>
+
 template <typename T>
 class SharedPointer
 {
@@ -165,14 +169,9 @@ class SharedPointer
 
   void _clean()
   {
-    // If the SharedPointer was moved, then both
-    // ptr and refCount will be nullptr.
     if (refCount == nullptr)
       return;
 
-    // Decrease the reference count. If the same reaches
-    // to zero, then there are no more observers of the
-    // object, so we can delete it.
     if (--(*refCount) == 0)
     {
       delete ptr;
@@ -183,41 +182,43 @@ class SharedPointer
 public:
   SharedPointer(T *p = nullptr) : ptr(p)
   {
-    refCount = new int(1);
+    if (p == nullptr)
+      refCount = nullptr;
+    else
+      // Initialize reference count to 1 if pointer is not null
+      refCount = new int(1);
   }
 
   ~SharedPointer() { _clean(); }
 
   // Copy constructor
-  SharedPointer(SharedPointer &other)
+  SharedPointer(const SharedPointer &other)
   {
     ptr = other.ptr;
     refCount = other.refCount;
-    ++(*refCount);
+    if (refCount)
+      ++(*refCount);
   }
 
   // Copy assignment operator
-  SharedPointer &operator=(SharedPointer &other)
+  SharedPointer &operator=(const SharedPointer &other)
   {
-    // Check for self-assignment
     if (this == &other)
       return *this;
 
-    // Release the current resources
     _clean();
 
-    // Copy the resources from the other SharedPointer
-    // and increase the reference count
     ptr = other.ptr;
     refCount = other.refCount;
-    ++(*refCount);
+    if (refCount)
+      ++(*refCount);
+
+    return *this;
   }
 
-  // Move operator
-  SharedPointer(SharedPointer &&other)
+  // Move constructor
+  SharedPointer(SharedPointer &&other) noexcept
   {
-    // Get the resources from the other SharedPointer
-    // and set it's resources to nullptr
     ptr = other.ptr;
     refCount = other.refCount;
 
@@ -226,26 +227,30 @@ public:
   }
 
   // Move assignment operator
-  SharedPointer &operator=(SharedPointer &&other)
+  SharedPointer &operator=(SharedPointer &&other) noexcept
   {
-    // Release current resources
+    if (this == &other)
+      return *this;
+
     _clean();
 
-    // Get the resources from the other SharedPointer
-    // and set it's resources to nullptr
     ptr = other.ptr;
     refCount = other.refCount;
 
     other.ptr = nullptr;
     other.refCount = nullptr;
+
+    return *this;
   }
 
-  // Overloading operators
-  T &operator*() { return *ptr; }
-  T *operator->() { return ptr; }
+  // Dereference operators
+  T &operator*() const { return *ptr; }
+  T *operator->() const { return ptr; }
 
-  int use_count() { return *refCount; }
+  int use_count() const { return refCount ? *refCount : 0; }
+  T *get() const { return ptr; }
 };
+
 
 int main()
 {
@@ -585,7 +590,7 @@ For our implementation, we set the capacity of the vector to be powers of 2, so 
 Note that in the following implementation, we have used `std:::move` to move the elements of the vector so that we can avoid copying the elements. To also provide support for `emplace_back`, we have used the `Args &&...args` to forward the arguments to the constructor of the object, and thus the template class needs an additional template parameter parameter `Args` which is vardiadic.
 
 ```cpp showLineNumbers
-template <typename T, typename... Args>
+template <typename T>
 class Vector
 {
 public:
@@ -605,6 +610,7 @@ public:
     delete[] arr;
   }
 
+  template <typename... Args>
   void emplace_back(Args &&...args)
   {
     push_back(T(std::forward<Args>(args)...));
@@ -682,6 +688,124 @@ private:
     arr = newArr;
   }
 };
+```
+
+---
+
+# Versioned Queue
+
+## Requirements
+
+You have to design a data stucture that supports the basic queue operations of `enqueue` and `deque`. In addition to the same, whenever one of these operations is called, the version that is associated with the data structure is also incremented by $1$ automatically. The `history` operation of the queue accepts an integer `version` and prints all the elements that were present in the queue at that version.
+
+The data structure should be designed so that the total memory used by the data structure is $O(n)$, where $n$ is the total number of `enqueue` and `dequeue` operations that have been performed on the queue. The `history` operation should run in $O(n)$ time, where $n$ is the number of elements in the queue at that version.
+
+## Solution
+
+We will make use of a linked list to store the elements of the queue. We will also maintain an vector called `versionHistory`, which would contain the starting and the tail nodes of the queue (underlying linked list) at each version. The `enqueue` and `dequeue` operations will manage the current queue nodes approprately.
+
+```cpp showLineNumbers
+#include <iostream>
+#include <vector>
+using namespace std;
+
+template <typename T>
+class Queue;
+
+template <typename T>
+class Node
+{
+  T data;
+  Node *next;
+  friend class Queue<T>;
+
+public:
+  Node(T val, Node *next = nullptr) : data(val), next(next) {}
+};
+
+template <typename T>
+class Queue
+{
+  Node<T> *head; // The starting node of the queue (head)
+  Node<T> *tail; // The ending node of the queue (exclusive)
+  int curVersion;
+  vector<pair<Node<T> *, Node<T> *>> versionHistory;
+
+public:
+  Queue() : head(nullptr), tail(nullptr), curVersion(0) {}
+
+  void enqueue(T val)
+  {
+    Node<T> *newNode = new Node<T>(val);
+    curVersion++;
+
+    if (!head)
+    {
+      // Initialize the queue with the current node
+      head = newNode;
+      tail = nullptr;
+    }
+    else
+    {
+      // Add the element as the head of the queue
+      newNode->next = head;
+      head = newNode;
+    }
+
+    versionHistory.push_back({head, tail});
+  }
+
+  T dequeue()
+  {
+    if (head == nullptr)
+      throw runtime_error("Queue is empty");
+
+    T data = head->data;
+
+    curVersion++;
+    head = head->next;
+    versionHistory.push_back({head, tail});
+
+    return data;
+  }
+
+  int getCurrentVersion() { return curVersion; }
+
+  void printHistory(int version)
+  {
+    if (version <= 0 || version > curVersion)
+      throw runtime_error("Invalid version number");
+
+    cout << "Version " << version << ": ";
+    auto [headNode, tailNode] = versionHistory[version - 1];
+    while (headNode != tailNode)
+    {
+      cout << headNode->data << " ";
+      headNode = headNode->next;
+    }
+    cout << "\n";
+  }
+};
+
+int main()
+{
+  Queue<int> q;
+  q.enqueue(1);
+  q.enqueue(2);
+  q.enqueue(3);
+  q.enqueue(4);
+  q.printHistory(3);
+  q.printHistory(4);
+  int x = q.dequeue();
+  cout << "Dequeued: " << x << endl;
+  x = q.dequeue();
+  cout << "Dequeued: " << x << endl;
+  q.printHistory(5);
+  q.printHistory(6);
+  q.enqueue(5);
+  q.enqueue(6);
+  q.printHistory(8);
+}
 ```
 
 ---
@@ -1649,3 +1773,45 @@ int main()
 ```
 
 </details>
+
+# Template Metaprogramming
+
+Template metaprogramming is a powerful feature in C++ that allows you to perform computations at compile time using templates. It can be used to create generic algorithms, type traits, and even complex data structures that are resolved during compilation rather than at runtime.
+
+Both `const` and `constexpr` are both used to declare constants in C++, but they differ in when and how their values are determined:
+
+- `const` specifies that a variable's value is constant and cannot be modified after initialization. The initialization of a const variable can be deferred until runtime. The compiler may choose to initialize it at compile-time as an optimization, but it is not required.
+- `constexpr` guarantees that a variable's value or a function's result can be evaluated at compile time. Since it must be initialized with a constant expression, and any implicit conversions must also be constant expressions.
+
+Using `constexpr` along with template metaprogramming allows you to create compile-time constants and perform computations that can be evaluated during compilation, leading to more efficient code.
+
+## GCD
+
+The greatest common divisor (GCD) of two numbers can be computed at compile time using template metaprogramming. The Euclidean algorithm is a classic method for computing the GCD, and we can implement it using recursive templates.
+
+```cpp showLineNumbers
+// General template for GCD
+template <int A, int B>
+struct GCD // If both the templates need to be passed as is, then no need to declare here
+{
+  static constexpr int value = GCD<B, A % B>::value;
+};
+
+// Partial template specialization for the case when B is 0
+template <int A>
+struct GCD<A, 0>
+{
+  static constexpr int value = A;
+};
+
+// Helper type alias to simplify usage
+template <int A, int B>
+constexpr get_gcd = GCD<A, B>::value;
+
+int main()
+{
+  static_assert(get_gcd<48, 18> == 6, "GCD of 48 and 18 should be 6");
+  static_assert(get_gcd<56, 98> == 14, "GCD of 56 and 98 should be 14");
+  static_assert(get_gcd<101, 10> == 1, "GCD of 101 and 10 should be 1");
+}
+```
