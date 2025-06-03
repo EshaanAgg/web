@@ -265,3 +265,16 @@ The important fact to note that the `inline` keyword is a request, not a command
 Some functions cannot be inlined, such as recursive functions or functions with loops or switch statements. Since C++17, variables can also be declared inline, mainly to avoid multiple definitions in different translation units.
 
 </details>
+
+6. Is `malloc` a system call?
+
+<details>
+<summary> Answer </summary>
+
+`malloc` is not a system call; it is a library function provided by the C standard library (or C++ standard library) `libc`. It allocates memory from the heap and returns a pointer to the allocated memory block. The actual memory allocation is typically done using system calls like `brk` or `mmap`, which are lower-level functions that interact directly with the operating system to manage memory.
+
+When you call `malloc`, it may internally use these system calls to request memory from the operating system, but `malloc` itself is not a system call. It is a higher-level abstraction that simplifies memory management for programmers.
+
+Examples of system calls include `read`, `write`, `open`, `close`, `fork`, and `exec`. These system calls provide a direct interface to the operating system's kernel, allowing programs to perform operations like file I/O, process management, and inter-process communication.
+
+</details>

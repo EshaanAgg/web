@@ -54,6 +54,7 @@ This is a collection of common C++ classes and templates that we often use, and 
 - [Template Metaprogramming](#template-metaprogramming)
   - [GCD](#gcd)
   - [Array Dimensions](#array-dimensions)
+  - [Remove Adjacent Duplicates](#remove-adjacent-duplicates)
 
 </details>
 
@@ -1893,6 +1894,8 @@ int main()
 
 </details>
 
+<br />
+
 # Template Metaprogramming
 
 Template metaprogramming is a powerful feature in C++ that allows you to perform computations at compile time using templates. It can be used to create generic algorithms, type traits, and even complex data structures that are resolved during compilation rather than at runtime.
@@ -1974,3 +1977,152 @@ int main()
   static_assert(get_array_dimensions<int[][6][7][8]> == 4, "int[][6][7][8] should have 4 dimensions");
 }
 ```
+
+## Remove Adjacent Duplicates
+
+We want to implement a template metafunction that removes adjacent duplicates from a list of integers at compile time. For example, given the list `1, 2, 2, 3, 3, 3, 4`, the result should be `1, 2, 3, 4`. We would make use of the `Vector` type defined below to represent the list of integers.
+
+```cpp showLineNumbers
+// A simple type representing a vector of integers at compile-time
+// Used as a container for list of integers
+template <int... Ints>
+struct Vector;
+
+// Prepend is a metafunction that adds a new element to the front
+// of an Vector at compile-time.
+// Base Definition: Prepend takes an integer NewElement and another type Vec,
+// which is expected to be a Vector.
+template <int NewElement, typename Vec>
+struct Prepend;
+
+// Specialization of Prepend: adds NewElement at the front of Vector<Existing...>
+template <int NewElement, int... Existing>
+struct Prepend<NewElement, Vector<Existing...>>
+{
+  using type = Vector<NewElement, Existing...>;
+};
+
+// Primary template for RemoveAdjacentDuplicates
+// Accepts a variable-length list of integers
+template <int... Ints>
+struct RemoveAdjacentDuplicates;
+
+// === Base Cases ===
+// For the base cases, we do not need to use the "typename" keyword
+// because we are not using recursive templates here.
+
+// Empty Vector
+template <>
+struct RemoveAdjacentDuplicates<>
+{
+  using type = Vector<>;
+};
+
+// Single Element Vector
+template <int Only>
+struct RemoveAdjacentDuplicates<Only>
+{
+  using type = Vector<Only>;
+};
+
+// === Recursive Cases ===
+// For these cases, we will use recursion to process the elements.
+// We would need to use the "typename" keyword to refer
+// to types defined in the template.
+
+// First element is the same as the second
+template <int First, int... Rest>
+struct RemoveAdjacentDuplicates<First, First, Rest...>
+{
+  using type = typename RemoveAdjacentDuplicates<First, Rest...>::type;
+};
+
+// First two elements are different
+template <int First, int Second, int... Rest>
+struct RemoveAdjacentDuplicates<First, Second, Rest...>
+{
+private:
+  using TailResult = typename RemoveAdjacentDuplicates<Second, Rest...>::type;
+
+public:
+  using type = typename Prepend<First, TailResult>::type;
+};
+```
+
+<br />
+
+<details>
+<summary> Testing your metafunction </summary>
+
+If you want to test your implementation, you can paste your implementation before the following test runner code and check if it works as expected. Please make sure that the classes `Vector` and `RemoveAdjacentDuplicates` are defined with the same signature as shown above.
+
+```cpp showLineNumbers
+// Helper alias for easier usage around the RemoveAdjacentDuplicates template
+template <int... Ints>
+using RemoveAdjacentDuplicates_t = typename RemoveAdjacentDuplicates<Ints...>::type;
+
+// Base definition for a type trait to compare two Vector types
+// We expect both A and B to be Vector types.
+template <typename A, typename B>
+struct AreVectorSame;
+
+template <>
+struct AreVectorSame<Vector<>, Vector<>>
+{
+  static constexpr bool areSame = true;
+};
+
+template <int... Ints>
+struct AreVectorSame<Vector<>, Vector<Ints...>>
+{
+  static constexpr bool areSame = false;
+};
+
+template <int... Ints>
+struct AreVectorSame<Vector<Ints...>, Vector<>>
+{
+  static constexpr bool areSame = false;
+};
+
+template <int A, int B, int... Ints1, int... Ints2>
+struct AreVectorSame<Vector<A, Ints1...>, Vector<B, Ints2...>>
+{
+  static constexpr bool areSame = false;
+};
+
+template <int A, int... Ints1, int... Ints2>
+struct AreVectorSame<Vector<A, Ints1...>, Vector<A, Ints2...>>
+{
+  static constexpr bool areSame = AreVectorSame<Vector<Ints1...>, Vector<Ints2...>>::areSame;
+};
+
+// Test cases
+int main()
+{
+  using R1 = RemoveAdjacentDuplicates_t<1, 1, 2, 3, 3, 4, 4, 5>;
+  using E1 = Vector<1, 2, 3, 4, 5>;
+  static_assert(AreVectorSame<R1, E1>::areSame, "Test 1 failed");
+
+  using R2 = RemoveAdjacentDuplicates_t<1, 2, 3, 4, 5>;
+  using E2 = Vector<1, 2, 3, 4, 5>;
+  static_assert(AreVectorSame<R2, E2>::areSame, "Test 2 failed");
+
+  using R3 = RemoveAdjacentDuplicates_t<1, 1, 1, 1, 1>;
+  using E3 = Vector<1>;
+  static_assert(AreVectorSame<R3, E3>::areSame, "Test 3 failed");
+
+  using R4 = RemoveAdjacentDuplicates_t<>;
+  using E4 = Vector<>;
+  static_assert(AreVectorSame<R4, E4>::areSame, "Test 4 failed");
+
+  using R5 = RemoveAdjacentDuplicates_t<1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 8>;
+  using E5 = Vector<1, 2, 3, 4, 5, 6, 7, 8>;
+  static_assert(AreVectorSame<R5, E5>::areSame, "Test 5 failed");
+}
+```
+
+> If you carefully look at the implementation of `AreVectorSame`, you will notice that we default to all types being different. Thus to shorten the implementation, we can actually remove all the cases (base & recursive) where the output is `false`, and only keep the cases where the output is `true`! Pretty neat, right?
+
+</details>
+
+---
