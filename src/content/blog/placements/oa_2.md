@@ -466,7 +466,7 @@ This is the second part of the series on online assessments that I witnessed dur
 
     </details>
 
-8. You are given a string $s$ whose length can be more than $10^9$. You are given an array $arr$ and a string $p$ showing the count of the characters (for example, if $arr = [1, 2]$ and $p$ is `ab`, then the string $s$ is `abb`). Count the number of sequences modulo $10^9 + 7$ such that every subsequence contains all the vowels atleast once.
+8. You are given a string $s$ whose length can be more than $10^9$. You are given an array $arr$ and a string $p$ showing the count of the characters (for example, if $arr = [1, 2]$ and $p$ is `ab`, then the string $s$ is `abb`). Count the number of sequences modulo $10^9 + 7$ such that every sequence contains all the vowels atleast once.
 
    Constraints:
 
@@ -476,7 +476,7 @@ This is the second part of the series on online assessments that I witnessed dur
     <details>
     <summary>Solution</summary>
 
-   We will make use of DP to solve this problem. We will maintain $idx$ as the current index in the compressed string that we are processing, and a $mask$ to represent the vowels that have occured atleast once in the current subsequence upto the index $idx$. The time complexity of the solution is $O(n \cdot 2^5 \cdot \log max(arr[i]))$. The extra factor of $\log max(arr[i])$ comes from the fact that we are using the binary exponentiation to calculate the powers of $2$, which can be removed with the help of precomputation.
+   We will make use of DP to solve this problem. We will maintain $idx$ as the current index in the compressed string that we are processing, and a $mask$ to represent the vowels that have occured atleast once in the current sequence upto the index $idx$. The time complexity of the solution is $O(n \cdot 2^5 \cdot \log max(arr[i]))$. The extra factor of $\log max(arr[i])$ comes from the fact that we are using the binary exponentiation to calculate the powers of $2$, which can be removed with the help of precomputation.
 
    ```cpp showLineNumbers
    long long mod = 1e9 + 7;

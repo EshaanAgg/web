@@ -2,7 +2,7 @@
 title: "Write Your Own"
 description: Snippets for common implementation of standard library classes & templates that are frequently asked in interviews.
 pubDate: 2024-12-01
-updatedDate: 2025-06-01
+updatedDate: 2025-06-04
 requireLatex: true
 pinned: true
 draft: false
@@ -77,7 +77,7 @@ class AutoPtr {
     }
 
     // Copy constructor [Moves the pointer to self]
-    AutoPtr(AutoPtr &other) {
+    AutoPtr(const AutoPtr &other) {
       ptr = other.ptr;
       other.ptr = nullptr;
     }
@@ -90,6 +90,7 @@ class AutoPtr {
       delete ptr; // Free any existing resource
       ptr = other.ptr;
       other.ptr = nullptr;
+      return *this;
     }
 
     // Overloading the operators for convinience
@@ -118,7 +119,6 @@ class UniquePointer
 
 public:
   UniquePointer(T *ptr = nullptr) : ptr(ptr) {}
-
   ~UniquePointer() { delete ptr; }
 
   // Disable the copy constructor and copy assignment
@@ -185,10 +185,11 @@ class SharedPointer
 public:
   SharedPointer(T *p = nullptr) : ptr(p)
   {
+    // Initialize reference count to 1 if the pointer is not null
+    // else set it to nullptr as well
     if (p == nullptr)
       refCount = nullptr;
     else
-      // Initialize reference count to 1 if pointer is not null
       refCount = new int(1);
   }
 
@@ -209,7 +210,7 @@ public:
     if (this == &other)
       return *this;
 
-    _clean();
+    _clean(); // Release current resources
 
     ptr = other.ptr;
     refCount = other.refCount;
@@ -220,7 +221,7 @@ public:
   }
 
   // Move constructor
-  SharedPointer(SharedPointer &&other) noexcept
+  SharedPointer(SharedPointer &&other)
   {
     ptr = other.ptr;
     refCount = other.refCount;
@@ -230,7 +231,7 @@ public:
   }
 
   // Move assignment operator
-  SharedPointer &operator=(SharedPointer &&other) noexcept
+  SharedPointer &operator=(SharedPointer &&other)
   {
     if (this == &other)
       return *this;
@@ -527,12 +528,12 @@ public:
 
   int get()
   {
-      return state;
+    return state;
   }
 
   int incr()
   {
-      return ++state;
+    return ++state;
   }
 };
 
@@ -590,7 +591,7 @@ The `std::vector` is a dynamic array that can grow and shrink in size. It is a s
 
 For our implementation, we set the capacity of the vector to be powers of 2, so that the reallocation is done less frequently (though other exponential growth factors can be used as well). We will make use of templates to make the vector generic, and try to provide the same interface as the `std::vector`. We will also provide the `operator[]` to access the elements of the vector, and implement iterators to traverse the vector.
 
-Note that in the following implementation, we have used `std:::move` to move the elements of the vector so that we can avoid copying the elements. To also provide support for `emplace_back`, we have used the `Args &&...args` to forward the arguments to the constructor of the object, and thus the template class needs an additional template parameter parameter `Args` which is vardiadic.
+Note that in the following implementation, we have used `std:::move` to move the elements of the vector so that we can avoid copying the elements. To also provide support for `emplace_back`, we have used the `Args &&...args` to forward the arguments to the constructor of the object.
 
 ```cpp showLineNumbers
 template <typename T>
@@ -683,7 +684,7 @@ private:
 
   void _shrink()
   {
-    capacity /= 2;
+    capacity = max(1, capacity / 2);
     T *newArr = new T[capacity];
     for (int i = 0; i < size; i++)
         newArr[i] = move(arr[i]);
@@ -936,8 +937,8 @@ A mutex (short for mutual exclusion) is a synchronization primitive that provide
 
 The two core operations are:
 
-- `lock()` — Attempts to acquire the lock by atomically setting the internal state to "locked" (`1`).
-- `unlock()` — Sets the internal state to "unlocked" (`0`), allowing another thread to acquire it.
+- `lock()` — Attempts to acquire the lock by atomically setting the internal state to "locked" ($1$).
+- `unlock()` — Sets the internal state to "unlocked" ($0$), allowing another thread to acquire it.
 
 This implementation uses `std::atomic` and avoids the need for condition variables or kernel-level blocking but can be inefficient under contention due to busy-waiting.
 
@@ -1367,7 +1368,7 @@ public:
 
 The Dining Philosophers Problem is a classic concurrency problem that illustrates the challenges of resource allocation among multiple competing threads (philosophers).
 
-- Five philosophers sit around a table.
+- $5$ philosophers sit around a table.
 - Each has a plate of food and needs two forks to eat: the fork on the left and the one on the right.
 - Forks are shared between adjacent philosophers (i.e., philosopher $i$ shares fork $i$ with $i+1$, modulo $5$).
 
@@ -1458,7 +1459,7 @@ public:
 
 ## Use a Semaphore to Limit Access
 
-Use a semaphore to allow at most 4 philosophers to try to pick up forks at once.
+Use a semaphore to allow at most $4$ philosophers to try to pick up forks at once.
 
 ```cpp showLineNumbers
 class DiningPhilosophersSemaphore
@@ -1914,7 +1915,9 @@ The greatest common divisor (GCD) of two numbers can be computed at compile time
 ```cpp showLineNumbers
 // General template for GCD
 template <int A, int B>
-struct GCD // If both the templates need to be passed as is, then no need to declare here
+// If both the templates need to be passed as is,
+// then no need to declare again with the struct
+struct GCD
 {
   static constexpr int value = GCD<B, A % B>::value;
 };
@@ -1954,13 +1957,15 @@ struct ArrayDimensions
 template <typename T, std::size_t N>
 struct ArrayDimensions<T[N]>
 {
-  static constexpr int value = 1 + ArrayDimensions<T>::value; // Add 1 for the current dimension
+  // Add 1 for the current dimension
+  static constexpr int value = 1 + ArrayDimensions<T>::value;
 };
 
+// Handle dynamic arrays as well
 template <typename T>
 struct ArrayDimensions<T[]>
 {
-  static constexpr int value = 1 + ArrayDimensions<T>::value; // Handle dynamic arrays as well
+  static constexpr int value = 1 + ArrayDimensions<T>::value;
 };
 
 // Helper type alias to simplify usage
@@ -1969,12 +1974,12 @@ constexpr int get_array_dimensions = ArrayDimensions<T>::value;
 
 int main()
 {
-  static_assert(get_array_dimensions<int> == 0, "int should have 0 dimensions");
-  static_assert(get_array_dimensions<int[5]> == 1, "int[5] should have 1 dimension");
-  static_assert(get_array_dimensions<int[3][4]> == 2, "int[3][4] should have 2 dimensions");
-  static_assert(get_array_dimensions<int[2][3][4]> == 3, "int[2][3][4] should have 3 dimensions");
-  static_assert(get_array_dimensions<int[]> == 1, "int[] should have 1 dimension");
-  static_assert(get_array_dimensions<int[][6][7][8]> == 4, "int[][6][7][8] should have 4 dimensions");
+  static_assert(get_array_dimensions<int> == 0, "int -> 0");
+  static_assert(get_array_dimensions<int[5]> == 1, "int[5] -> 1");
+  static_assert(get_array_dimensions<int[3][4]> == 2, "int[3][4] -> 2");
+  static_assert(get_array_dimensions<int[2][3][4]> == 3, "int[2][3][4] -> 3");
+  static_assert(get_array_dimensions<int[]> == 1, "int[] -> 1");
+  static_assert(get_array_dimensions<int[][6][7][8]> == 4, "int[][6][7][8] -> 4");
 }
 ```
 
@@ -2093,7 +2098,10 @@ struct AreVectorSame<Vector<A, Ints1...>, Vector<B, Ints2...>>
 template <int A, int... Ints1, int... Ints2>
 struct AreVectorSame<Vector<A, Ints1...>, Vector<A, Ints2...>>
 {
-  static constexpr bool areSame = AreVectorSame<Vector<Ints1...>, Vector<Ints2...>>::areSame;
+  static constexpr bool areSame = AreVectorSame<
+    Vector<Ints1...>,
+    Vector<Ints2...>
+  >::areSame;
 };
 
 // Test cases
@@ -2121,7 +2129,7 @@ int main()
 }
 ```
 
-> If you carefully look at the implementation of `AreVectorSame`, you will notice that we default to all types being different. Thus to shorten the implementation, we can actually remove all the cases (base & recursive) where the output is `false`, and only keep the cases where the output is `true`! Pretty neat, right?
+PS. If you carefully look at the implementation of `AreVectorSame`, you will notice that we default to all types being different. Thus to shorten the implementation, we can actually remove all the cases (base & recursive) where the output is `false`, and only keep the cases where the output is `true`! Pretty neat, right?
 
 </details>
 
