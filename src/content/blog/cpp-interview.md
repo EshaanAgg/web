@@ -2,7 +2,10 @@
 title: "C++ (& Systems) Interview Questions"
 description: Some tricky CPP (and other releated topics) questions that I have seen in interviews.
 pubDate: 2025-06-04
+updatedDate: 2025-06-05
 requireLatex: true
+draft: false
+pinned: true
 tags: ["cpp", "2025"]
 ---
 
@@ -18,6 +21,9 @@ In addition to these questions, I have been also asked multiple times to impleme
 - [Question 3](#question-3)
 - [Question 4](#question-4)
 - [Question 5](#question-5)
+- [Question 6](#question-6)
+- [Question 7](#question-7)
+- [Question 8](#question-8)
 - [Descriptive Questions](#descriptive-questions)
 
 </details>
@@ -298,6 +304,161 @@ In the `main` function:
 
 </details>
 
+## Question 6
+
+What is the output of the following code?
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  char *str = "Welcome to C++";
+  double *p = (double *)str;
+  p++;
+  cout << (char *)p << "\n";
+  return 0;
+}
+```
+
+<br />
+
+<details>
+<summary> Answer </summary>
+
+```
+to C++
+```
+
+This code demonstrates pointer arithmetic and type casting in C++. Here's a breakdown of what happens:
+
+1. `char *str = "Welcome to C++";` initializes a pointer `str` to a string literal. The pinter `str` points to the first character of the string "Welcome to C++".
+2. `double *p = (double *)str;` casts the `char *` pointer to a `double *`. This is a dangerous operation because it treats the memory address of the string as if it were pointing to a `double`, which typically has a size of 8 bytes on most systems.
+3. `p++;` increments the pointer `p` by the size of a `double`, which is usually 8 bytes. This means `p` now points to the memory address that is 8 bytes ahead of the original string's starting address, and thus it points to the character 't' in the string "Welcome to C++".
+4. `cout << (char *)p << "\n";` casts `p` back to a `char *` and prints the string starting from the new address. Since `p` now points to the character 't', it prints "to C++".
+
+</details>
+
+## Question 7
+
+Identify the bug in the following code, and give the minimal and the best way to fix it.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+class A {
+public:
+  int n;
+  int *arr;
+
+  A(): n(0), arr(nullptr) {}
+  A(int n): n(n), arr(new int[n]) {}
+};
+
+class B {
+public:
+  A a;
+
+  B() {}
+  B(int n): a(n) {}
+}
+
+int main() {
+  B b(10);
+  b.a.arr[0] = 1;
+
+  B b2 = b;
+  b.a.arr[1] = 2;
+
+  cout << b2.arr[0] << " " << b2.arr[1] << "\n";
+}
+```
+
+## Question 8
+
+There is a module `M` which needs to be provided with UDP packet data in an efficient and in order manner. The UDP packets are sequenced $1$, $2$, $3$ and so on. Since the data in from a UDP stream, it is possible that some of the packets are dropped in the transimission. You are required to implement a wrapper `W` around the module `M`, which can manage these drops and provide a reliable and in-order service to `M`.
+
+To recover the dropped packets, you can contact the main exchange to request a snapshot of the last recorded data it has. This exchange takes over a line that is seperate from the UDP connection. The exchange responds with a packet, which has a last packet number field called $S$, and the data of all the packets from $1$ to $S$ sequence number in a compressed manner. The exchange updates the snapshot approximately every $30$ seconds, and increments the sequence number $S$ according.
+
+The module `M` has two methods:
+
+- `process(packet)` - which processes a packet with the given sequence number.
+- `handleSnapshot(snapshot)` - which handles the snapshot data and processes all the packets from $1$ to $S$
+
+The exchange has a method:
+
+- `getSnapshot()` - which returns the latest snapshot data.
+
+You need to design the wrapper `W` around the module `M` (give the pseudo-code), which can handle the UDP packets and the snapshots efficiently. Processing the snapshot is an expensive operation, so it should be done only when necessary. You can assume that the wrapper `W` can repeatedly poll the attached network interface to check for new UDP packets, and can also poll the exchange for the latest snapshot data.
+
+<details>
+<summary> Answer </summary>
+
+```cpp
+class Wrapper {
+  map<int, Packet> packets; // Store received packets that were not sent yet
+  int maxSeenSequence = 0;  // Track the highest sequence number seen
+  int expectedPacket = 1;   // Track the next expected packet sequence number
+
+  Module m;
+  Exchange exchange;
+
+  void run() {
+    // Start the recovery process in a new thread
+    thread recoveryThread(&Wrapper::recovery, this);
+
+    while (true) {
+      Packet packet = pollForUDPPacket();
+
+      // Process the packet immediately if it's the expected one
+      if (packet.seq == expectedPacket) {
+        m.process(packet);
+        expectedPacket++;
+        processBufferedPackets(); // Process any buffered packets that are now in order
+      } else if (packet.seq > expectedPacket) {
+        // Buffer the packet for later processing
+        packets[packet.seq] = packet;
+        maxSeenSequence = max(maxSeenSequence, packet.seq);
+      }
+    }
+  }
+
+  void processBufferedPackets() {
+    while (packets.find(expectedPacket) != packets.end()) {
+      Packet nextPacket = packets[expectedPacket];
+      m.process(nextPacket);
+      packets.erase(expectedPacket);
+      expectedPacket++;
+    }
+  }
+
+  void recovery() {
+    do {
+      if (shouldRequestSnapshot()) {
+        Snapshot snapshot = exchange.getSnapshot();
+        if (snapshot.lastSeq > maxSeenSequence) {
+          // Update expectedPacket to the next sequence number after the snapshot
+          m.handleSnapshot(snapshot);
+          expectedPacket = snapshot.lastSeq + 1;
+          processBufferedPackets();
+        }
+      }
+    } while (true);
+  }
+
+  bool shouldRequestSnapshot() {
+    // Implement a sort of exponential backoff
+    // or fixed interval to request snapshots checking if the snapshot
+    // was different from the last one
+  }
+};
+```
+
+The code above implements a wrapper `W` around the module `M` that handles UDP packets and snapshots efficiently. The wrapper uses a map to buffer packets that arrive out of order, and it processes them in sequence as they become available. The recovery thread periodically checks for new snapshots from the exchange and processes a snapshot only when the snapshot contains the data for all the dropped packets till now. There would be a need for synchronization mechanisms (like mutexes) to ensure thread safety between the main thread and the recovery thread, especially when accessing shared data like `packets` and `expectedPacket`.
+
+</details>
+
 ## Descriptive Questions
 
 1. What are virtual functions in C++? Why do we need them? Can static member functions be virtual?
@@ -374,6 +535,7 @@ In the `main` function:
    void process(const int &x) {
      std::cout << "Const reference: " << x << "\n";
    }
+
    int main() {
      int a = 10;
      const int b = 20;

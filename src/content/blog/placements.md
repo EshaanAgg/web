@@ -5,7 +5,6 @@ pubDate: 2024-12-01
 updatedDate: 2024-12-01
 draft: false
 tags: ["placements", "2024"]
-pinned: true
 series:
   name: "placements"
   part: 1

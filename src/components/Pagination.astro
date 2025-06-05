@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { blogDateSort } from "src/utils/blogs";
 
 interface Props {
   slug: string;
@@ -9,19 +10,22 @@ const { slug } = Astro.props;
 
 const posts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
-  .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+  .sort(blogDateSort);
 
 const index = posts.findIndex((post) => post.slug === slug);
+if (index === -1 || !posts[index])
+  throw new Error(`Post with slug "${slug}" not found in the blog collection.`);
 
-let nextPost = posts[index + 1],
-  prevPost = posts[index - 1];
+let nextPost = index < posts.length - 1 ? posts[index + 1] : null;
+let prevPost = index > 0 ? posts[index - 1] : null;
 
-const postData = posts[index]?.data;
+const postData = posts[index].data;
 
 // If the current post is part of series, update the next and previous post
-if (postData?.series) {
+if (postData.series) {
+  const seriesName = postData.series.name;
   const seriesPosts = posts
-    .filter((post) => post.data.series?.name === postData.series?.name)
+    .filter((post) => post.data.series?.name === seriesName)
     .sort((a, b) => (a.data.series?.part ?? 0) - (b.data.series?.part ?? 0));
 
   const seriesIndex = seriesPosts.findIndex((post) => post.slug === slug);

@@ -4,27 +4,14 @@ import { getCollection } from "astro:content";
 import Header from "@components/Header.astro";
 import AppLayout from "@layouts/AppLayout.astro";
 import BlogCard from "@components/blog/BlogCard.astro";
+import { blogSort } from "src/utils/blogs";
 
 const inDevMode = import.meta.env.MODE === "development";
 
 const posts = (await getCollection("blog"))
   .filter((blog) => inDevMode || !blog.data.draft)
   .filter((blog) => blog.data.hasBlogCard)
-  .sort((a, b) => {
-    // Prioritize draft blogs
-    if (a.data.draft != b.data.draft)
-      return Number(b.data.draft) - Number(a.data.draft);
-
-    // Sort by dates if they have the same pinned status
-    if (b.data.pinned == a.data.pinned) {
-      const aDate = a.data.updatedDate ?? a.data.pubDate; // Use updatedDate if available, else pubDate
-      const bDate = b.data.updatedDate ?? b.data.pubDate;
-      return bDate.valueOf() - aDate.valueOf();
-    }
-
-    // Prioritize pinned blogs
-    return Number(b.data.pinned) - Number(a.data.pinned);
-  });
+  .sort(blogSort);
 
 const title = "Blog | Eshaan Aggarwal";
 const description =

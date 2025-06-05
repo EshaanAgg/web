@@ -7,7 +7,6 @@ tags: ["TypeScript", "2024"]
 hero: "./images/aots24.png"
 heroAlt: "Christmas background with caption 'Learn TS with Advent of TypeScript'"
 draft: false
-pinned: true
 external:
   link: https://blogs.copsiitbhu.co.in/learning-typescipt-advent-of-ts-24/
   platform: Hashnode
