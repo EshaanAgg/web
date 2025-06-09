@@ -1,17 +1,15 @@
 ---
-title: "C++ (& Systems) Interview Questions"
-description: Some tricky CPP (and other releated topics) questions that I have seen in interviews.
+title: "Systems Interview at a HFT"
+description: A collection of all the questions I was asked in a C++ interview at a prominent HFT firm.
 pubDate: 2025-06-04
-updatedDate: 2025-06-05
+updatedDate: 2025-06-10
 requireLatex: true
 draft: false
 pinned: true
 tags: ["cpp", "2025"]
 ---
 
-Here are some C++ interview questions that I have encountered in system and software engineering interviews as a final year student, or fresh graduate. Some of these questions are from prominent HFT firms and Quants, while others are from some industry leaders in general software based firms. Hopefully, these will help you prepare for your interviews!
-
-In addition to these questions, I have been also asked multiple times to implement some common data structures, OS primitives or some scheduling problems, which I have covered in [my other blog](./../placements/write_your_own), so I won't be covering them here.
+I had the opportunity to interview at a prominent HFT firm in $2025$, and I was asked a variety of questions that tested my understanding of C++ and systems programming. I decided to compile all the questions that I was asked during the interview, not only from my interview, but also from the experiences of my peers who interviewed at the same firm, and online sources like Glassdoor and LeetCode. In addition to these questions, I also was asked some primitives or common OS problems from [my other blog](./../placements/write_your_own), so do brush up on those as well.
 
 <details>
 <summary> Table of Contents </summary>
@@ -23,7 +21,8 @@ In addition to these questions, I have been also asked multiple times to impleme
 - [Question 5](#question-5)
 - [Question 6](#question-6)
 - [Question 7](#question-7)
-- [Question 8](#question-8)
+- [Design Question](#design-question)
+- [DSA Question](#dsa-question)
 - [Descriptive Questions](#descriptive-questions)
 
 </details>
@@ -375,7 +374,7 @@ int main() {
 }
 ```
 
-## Question 8
+## Design Question
 
 There is a module `M` which needs to be provided with UDP packet data in an efficient and in order manner. The UDP packets are sequenced $1$, $2$, $3$ and so on. Since the data in from a UDP stream, it is possible that some of the packets are dropped in the transimission. You are required to implement a wrapper `W` around the module `M`, which can manage these drops and provide a reliable and in-order service to `M`.
 
@@ -456,6 +455,157 @@ class Wrapper {
 ```
 
 The code above implements a wrapper `W` around the module `M` that handles UDP packets and snapshots efficiently. The wrapper uses a map to buffer packets that arrive out of order, and it processes them in sequence as they become available. The recovery thread periodically checks for new snapshots from the exchange and processes a snapshot only when the snapshot contains the data for all the dropped packets till now. There would be a need for synchronization mechanisms (like mutexes) to ensure thread safety between the main thread and the recovery thread, especially when accessing shared data like `packets` and `expectedPacket`.
+
+This problem alternatively can also be explained as a variant of the "Consumer-Producer" problem, where the main thread is the producer of packets (from the UDP stream) and the recovery thread is the consumer (which processes the snapshot data), and need to be synchronized properly to ensure that the packets along with the option to request a snapshot.
+
+</details>
+
+## DSA Question
+
+You are given a undirected graph with $n$ nodes and $m$ edges. You need to the colour each node with one of colours $1$, $2$ or $3$ such that:
+
+- For every edge $(u, v)$, $|colour(u) - colour(v)| = 1$.
+- The number of nodes of each colour is equal.
+
+Return the number of ways to colour the graph, or $0$ if it is not possible to colour the graph. Return the answer modulo $10^9 + 7$.
+
+<details>
+<summary> Answer </summary>
+
+If the whole graph is connected, then it would be only possible to colour the graph if:
+
+- The number of nodes $n$ is divisible by $3$.
+- The graph is bipartite, i.e., it can be coloured with two colours such that no two adjacent nodes have the same colour.
+- In the bipartite graph, let the number of nodes in the first part be $a$ and in the second part be $b$, such that $a \ge b$. Then, it must hold that $a = 2b$.
+
+Then we can colour all the nodes in the smaller part with colour $2$, and the nodes in the larger part with colours $1$ and $3$ alternatively.
+
+Now since the graph can be disconnected, the conditions change a bit:
+
+- The number of nodes in the whole graph must be divisible by $3$ (and not in each component).
+- Each component must be bipartite.
+- In the final colouring, there must be $\frac{n}{3}$ nodes from the "smaller" part, and $\frac{2n}{3}$ nodes from the "larger" part. Thus the number of colourings can be calculated by choosing $\frac{n}{3}$ nodes from the "larger" part and colouring them with colour $1$, and the rest $\frac{n}{3}$ nodes with colour $3$. Thus the number of colourings would be $\binom{\frac{2n}{3}}{\frac{n}{3}}$.
+- This would need to be multiplied by the number of ways to label each of the component parts as "smaller" or "larger" such that the sum condition holds. To calculate this, we can use dynamic programming to count the number of ways to choose the nodes from each component.
+
+The overall time-complexity of the solution would be $O(n^2)$.
+
+```cpp showLineNumbers
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define vi vector<int>
+#define vvi vector<vector<int>>
+#define vvll vector<vector<ll>>
+
+const ll MOD = 1e9 + 7;
+
+ll power(ll a, ll b) {
+  ll res = 1;
+  while (b > 0) {
+    if (b & 1)
+      res = (res * a) % MOD;
+    a = (a * a) % MOD;
+    b >>= 1;
+  }
+  return res;
+}
+
+
+// Returns nCr(2a, a)
+ll getBinomial(ll a) {
+  ll facA = 1;
+  ll fac2A = 1;
+  for (ll i = 2; i <= 2 * a; i++) {
+    fac2A = (fac2A * i) % MOD;
+    if (i == a)
+      facA = fac2A;
+  }
+
+  ll dr = power(facA, MOD - 2);
+  dr = (dr * dr) % MOD;
+  return (fac2A * dr) % MOD;
+}
+
+// Assumes that node u is already coloured, and we need to colour
+// it's neighbours with the other two colours.
+// Also pushes the coloured nodes to col1 and col2 vectors.
+bool isBipartite(int u, vvi &g, vi &col, vi &col1, vi &col2) {
+  for (int v : g[u]) {
+    if (col[v] == -1) {
+      // Colour the neighbour with the other colour
+      col[v] = 1 - col[u];
+      if (col[v] == 0) col1.push_back(v);
+      else col2.push_back(v);
+      if (!isBipartite(v, g, col, col1, col2)) return false;
+    } else if (col[v] == col[u]) {
+      // If the neighbour has the same colour, then it's not bipartite
+      return false;
+    }
+  }
+
+  return true;
+}
+
+ll getWays(int idx, int tar, vi &a, vi &b, vvll &dp) {
+  if (idx == a.size())
+    return tar == 0;
+  if (tar < 0)
+    return 0;
+
+  if (dp[idx][tar] != -1)
+    return dp[idx][tar];
+
+  ll res = getWays(idx + 1, tar - a[idx], a, b, dp);
+  res += getWays(idx + 1, tar - b[idx], a, b, dp);
+  res %= MOD;
+  dp[idx][tar] = res;
+  return res;
+}
+
+int main() {
+  int n, m;
+  cin >> n >> m;
+
+  vvi g(n);
+  for (int i = 0; i < m; i++) {
+    int u, v;
+    cin >> u >> v;
+    g[u - 1].push_back(v - 1);
+    g[v - 1].push_back(u - 1);
+  }
+
+  if (n % 3 != 0) {
+    cout << 0 << "\n"; // Not possible to colour
+    return 0;
+  }
+
+  vector<int> col(n, -1); // -1 means uncoloured
+  vector<int> a, b;
+  for (int i = 0; i < n; i++) {
+    if (col[i] != -1)
+      continue;
+    vector<int> col1, col2;
+
+    col[i] = 0;
+    col1.push_back(i);
+    if (!isBipartite(i, g, col, col1, col2)) {
+      cout << 0 << "\n"; // Not bipartite
+      return 0;
+    }
+
+    a.push_back(col1.size());
+    b.push_back(col2.size());
+  }
+
+  int s = n / 3;
+  vvll dp(a.size(), vector<ll>(s + 1, -1));
+  ll ways = getWays(0, s, a, b, dp);
+
+  cout << (ways * getBinomial(s)) % MOD << "\n";
+  return 0;
+}
+```
 
 </details>
 
@@ -556,3 +706,98 @@ The code above implements a wrapper `W` around the module `M` that handles UDP p
    Memory alignment refers to placing data at memory addresses that are multiples of their size. Proper alignment is crucial for performance as it affects cache line usage, prevents CPU pipeline stalls, and is required for certain SIMD operations. Misaligned access can cause performance penalties or crashes on some architectures.
 
    </details>
+
+9. Explain the difference between paging and segmentation in detail. How do they relate to compilation and execution in C++?
+
+   <details>
+   <summary> Answer </summary>
+
+   ### Paging
+
+   Paging is a memory management technique used by operating systems where:
+
+   - The logical address space (used by processes) is divided into fixed-size blocks called pages.
+   - The physical memory (RAM) is divided into frames of the same size.
+   - Pages are mapped to frames using a page table maintained by the OS. Often, a Translation Lookaside Buffer (TLB) is also used to speed up address translation.
+   - It is related to the physical memory management, allowing processes to use more memory than physically available through swapping (as CPU works with virtual addresses).
+   - It eliminates external fragmentation.
+
+   ### Segmentation
+
+   **Segmentation** is another technique which:
+
+   - Divides memory into variable-sized segments based on logical divisions of a program.
+   - Each segment has a base address and a limit, which defines its size.
+   - It allows for more flexible memory management, as segments can grow or shrink independently.
+   - The various examples of segments of a program can include:
+     - Code segment (text)
+     - Data segment
+     - Stack segment
+     - Heap segment
+   - It is more abstract and logical, focusing on the structure of a program rather than physical memory management.
+   - It can lead to external fragmentation, as segments can vary in size.
+
+   ### Use in C++
+
+   Many modern OS (like Linux, Windows) use both in layered ways, but:
+
+   - Most modern x86 CPUs (in 64-bit mode) disable hardware segmentation.
+   - They instead rely on **paging** for memory protection and isolation.
+
+   In C++, you don't interact directly with segmentation or paging. But:
+
+   - C++ code maps to segments:
+
+     - **.text** → Code segment
+     - **.data/.bss** → Static/global segment
+     - **heap** → Managed via `new`/`malloc`
+     - **stack** → Function call stack
+
+     OS or executable format (like ELF) defines these segments during linking and loading.
+
+   - C++ code is compiled to machine code, which is then loaded into memory by the OS. The OS uses paging to manage the memory of the process, mapping logical addresses used in the C++ code to physical addresses in RAM. You can also see it's more explicit effects during page faults or memory mapped files.
+
+   </details>
+
+10. What is the difference between `new` and `malloc` in C++? Discuss about the underlying memory management, intialization and metadata stored.
+
+    <details>
+    <summary> Answer </summary>
+
+    - `malloc` is part of the C standard library, which is used to serve small allocations from an existing heap region.
+    - It can make use of system calls like `brk()` or `mmap()` to allocate memory.
+    - `malloc` implementations store a header before the actual memory block that contains metadata:
+
+      - Size of the block
+      - Allocation flags
+      - Free/used state
+      - Possibly pointers to adjacent blocks (for free list)
+
+    ```
+    [metadata][user data pointer returned by malloc]
+    ```
+
+    - On the other hand, `new` is a C++ operator that does more than just allocate memory. It:
+      - Allocates memory for an object and then calls its constructor.
+      - It returns a typed pointer to the object, not just a `void*`.
+      - It can throw exceptions (like `std::bad_alloc`) if allocation fails, while `malloc` returns `NULL`.
+    - The `new` operator can be overloaded for each class to customize memory allocation. No extra metadata is stored by the language itself, but your `operator new` implementation can store info (e.g., for debugging).
+    - The compiler and runtime rely on object layout and virtual tables (vtable pointers) for polymorphic behavior, not on heap metadata.
+
+    You can use the `strace` command to see the system calls made by `malloc` and `new` in a C++ program. For example, if you have a program called `your_program`, you can run:
+
+    ```bash
+    strace ./your_program
+    ```
+
+    You'll see calls like:
+
+    ```bash
+    brk(NULL)                = 0x555555758000
+    brk(0x555555779000)      = 0x555555779000
+    mmap(NULL, 4096, ...)    = 0x7ffff7fb4000
+    ```
+
+    While `malloc` and `free` are used for raw memory allocation and deallocation, `new` and `delete` are used for object-oriented memory management in C++. `new` is not necessarily slower than `malloc`, but it does additional work (like calling constructors and ensuring type safety), which can add overhead.
+
+    </details>
