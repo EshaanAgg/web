@@ -1022,7 +1022,7 @@ This is the third part of the series on online assessments that I witnessed duri
 
     </details>
 
-6. You are given an array $arr$. In one operations, you are required to choose a range $[l, r]$ such that it has not been chosen previously, and then add the value of $max(arr[l] ..., arr[r])$ to your score. What is the maximum score you can obtain after performing at max $k$ operations?
+6. You are given an array $arr$. In one operation, you are required to choose a range $[l, r]$ such that it has not been chosen previously, and then add the value of $max(arr[l] ..., arr[r])$ to your score. What is the maximum score you can obtain after performing at max $k$ operations?
 
    Constraints:
 
@@ -1094,7 +1094,7 @@ This is the third part of the series on online assessments that I witnessed duri
 
     </details>
 
-7. You are given a string $s$. Find the length of the minimum substring of $s$ that must be removed from the same, so that the remaining string can be permuted to form a palindrome. String $s$ only consists of lowercase English alphabets.
+7. You are given a string $s$. Find the length of the minimum substring of $s$ that must be removed from the same, so that the remaining string can be rearranged to form a palindrome. String $s$ only consists of lowercase English alphabets.
 
    Constraints:
 
@@ -1143,7 +1143,7 @@ This is the third part of the series on online assessments that I witnessed duri
 
     </details>
 
-8. You are given $n$ points on a grid. Calculate the area of the minimum square that encloses at-least $k$ of the points in the grid. The points that lie on the boundary of the square are not counted as to be enclosed in the same.
+8. You are given $n$ points on a grid. Calculate the area of the minimum square that encloses at least $k$ of the points in the grid. The points that lie on the boundary of the square are not counted as to be enclosed in the same.
 
    Constraints:
 
@@ -1195,7 +1195,7 @@ This is the third part of the series on online assessments that I witnessed duri
 
 9. [Maximise the String](https://codeforces.com/problemset/problem/1506/G)
 
-10. You are given a tree of $n$ nodes. You need to colour the nodes of the tree with $m$ colours, such that no two adjacent nodes, as well as two nodes that are adjacent to a common city have the same colour. Output the number of colourings of the graph modulo $10^9 + 7$.
+10. You are given a tree of $n$ nodes. You need to colour the nodes of the tree with $m$ colours, such that no two adjacent nodes, as well as two nodes that are adjacent to a common city have the same colour. Output the number of possible colourings of the graph modulo $10^9 + 7$.
 
     Constraints:
 

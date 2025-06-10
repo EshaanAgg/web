@@ -1400,7 +1400,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
     </details>
 
-5.  You are given an array $a$ and who empty arrays $s$ and $t$. The array $a$ is a permutation of length $n$. In one operation, you can do one of the following:
+5.  You are given an array $a$ and two empty arrays $s$ and $t$. The array $a$ is a permutation of length $n$. In one operation, you can do one of the following:
 
     - Remove the element from the starting of $a$ and add it to the end of $t$.
     - Remove the element from the starting of $a$ and add it to the end of $s$.
@@ -1680,7 +1680,7 @@ A lot of these questions have been mixed with questions that were asked in the i
 
 10. Given an array of size $N$ containing integers, find the minimum possible sum of that can be formed be adding the elements in the array. You can perform the following operation at most once:
 
-    - Select an index. If the sum of all the elements in the array up to the selected index is a multiple of the element present at the index. divide the sum up to the selected index by the element present at the index.
+    - Select an index. If the sum of all the elements in the array up to the selected index is a multiple of the element present at the index, divide the sum up to the selected index by the element present at the index.
     - After dividing, you do not have to add this element to the resultant sum.
     - After this operation is performed, you will have to add the remaining elements to the resultant sum.
     - Note that the chosen index is excluded from the prefix sum and the suffix sum. If the chosen index is $0$, then it should be included in the prefix sum.

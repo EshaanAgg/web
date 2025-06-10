@@ -11,7 +11,7 @@ series:
 tags: ["placements", "2024"]
 ---
 
-This is the second part of the series on online assessments that I witnessed during the season of 2024. The first part can be found [here](../oa_1/).
+This is the second part of the series on online assessments that I witnessed during the season of 2024. The first part can be found [here](../oa_1/) and the third part can be found [here](../oa_3/). The questions in this blog post are from the following companies:
 
 - [Zomato](#zomato)
 - [PACE Stock Broking](#pace-stock-broking)
@@ -2265,7 +2265,7 @@ The company repeated the coding questions across campuses, even if the gap betwe
 
     As with such minimization questions, we will use binary search to find the minimum value of $p$. Once we have a value of $p$, we can use a simple Djikstra to find if a valid path exists. The only change we need to make is if we arrive at a power booster node, we need to set the power to $p$ instead of further decrementing it.
 
-    You might expect the time complexity of the solution to be $O(m \log n \cdot \log m)$ where $m$ is the maximum number of edges in the graph due to Djikstra, but the same turns out to be in the order of $O(n^2)$ instead. This is because having power booster breaks the monotonicity of the distance function that Djikstra expects (Suppose you reach an intermediary power node that is still at a large distance from destination before the other power node that is at a smaller distance. Now you will recharge at that node (farther from destination) and do Djikstra from it which would be of no use as it is suboptimal and may not be able to reach the final destination from there)
+    You might expect the time complexity of the solution to be $O(m \log n \cdot \log m)$ where $m$ is the maximum number of edges in the graph due to Djikstra, but the same turns out to be in the order of $O(n^2)$ instead. This is because having power booster breaks the monotonicity of the distance function that Djikstra expects (Suppose you reach an intermediary power node that is still at a large distance from destination before the other power node that is at a smaller distance. Now you will recharge at that node (farther from destination) and do Djikstra from it which would be of no use as it is suboptimal and may not be able to reach the final destination from there).
 
     ```cpp
     int main()
@@ -3089,7 +3089,7 @@ The test usually involves 2 coding questions and 1 question involving writing a 
 
     </details>
 
-2. You are given a graph (not necessarily connected) of $n$ nodes numbered from $1$ to $n$ and $n - 1$ edges. Each edge has a cost associated with it. You can break any edge, disconnecting the pair of nodes in one operation, but you must add the same edge between a different pair od nodes. The cost of one such operation is the cost of the edge. Find the minimum cost to make the graph a tree.
+2. You are given a graph (not necessarily connected) of $n$ nodes numbered from $1$ to $n$ and $n - 1$ edges. Each edge has a cost associated with it. You can break any edge, disconnecting the pair of nodes in one operation, but you must add the same edge between a different pair of nodes. The cost of one such operation is the cost of the edge. Find the minimum cost to make the graph a tree.
 
    - $1 \leq n \leq 10^5$
    - $1 \leq cost[i] \leq 10^9$
